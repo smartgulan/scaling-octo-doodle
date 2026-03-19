@@ -33,10 +33,11 @@ body {
 
 /* Left */
 .onboarding-left {
-    background: linear-gradient(135deg, #7b61ff, #ff7a7a, #ffb86c);
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 400px;
+    height: 552px;
 }
 
 .onboarding-visual {
