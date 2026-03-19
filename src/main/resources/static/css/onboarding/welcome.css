@@ -1,0 +1,12 @@
+.welcome-content {
+    width: 100%;
+    max-width: 360px;
+}
+
+.welcome-content h1 {
+    font-weight: 600;
+}
+
+.welcome-content p {
+    margin-bottom: 24px;
+}

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ru"
+      xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/onboarding :: layout(~{::content}, 'Welcome', 'welcome.css')}">
+
+<th:block th:fragment="content">
+    <div class="welcome-content">
+        <h1>Welcome to Resona AI</h1>
+        <p>Complete a few quick steps to get started. It takes less than a minute.</p>
+
+        <form th:action="@{/onboarding/step-1}" method="post">
+            <div class="form-group">
+                <input type="text" name="companyName" placeholder="Company name" required>
+            </div>
+
+            <div class="form-group">
+                <select name="businessType" required>
+                    <option value="" disabled selected>Select your business type</option>
+                    <option th:each="type : ${businessTypes}"
+                            th:value="${type}"
+                            th:text="${type.name}">Restaurant</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <select name="musicProvider" required>
+                    <option value="" disabled selected>Select music provider</option>
+                    <option th:each="provider : ${musicProviders}"
+                            th:value="${provider}"
+                            th:text="${provider.name}">Spotify</option>
+                </select>
+            </div>
+
+            <button class="btn-primary" type="submit">Continue</button>
+        </form>
+    </div>
+</th:block>
+</html>

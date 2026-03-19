@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout(
+                    ~{::content},
+                    'Главная - GenVibe',
+                    'main.css'
+                    )}">
+
+<th:block th:fragment="content">
+    <div>TEST</div>
+</th:block>
+</html>

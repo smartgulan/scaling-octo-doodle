@@ -1,0 +1,15 @@
+.feel-container h1 { font-weight: 500; line-height: 1.2; margin-bottom: 8px; }
+.feel-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 24px; }
+.feel-card {
+    background: #fcfcfc; border: 1px solid #eee; border-radius: 12px;
+    padding: 16px; cursor: pointer; transition: 0.2s; position: relative;
+}
+.feel-card input { display: none; }
+.feel-card.active { background: #000; color: #fff; border-color: #000; }
+.feel-card.active .card-desc { color: #ccc; }
+.card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+.card-title { font-weight: 600; font-size: 15px; }
+.card-desc { font-size: 12px; line-height: 1.4; margin-bottom: 0; }
+.full-width { grid-column: span 2; }
+.form-footer { grid-column: span 2; padding-top: 20px; border-top: 1px solid #eee; margin-top: 10px; }
+.check-icon { font-size: 14px; }

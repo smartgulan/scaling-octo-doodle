@@ -1,0 +1,8 @@
+.playtime-content h1 { font-weight: 500; max-width: 320px; }
+.pills-group { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 30px; }
+.pill-item input { display: none; }
+.pill-item span {
+    display: inline-block; padding: 10px 20px; border: 1px solid #eee;
+    border-radius: 10px; font-size: 14px; cursor: pointer; transition: 0.2s;
+}
+.pill-item input:checked + span { background: #000; color: #fff; border-color: #000; }

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="ru"
+      xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/onboarding :: layout(~{::content}, 'Verify Email', 'verify-email.css')}">
+
+<th:block th:fragment="content">
+    <div class="verify-content">
+        <h1>We have prepared music for <span th:text="${companyName}">*Company name*</span> based on data</h1>
+        <p>Write your Email to get access to music.</p>
+
+        <form th:action="@{/auth/send-email}" method="post">
+            <div class="form-group">
+                <input type="email" name="email" placeholder="Email" required>
+            </div>
+            <button class="btn-primary" type="submit">Continue</button>
+        </form>
+    </div>
+</th:block>
+</html>

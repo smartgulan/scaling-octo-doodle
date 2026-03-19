@@ -1,0 +1,6 @@
+.register-content h1 { font-weight: 500; margin-bottom: 30px; }
+.password-wrapper { position: relative; }
+.toggle-password {
+    position: absolute; right: 14px; top: 50%;
+    transform: translateY(-50%); cursor: pointer; color: #999;
+}

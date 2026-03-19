@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ru"
+      xmlns:th="http://www.thymeleaf.org"
+      th:fragment="layout(content, pageTitle, pageCss)">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle}">Resona AI</title>
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+    <link rel="stylesheet" th:href="@{/css/onboarding/style.css}">
+    <link rel="stylesheet" th:href="@{'/css/onboarding/' + ${pageCss}}">
+    <script defer th:src="@{/js/onboarding.js}"></script>
+</head>
+
+<body>
+
+<div class="onboarding-wrapper">
+    <div class="onboarding-container">
+
+        <div class="onboarding-left">
+            <div class="onboarding-visual"></div>
+        </div>
+
+        <div class="onboarding-right">
+            <main th:insert="${content}"></main>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

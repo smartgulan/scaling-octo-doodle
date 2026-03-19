@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ru"
+      xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/onboarding :: layout(~{::content}, 'Check Email', 'verification-sent.css')}">
+
+<th:block th:fragment="content">
+    <div class="sent-content">
+        <h1>You are all set. <br> Check your email to get the link to your music.</h1>
+        <p>We've sent a confirmation link to your email address. Please check your inbox (and spam folder just in case) and click on the link to verify your email.</p>
+
+        <div class="info-box">
+            <p class="info-title">Didn't receive the email?</p>
+            <ul>
+                <li>Check your spam or junk folder.</li>
+                <li>Make sure you entered the correct email address.</li>
+            </ul>
+            <a href="/onboarding/resend" class="resend-link">Resend the confirmation email</a>
+        </div>
+    </div>
+</th:block>
+</html>

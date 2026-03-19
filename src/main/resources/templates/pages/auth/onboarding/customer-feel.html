@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ru"
+      xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/onboarding :: layout(~{::content}, 'Customer Experience', 'customer-feel.css')}">
+
+<th:block th:fragment="content">
+    <div class="feel-container">
+        <h1>When customers are here, what should the space help them do?</h1>
+        <p>Pick what customers experience before music is added</p>
+
+        <form th:action="@{/onboarding/step-4}" method="post" class="feel-grid">
+            <label th:each="purpose, iterStat : ${spacePurposes}"
+                   th:classappend="${iterStat.first} ? 'active' : ''"
+                   class="feel-card">
+
+                <input type="radio" name="spacePurpose"
+                       th:value="${purpose}"
+                       th:checked="${iterStat.first}">
+
+                <div class="card-header">
+                    <span class="card-title" th:text="${purpose.name}">Slow down and relax</span>
+                    <span th:if="${iterStat.first}" class="check-icon">✓</span>
+                </div>
+                <p class="card-desc" th:text="${purpose.description}">Description</p>
+            </label>
+
+            <div class="form-footer">
+                <button class="btn-primary" type="submit">Continue</button>
+            </div>
+        </form>
+    </div>
+</th:block>
+</html>

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ru"
+      xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/onboarding :: layout(~{::content}, 'Music Visibility', 'playtime-window.css')}">
+
+<th:block th:fragment="content">
+    <div class="playtime-content">
+        <h1>When should the music feel more noticeable?</h1>
+        <p>You can change this anytime - the music adapts with your business.</p>
+
+        <form th:action="@{/onboarding/step-5}" method="post">
+            <div class="pills-group">
+                <label th:each="window, iterStat : ${playtimeWindows}" class="pill-item">
+                    <input type="radio" name="playtimeWindow"
+                           th:value="${window}"
+                           th:checked="${iterStat.first}">
+                    <span th:text="${window.name}">Morning only</span>
+                </label>
+            </div>
+            <button class="btn-primary" type="submit">Continue</button>
+        </form>
+    </div>
+</th:block>
+</html>
