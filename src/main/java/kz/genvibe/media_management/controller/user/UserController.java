@@ -1,5 +1,7 @@
 package kz.genvibe.media_management.controller.user;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import kz.genvibe.media_management.model.domain.dto.user.PasswordSetupDto;
 import kz.genvibe.media_management.service.internal.UserService;
 import lombok.RequiredArgsConstructor;
@@ -16,8 +18,12 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public String createUser(@ModelAttribute PasswordSetupDto passwordSetupDto) {
-        userService.createUser(passwordSetupDto);
+    public String createUser(
+        @ModelAttribute PasswordSetupDto passwordSetupDto,
+        HttpServletRequest request,
+        HttpServletResponse response
+    ) {
+        userService.createUser(passwordSetupDto, request, response);
         return "redirect:/dashboard";
     }
 

@@ -35,8 +35,10 @@ public class WebSecurityConfig implements WebMvcConfigurer {
                 .requestMatchers(
                     "/auth/**",
                     "/onboarding/**",
+                    "/assets/**",
                     "/css/**",
                     "/js/**",
+                    "/users",
                     "/uploads/**"
                 ).permitAll()
                 .requestMatchers("/users/**").hasRole("ADMIN")
@@ -44,6 +46,8 @@ public class WebSecurityConfig implements WebMvcConfigurer {
             )
             .formLogin(form -> form
                 .loginPage("/auth/login")
+                .usernameParameter("email")
+                .passwordParameter("password")
                 .failureHandler(failureHandler)
                 .defaultSuccessUrl("/dashboard", true)
                 .permitAll()

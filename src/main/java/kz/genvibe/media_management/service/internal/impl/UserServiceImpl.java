@@ -1,10 +1,8 @@
 package kz.genvibe.media_management.service.internal.impl;
 
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.validation.Valid;
-import kz.genvibe.media_management.exception.UserAlreadyExistsException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import kz.genvibe.media_management.model.domain.OnboardingSession;
-import kz.genvibe.media_management.model.domain.dto.user.AppUserDto;
 import kz.genvibe.media_management.model.domain.dto.user.AppUserUpdateDto;
 import kz.genvibe.media_management.model.domain.dto.user.PasswordSetupDto;
 import kz.genvibe.media_management.model.entity.AppUser;
@@ -14,10 +12,15 @@ import kz.genvibe.media_management.service.internal.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
+
+import java.util.List;
 
 @Service
 @Validated
@@ -31,7 +34,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void createUser(PasswordSetupDto passwordSetupDto) {
+    public void createUser(
+        PasswordSetupDto passwordSetupDto,
+        HttpServletRequest request,
+        HttpServletResponse response
+    ) {
         if (!session.isEmailVerified()) {
             throw new AccessDeniedException("Email not verified");
         }
@@ -51,6 +58,19 @@ public class UserServiceImpl implements UserService {
             .build();
 
         appUserRepository.save(appUser);
+
+        var authentication = new UsernamePasswordAuthenticationToken(
+            appUser.getEmail(),
+            null,
+            List.of(appUser.getRole())
+        );
+        var context = SecurityContextHolder.createEmptyContext();
+        context.setAuthentication(authentication);
+        SecurityContextHolder.setContext(context);
+
+        new HttpSessionSecurityContextRepository().saveContext(context, request, response);
+
+        log.info("User created with email: {}", appUser.getEmail());
     }
 
     @Override
