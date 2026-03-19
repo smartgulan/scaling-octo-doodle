@@ -3,8 +3,10 @@ package kz.genvibe.media_management.controller.auth;
 import jakarta.validation.Valid;
 import kz.genvibe.media_management.model.domain.OnboardingSession;
 import kz.genvibe.media_management.model.domain.dto.onboarding.*;
+import kz.genvibe.media_management.model.enums.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,8 +20,14 @@ public class OnboardingActionController {
     private final OnboardingSession session;
 
     @PostMapping("/step-1")
-    public String onboardingStep1(@Valid @ModelAttribute Step1Dto dto, BindingResult bindingResult) {
+    public String onboardingStep1(
+        @Valid @ModelAttribute Step1Dto dto,
+        BindingResult bindingResult,
+        Model model
+    ) {
         if (bindingResult.hasErrors()) {
+            model.addAttribute("businessTypes", BusinessType.values());
+            model.addAttribute("musicProviders", MusicProvider.values());
             return "pages/auth/onboarding/welcome";
         }
 

@@ -12,7 +12,7 @@ public class DashboardController {
 
     @GetMapping
     public String dashboard() {
-        return "pages/home";
+        return "pages/dashboard";
     }
 
 }
