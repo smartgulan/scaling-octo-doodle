@@ -19,7 +19,7 @@
     <div class="onboarding-container">
 
         <div class="onboarding-left">
-            <img src="/assets/onboarding/1.png" alt="1">
+            <img th:src="@{/assets/onboarding/{img}(img=${formImage})}" alt="1">
         </div>
 
         <div class="onboarding-right">

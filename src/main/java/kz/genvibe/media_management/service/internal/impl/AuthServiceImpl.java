@@ -8,7 +8,6 @@ import kz.genvibe.media_management.model.entity.EmailVerificationToken;
 import kz.genvibe.media_management.repository.EmailVerificationTokenRepository;
 import kz.genvibe.media_management.service.internal.AuthService;
 import kz.genvibe.media_management.service.internal.MailService;
-import kz.genvibe.media_management.service.internal.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -24,7 +23,6 @@ public class AuthServiceImpl implements AuthService {
 
     private static final String VERIFICATION_URL_PATH = "/auth/verify-email?token=";
 
-    private final UserService userService;
     private final MailService mailService;
     private final EmailVerificationTokenRepository emailVerificationTokenRepository;
     private final AppProps appProps;

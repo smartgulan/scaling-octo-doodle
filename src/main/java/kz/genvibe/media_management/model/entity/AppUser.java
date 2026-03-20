@@ -50,7 +50,7 @@ public class AppUser extends UpdateEntity {
     @Column(nullable = false, columnDefinition = "boolean default false")
     private boolean onboardingCompleted = false;
 
-    @Column(length = 100, nullable = false)
+    @Column(nullable = false)
     private String password;
 
     @Builder.Default
@@ -69,6 +69,17 @@ public class AppUser extends UpdateEntity {
     @Column(columnDefinition = "boolean default true", nullable = false)
     private boolean enabled = true;
 
-}
+    @Column
+    private String fullName;
 
-// (IPOTEKA BANK) cr rq creation -> send to email -> access to redact the decision of the bank
+    @Column
+    private String companyRole;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "music_type_id", nullable = true)
+    private MusicType musicType;
+
+    @OneToMany(mappedBy = "appUser", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Store> stores = new ArrayList<>();
+
+}

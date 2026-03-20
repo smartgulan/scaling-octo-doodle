@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout(
+                    ~{::content},
+                    'Stores - GenVibe',
+                    'stores.css',
+                    'Stores'
+                    )}">
+
+<th:block th:fragment="content">
+    <div class="page-header-meta">
+        <a th:href="@{/dashboard}" class="back-link">
+            <span class="icon">←</span>
+        </a>
+        <p class="subtitle">Manage all stores under your company</p>
+    </div>
+
+    <div th:if="${#lists.isEmpty(stores)}" class="empty-state-container">
+        <div class="empty-card">
+            <div class="empty-icon">🏪</div>
+            <h3>No stores added yet</h3>
+            <p>Add your first store to start playing music</p>
+            <button class="btn-add-large" onclick="openModal()">
+                <span class="plus">+</span> Add new store
+            </button>
+        </div>
+    </div>
+
+    <div th:unless="${#lists.isEmpty(stores)}" class="stores-grid">
+        <div th:each="store : ${stores}" class="store-card">
+            <div class="store-info">
+                <div class="store-title-row">
+                    <h3 th:text="${store.name}">Downtown store</h3>
+                    <span class="status-badge" th:classappend="${store.active ? 'active' : 'inactive'}"
+                          th:text="${store.active ? 'Active' : 'Inactive'}">Inactive</span>
+                </div>
+                <div class="store-details">
+                    <p><span class="icon">📍</span> <span th:text="${store.address}">123 Main St., City</span></p>
+                    <p><span class="icon">✉️</span> <span th:text="${store.email}">store@email.com</span></p>
+                </div>
+                <p class="last-access" th:if="${store.active}">Last accessed: 24 Nov., 2026</p>
+                <p class="activation-hint" th:unless="${store.active}">Activate this store to generate a music access link</p>
+            </div>
+
+            <div class="store-actions">
+                <button th:if="${store.active}" class="btn-view">View Store</button>
+                <button th:unless="${store.active}" class="btn-activate">Activate store</button>
+            </div>
+        </div>
+
+        <button class="btn-add-card" onclick="openModal()">
+            <span class="plus">+</span> Add new store
+        </button>
+    </div>
+
+    <div th:replace="~{fragments/modal :: modal(~{::addStoreForm})}">
+        <th:block th:fragment="addStoreForm">
+            <div class="add-store-modal">
+                <h2>Add store</h2>
+                <form th:action="@{/stores/add}" method="post">
+                    <div class="form-group">
+                        <input type="text" name="name" placeholder="Store name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Location (optional)</label>
+                        <input type="text" name="address" placeholder="123 Main St., City">
+                    </div>
+                    <div class="form-group">
+                        <label>Store Play link will be sent to their email</label>
+                        <input type="email" name="email" placeholder="store@email.com" required>
+                    </div>
+                    <button type="submit" class="btn-save-store">Save store</button>
+                </form>
+            </div>
+        </th:block>
+    </div>
+</th:block>
+</html>

@@ -1,0 +1,97 @@
+.page-header-meta {
+    margin-top: -85px;
+    margin-bottom: 40px;
+    position: relative;
+}
+
+.subtitle {
+    color: var(--text-muted);
+}
+
+/* Пустое состояние */
+.empty-state-container {
+    background-color: #f0e6e6; /* Легкий розоватый оттенок как на макете */
+    border-radius: 24px;
+    height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.empty-card {
+    text-align: center;
+}
+
+.empty-icon {
+    font-size: 2rem;
+    background: #fff;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    margin: 0 auto 20px;
+}
+
+/* Сетка магазинов */
+.stores-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 20px;
+}
+
+.store-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 200px;
+}
+
+.store-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.status-badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.status-badge.active { background: #e6f7ed; color: #2ecc71; }
+.status-badge.inactive { background: #fff4e6; color: #f39c12; }
+
+.store-details p {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin: 5px 0;
+}
+
+.btn-add-card, .btn-add-large {
+    background: #000;
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    padding: 12px 24px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.btn-activate, .btn-view {
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #eee;
+    background: #fff;
+    cursor: pointer;
+    margin-top: 15px;
+}
+
+.activation-hint { font-size: 0.8rem; color: #aaa; margin-top: 15px; }

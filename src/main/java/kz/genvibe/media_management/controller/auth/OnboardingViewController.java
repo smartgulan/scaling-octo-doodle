@@ -1,6 +1,7 @@
 package kz.genvibe.media_management.controller.auth;
 
 import kz.genvibe.media_management.model.domain.OnboardingSession;
+import kz.genvibe.media_management.model.domain.dto.onboarding.Step1Dto;
 import kz.genvibe.media_management.model.enums.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -17,6 +18,7 @@ public class OnboardingViewController {
 
     @GetMapping("/welcome")
     public String onboardingStep1(Model model) {
+        model.addAttribute("step1Dto", new Step1Dto(null, null, null));
         model.addAttribute("businessTypes", BusinessType.values());
         model.addAttribute("musicProviders", MusicProvider.values());
         return "pages/auth/onboarding/welcome";

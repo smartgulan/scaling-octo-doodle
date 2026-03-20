@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout(
+                    ~{::content},
+                    'Dashboard - GenVibe',
+                    'dashboard.css',
+                    'Analytics'
+                    )}">
+
+<th:block th:fragment="content">
+  <p>test</p>
+</th:block>
+</html>

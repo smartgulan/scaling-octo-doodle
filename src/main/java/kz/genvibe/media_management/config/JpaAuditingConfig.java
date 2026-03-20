@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import java.math.BigInteger;
 import java.util.Optional;
 
 @Configuration
@@ -24,10 +23,6 @@ public class JpaAuditingConfig implements AuditorAware<String> {
         }
 
         return Optional.of(authentication.getName());
-    }
-
-    private void reverseString(Number i) {
-        int a = 0, b = 2;
     }
 
 }

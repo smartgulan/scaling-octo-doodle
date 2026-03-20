@@ -1,0 +1,275 @@
+/* Переменные для быстрой настройки темы */
+:root {
+    --sidebar-bg: #FFFFFF66;           /* Цвет фона сайдбара */
+    --sidebar-width: 260px;
+    --text-main: #1a1a1a;
+    --text-muted: #757575;
+    --active-item-bg: #ffffff;       /* Белый фон активного пункта */
+    --active-item-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --border-color: #e0e0e0;
+}
+
+/* Основной контейнер */
+.sidebar {
+    width: var(--sidebar-width);
+    height: 100vh;
+    background-color: var(--sidebar-bg);
+    display: flex;
+    flex-direction: column;
+    padding: 24px 16px;
+    box-sizing: border-box;
+    position: fixed; /* Сайдбар всегда на месте при скролле */
+    left: 0;
+    top: 0;
+    border-right: 1px solid var(--border-color);
+    z-index: 1000;
+}
+
+/* Заголовок (Resona AI / Admin Panel) */
+.sidebar-header {
+    padding: 0 12px 32px 12px;
+}
+
+.brand-name {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-main);
+    letter-spacing: -0.5px;
+}
+
+.brand-subtitle {
+    margin: 4px 0 0 0;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+/* Секция навигации */
+.sidebar-menu {
+    flex-grow: 1; /* Занимает всё свободное пространство */
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+/* Стили ссылок (пунктов меню) */
+.menu-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    text-decoration: none;
+    color: var(--text-muted);
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.menu-item .icon {
+    margin-right: 12px;
+    font-size: 1.1rem;
+    width: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+/* Эффект при наведении */
+.menu-item:hover {
+    color: var(--text-main);
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+/* Активное состояние (как на скриншоте) */
+.menu-item.active {
+    background-color: var(--active-item-bg);
+    color: var(--text-main);
+    box-shadow: var(--active-item-shadow);
+}
+
+/* Нижняя часть (Футер) */
+.sidebar-footer {
+    margin-top: auto; /* Прижимает к низу */
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Черная кнопка Music Library */
+.btn-black-nav {
+    display: flex;
+    align-items: center;
+    background-color: #000000;
+    color: #ffffff;
+    text-decoration: none;
+    padding: 14px 16px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: opacity 0.2s;
+}
+
+.btn-black-nav:hover {
+    opacity: 0.85;
+}
+
+.btn-black-nav .icon {
+    margin-right: 12px;
+}
+
+/* Разделительная линия */
+.sidebar-divider {
+    border: 0;
+    border-top: 1px solid var(--border-color);
+    margin: 0;
+}
+
+/* Профиль пользователя */
+.user-profile-block {
+    display: flex;
+    align-items: center;
+    padding: 8px 4px;
+}
+
+.avatar-circle {
+    width: 36px;
+    height: 36px;
+    background-color: #e8e8e8;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+    font-size: 1.1rem;
+    border: 1px solid var(--border-color);
+}
+
+.user-details {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.4;
+}
+
+.user-name-text {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+.user-role-text {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+/* ... ваши переменные и стили sidebar оставляем ... */
+
+body {
+    margin: 0;
+    font-family: 'Inter', -apple-system, sans-serif;
+    background-color: #f5f5f5; /* Светло-серый фон страницы */
+    display: flex;
+}
+
+.main-container {
+    margin-left: var(--sidebar-width);
+    flex-grow: 1;
+    min-height: 100vh;
+    padding: 40px 60px;
+    box-sizing: border-box;
+}
+
+.header-panel {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 40px;
+}
+
+.main-title {
+    font-size: 2.4rem;
+    font-weight: 500;
+    margin: 0;
+    color: var(--text-main);
+}
+
+.logout-link {
+    background: none;
+    border: none;
+    color: var(--text-main);
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 0;
+    font-weight: 400;
+}
+
+.logout-link:hover {
+    text-decoration: underline;
+}
+
+/* Modal Styles */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    display: none;
+    z-index: 2000;
+}
+
+.modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #fff;
+    padding: 40px;
+    border-radius: 28px;
+    width: 500px;
+    display: none;
+    z-index: 2001;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+}
+
+.modal.active, .modal-overlay.active {
+    display: block;
+}
+
+.modal-header .close {
+    position: absolute;
+    right: 25px;
+    top: 20px;
+    font-size: 24px;
+    cursor: pointer;
+    background: #f0f0f0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+/* Стили формы внутри модалки */
+.add-store-modal h2 { margin-bottom: 30px; }
+.form-group { margin-bottom: 20px; }
+.form-group label { display: block; font-size: 0.85rem; color: #aaa; margin-bottom: 8px; }
+.form-group input {
+    width: 100%;
+    padding: 16px;
+    border: 1px solid #eee;
+    border-radius: 14px;
+    box-sizing: border-box;
+    font-size: 1rem;
+}
+
+.btn-save-store {
+    width: 100%;
+    background: #ccc; /* По умолчанию серая как на макете */
+    color: #fff;
+    border: none;
+    padding: 16px;
+    border-radius: 14px;
+    font-weight: 500;
+    margin-top: 20px;
+}
