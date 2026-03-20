@@ -1,7 +1,6 @@
 package kz.genvibe.media_management.model.entity;
 
 import jakarta.persistence.*;
-import kz.genvibe.media_management.model.Jingle;
 import kz.genvibe.media_management.model.entity.base.UpdateEntity;
 import lombok.*;
 

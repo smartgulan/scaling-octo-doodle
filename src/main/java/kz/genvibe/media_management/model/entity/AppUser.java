@@ -76,7 +76,7 @@ public class AppUser extends UpdateEntity {
     private String companyRole;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "music_type_id")
+    @JoinColumn(name = "music_type_id", nullable = true)
     private MusicType musicType;
 
     @OneToMany(mappedBy = "appUser", cascade = CascadeType.ALL, orphanRemoval = true)

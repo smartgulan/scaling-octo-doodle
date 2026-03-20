@@ -1,6 +1,6 @@
 /* Переменные для быстрой настройки темы */
 :root {
-    --sidebar-bg: #f4f4f4;           /* Цвет фона сайдбара */
+    --sidebar-bg: #FFFFFF66;           /* Цвет фона сайдбара */
     --sidebar-width: 260px;
     --text-main: #1a1a1a;
     --text-muted: #757575;
@@ -158,4 +158,118 @@
 .user-role-text {
     font-size: 0.75rem;
     color: var(--text-muted);
+}
+
+/* ... ваши переменные и стили sidebar оставляем ... */
+
+body {
+    margin: 0;
+    font-family: 'Inter', -apple-system, sans-serif;
+    background-color: #f5f5f5; /* Светло-серый фон страницы */
+    display: flex;
+}
+
+.main-container {
+    margin-left: var(--sidebar-width);
+    flex-grow: 1;
+    min-height: 100vh;
+    padding: 40px 60px;
+    box-sizing: border-box;
+}
+
+.header-panel {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 40px;
+}
+
+.main-title {
+    font-size: 2.4rem;
+    font-weight: 500;
+    margin: 0;
+    color: var(--text-main);
+}
+
+.logout-link {
+    background: none;
+    border: none;
+    color: var(--text-main);
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 0;
+    font-weight: 400;
+}
+
+.logout-link:hover {
+    text-decoration: underline;
+}
+
+/* Modal Styles */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    display: none;
+    z-index: 2000;
+}
+
+.modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #fff;
+    padding: 40px;
+    border-radius: 28px;
+    width: 500px;
+    display: none;
+    z-index: 2001;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+}
+
+.modal.active, .modal-overlay.active {
+    display: block;
+}
+
+.modal-header .close {
+    position: absolute;
+    right: 25px;
+    top: 20px;
+    font-size: 24px;
+    cursor: pointer;
+    background: #f0f0f0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+/* Стили формы внутри модалки */
+.add-store-modal h2 { margin-bottom: 30px; }
+.form-group { margin-bottom: 20px; }
+.form-group label { display: block; font-size: 0.85rem; color: #aaa; margin-bottom: 8px; }
+.form-group input {
+    width: 100%;
+    padding: 16px;
+    border: 1px solid #eee;
+    border-radius: 14px;
+    box-sizing: border-box;
+    font-size: 1rem;
+}
+
+.btn-save-store {
+    width: 100%;
+    background: #ccc; /* По умолчанию серая как на макете */
+    color: #fff;
+    border: none;
+    padding: 16px;
+    border-radius: 14px;
+    font-weight: 500;
+    margin-top: 20px;
 }

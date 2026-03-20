@@ -2,11 +2,65 @@
 <html xmlns:th="http://www.thymeleaf.org"
       th:replace="~{layout/base :: layout(
                     ~{::content},
-                    'Dashboard - GenVibe',
-                    'dashboard.css'
+                    'Music - GenVibe',
+                    'music.css',
+                    'Select music type'
                     )}">
 
 <th:block th:fragment="content">
-  <p>test</p>
+  <div class="page-header-meta">
+    <a th:href="@{/dashboard}" class="back-link">
+      <span class="icon">←</span>
+    </a>
+    <p class="subtitle">Choose a music style that matches your brand atmosphere.</p>
+  </div>
+
+  <div class="music-type-list">
+    <div th:each="type : ${musicTypes}" class="music-card" th:data-id="${type.id}">
+      <div class="music-icon" th:classappend="${type.iconName}"></div>
+
+      <div class="music-info">
+        <h3 th:text="${type.name}">Style Name</h3>
+        <p th:text="${type.description}">Style description text goes here.</p>
+      </div>
+
+      <div class="waveform">
+        <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+        <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+        <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+        <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+        <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+      </div>
+
+      <button class="btn-play"
+              th:data-url="${type.previewUrl}"
+              onclick="playPreview(this.getAttribute('data-url'))">
+        <span class="play-icon">▶</span> Play preview
+      </button>
+    </div>
+  </div>
+
+  <div class="action-footer">
+    <div class="footer-buttons">
+      <a th:href="@{/dashboard}" class="btn-cancel">Cancel</a>
+      <button class="btn-save" id="saveButton" disabled>Select and save</button>
+    </div>
+    <p class="footer-note">This style will be used as the default for all active stores</p>
+  </div>
+
+  <script>
+    document.querySelectorAll('.music-card').forEach(card => {
+      card.addEventListener('click', () => {
+        document.querySelectorAll('.music-card').forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+        document.getElementById('saveButton').disabled = false;
+      });
+    });
+
+    function playPreview(url) {
+      console.log("Playing: " + url);
+      // Тут можно добавить логику Audio API
+    }
+  </script>
 </th:block>
 </html>

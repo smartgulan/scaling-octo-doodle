@@ -6,7 +6,11 @@ import kz.genvibe.media_management.model.domain.dto.user.PasswordSetupDto;
 import kz.genvibe.media_management.model.entity.AppUser;
 import kz.genvibe.media_management.model.domain.dto.user.AppUserDto;
 import kz.genvibe.media_management.model.domain.dto.user.AppUserUpdateDto;
+import kz.genvibe.media_management.model.entity.MusicType;
+import kz.genvibe.media_management.model.entity.Store;
 import kz.genvibe.media_management.model.enums.UserRole;
+
+import java.util.List;
 
 public interface UserService {
     // User modification methods
@@ -20,8 +24,8 @@ public interface UserService {
 
     // User read methods
     AppUser getUserByEmail(String email);
+    MusicType getUserMusicType(String email);
+    List<Store> getUserStores(String email);
 
-    // User state/role management methods
-    void disableUser(String email);
-    void updateUserRole(String email, UserRole newRole);
+    void saveUserMusicType(String email, String musicType);
 }
