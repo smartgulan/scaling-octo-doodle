@@ -1,5 +1,7 @@
 package kz.genvibe.media_management.config;
 
+import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.NonNull;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -7,12 +9,18 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import java.util.List;
+
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class WebSecurityConfig implements WebMvcConfigurer {
+
+    private final CurrentUserArgumentResolver currentUserArgumentResolver;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -23,6 +31,11 @@ public class WebSecurityConfig implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/uploads/**")
             .addResourceLocations("file:/mnt/data/files/");
+    }
+
+    @Override
+    public void addArgumentResolvers(@NonNull List<HandlerMethodArgumentResolver> resolvers) {
+        resolvers.add(currentUserArgumentResolver);
     }
 
     @Bean

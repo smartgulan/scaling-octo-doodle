@@ -110,11 +110,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void saveUserMusicType(String email, String musicTypeName) {
-        var user = getUserByEmail(email);
+    public void saveUserMusicType(AppUser appUser, String musicTypeName) {
         var musicType = musicService.getMusicTypeByName(musicTypeName);
-        user.setMusicType(musicType);
-        log.info("Saved music type for user: {}", user.getEmail());
+        appUser.setMusicType(musicType);
+
+        appUserRepository.save(appUser);
+
+        log.info("Saved music type for user: {}", appUser.getEmail());
     }
 
     @Transactional(readOnly = true)

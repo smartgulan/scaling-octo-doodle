@@ -53,20 +53,13 @@
     border-color: #000;
 }
 
-/* Иконки с градиентами */
-.music-icon {
+.music-icon-img {
     width: 60px;
     height: 60px;
     border-radius: 12px;
     margin-right: 20px;
-    flex-shrink: 0;
+    object-fit: contain; /* Чтобы иконка не растягивалась */
 }
-
-/* Примеры градиентов на основе iconName */
-.music-icon.chill { background: linear-gradient(135deg, #ff8a8a 0%, #ff5e62 100%); }
-.music-icon.energetic { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
-.music-icon.cinematic { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
-.music-icon.ambient { background: linear-gradient(135deg, #5ee7df 0%, #b490ca 100%); }
 
 .music-info {
     width: 300px;

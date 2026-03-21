@@ -27,5 +27,6 @@ public interface UserService {
     MusicType getUserMusicType(String email);
     List<Store> getUserStores(String email);
 
-    void saveUserMusicType(String email, String musicType);
+    // User entity fields modification methods
+    void saveUserMusicType(AppUser appUser, String musicType);
 }
