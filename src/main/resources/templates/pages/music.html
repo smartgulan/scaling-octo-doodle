@@ -15,7 +15,9 @@
              class="music-card"
              th:data-id="${type.id}"
              th:data-name="${type.name}">
-            <div class="music-icon" th:classappend="${type.iconName}"></div>
+            <img th:src="@{'/assets/music/' + ${type.iconName}}"
+                 class="music-icon-img"
+                 alt="Music Icon">
 
             <div class="music-info">
                 <h3 th:text="${type.name}">Style Name</h3>
