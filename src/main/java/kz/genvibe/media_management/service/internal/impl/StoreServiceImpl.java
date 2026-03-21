@@ -1,5 +1,6 @@
 package kz.genvibe.media_management.service.internal.impl;
 
+import kz.genvibe.media_management.model.entity.AppUser;
 import kz.genvibe.media_management.model.entity.Store;
 import kz.genvibe.media_management.repository.StoreRepository;
 import kz.genvibe.media_management.service.internal.StoreService;
@@ -19,9 +20,8 @@ public class StoreServiceImpl implements StoreService {
     private final StoreRepository storeRepository;
 
     @Override
-    public List<Store> getAllStores(String email) {
-        var user = userService.getUserByEmail(email);
-        return storeRepository.findAllByAppUser(user);
+    public List<Store> getAllStores(AppUser appUser) {
+        return storeRepository.findAllByAppUser(appUser);
     }
 
 }
