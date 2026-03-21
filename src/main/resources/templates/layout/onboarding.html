@@ -19,7 +19,9 @@
     <div class="onboarding-container">
 
         <div class="onboarding-left">
-            <img th:src="@{/assets/onboarding/{img}(img=${formImage})}" alt="1">
+            <img th:if="${formImage != null}"
+                 th:src="@{/assets/onboarding/{img}(img=${formImage})}"
+                 alt="1">
         </div>
 
         <div class="onboarding-right">

@@ -1,22 +1,23 @@
 .welcome-content {
-    width: 425px
-}
-.welcome-content {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    width: 425px;
+    margin: 56px 56px 56px 56px;
     gap: 32px;
 }
-.welcome-text{
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: 12px;
-}
-.btn-primary{
+.btn{
     margin-top: 16px;
-    height: 54px;
-    font-family: 'Inter', sans-serif;
-    font-size: 14px;
     font-weight: 500;
+    width: 100%;
+    padding: 14px;
+    border-radius: 1rem;
+    border: none;
+    background: #000000;
+    color: #FFFFFF;
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.2s;
+    height: 54px;
 }

@@ -5,7 +5,7 @@
 
 <th:block th:fragment="content">
     <div class="welcome-content">
-        <div class="welcome-text">
+        <div class="title-content">
         <h1>Welcome to Resona AI</h1>
         <p>Complete some quick steps to kick start your music experience. It will take less than a minute!</p>
         </div>
@@ -47,7 +47,7 @@
                     <input type="hidden" name="musicProvider" required>
                 </div>
             </div>
-            <button class="btn-primary" type="submit">Continue</button>
+            <button class="btn" type="submit">Continue</button>
             <script>
                 document.addEventListener('DOMContentLoaded', () => {
                     document.querySelectorAll('.custom-select-wrapper').forEach(wrapper => {
@@ -55,21 +55,18 @@
                         const options = wrapper.querySelectorAll('.custom-select-options li');
                         const hiddenInput = wrapper.querySelector('input[type="hidden"]');
 
-                        // Найти текстовый узел header (не трогая SVG)
                         let headerTextNode = Array.from(header.childNodes).find(node => node.nodeType === Node.TEXT_NODE);
                         if (!headerTextNode) {
-                            headerTextNode = document.createTextNode(''); // создаем если нет
+                            headerTextNode = document.createTextNode('');
                             header.insertBefore(headerTextNode, header.querySelector('svg'));
                         }
 
-                        // Открытие/закрытие
                         header.addEventListener('click', e => {
                             wrappers = document.querySelectorAll('.custom-select-wrapper');
                             wrappers.forEach(w => { if (w !== wrapper) w.classList.remove('active'); });
                             wrapper.classList.toggle('active');
                         });
 
-                        // Выбор опции
                         options.forEach(option => {
                             option.addEventListener('click', e => {
                                 headerTextNode.textContent = option.textContent + ' ';
@@ -79,7 +76,6 @@
                             });
                         });
 
-                        // Закрытие при клике вне
                         document.addEventListener('click', e => {
                             if (!wrapper.contains(e.target)) {
                                 wrapper.classList.remove('active');

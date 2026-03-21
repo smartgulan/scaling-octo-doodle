@@ -12,7 +12,9 @@ public enum BrandIdentity {
     SOCIAL_AND_STYLISH("Social & Stylish"),
     CREATIVE_AND_PLAYFUL("Creative & Playful"),
     NATURAL_AND_MINDFUL("Natural & Mindful"),
-    TRADITIONAL_AND_CULTURAL("Traditional & Cultural");
+    TRADITIONAL_AND_CULTURAL("Traditional & Cultural (select culture)"),
+    CHINESE("Chinese"),
+    JAPANESE("Japanese");
 
     private final String name;
 }
