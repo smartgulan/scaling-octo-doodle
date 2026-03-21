@@ -1,2 +1,13 @@
-.verify-content h1 { font-weight: 500; max-width: 380px; }
-.verify-content .form-group { margin-top: 24px; }
+.verify-content {
+    display: flex;
+    flex-direction: column;
+    max-width: 516px;
+    gap: 34px;
+    margin: auto 56px;
+}
+
+hr{
+    border: none;
+    border-top: 1px solid #00000033;
+    margin: 34px 0;
+}

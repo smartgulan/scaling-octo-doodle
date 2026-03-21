@@ -5,9 +5,9 @@
 
 <th:block th:fragment="content">
     <div class="step-content">
-        <h1>What's your brand's identity?</h1>
+        <div class="title-content"><h1>What's your brand's identity?</h1>
         <p>Pick at least 2</p>
-
+        </div>
         <form th:action="@{/onboarding/step-2}" method="post">
             <div class="chips">
                 <label th:each="identity : ${brandIdentities}" class="chip">

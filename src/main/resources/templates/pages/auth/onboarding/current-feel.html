@@ -5,9 +5,10 @@
 
 <th:block th:fragment="content">
     <div class="step-content">
+        <div class="title-content">
         <h1>Right now, your space usually feels...</h1>
         <p>Pick what customers experience before music is added</p>
-
+        </div>
         <form th:action="@{/onboarding/step-3}" method="post">
             <div class="chips">
                 <label th:each="feel : ${currentFeels}" class="chip">
