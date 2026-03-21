@@ -1,12 +1,22 @@
 .welcome-content {
-    width: 100%;
-    max-width: 360px;
+    width: 425px
 }
-
-.welcome-content h1 {
-    font-weight: 600;
+.welcome-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 32px;
 }
-
-.welcome-content p {
-    margin-bottom: 24px;
+.welcome-text{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 12px;
+}
+.btn-primary{
+    margin-top: 16px;
+    height: 54px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
 }
