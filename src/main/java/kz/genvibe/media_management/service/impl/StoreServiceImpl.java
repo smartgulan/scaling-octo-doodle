@@ -1,11 +1,11 @@
-package kz.genvibe.media_management.service.internal.impl;
+package kz.genvibe.media_management.service.impl;
 
 import jakarta.persistence.EntityNotFoundException;
 import kz.genvibe.media_management.model.domain.dto.store.StoreCreateDto;
 import kz.genvibe.media_management.model.entity.AppUser;
 import kz.genvibe.media_management.model.entity.Store;
 import kz.genvibe.media_management.repository.StoreRepository;
-import kz.genvibe.media_management.service.internal.StoreService;
+import kz.genvibe.media_management.service.StoreService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

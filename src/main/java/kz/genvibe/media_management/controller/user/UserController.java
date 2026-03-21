@@ -3,7 +3,7 @@ package kz.genvibe.media_management.controller.user;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import kz.genvibe.media_management.model.domain.dto.user.PasswordSetupDto;
-import kz.genvibe.media_management.service.internal.UserService;
+import kz.genvibe.media_management.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;

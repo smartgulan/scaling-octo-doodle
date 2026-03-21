@@ -1,9 +1,14 @@
 package kz.genvibe.media_management.model.enums;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+@Getter
+@RequiredArgsConstructor
 public enum JingleCategory {
-    WELCOME,
-    PROMOTION,
-    CLOSING,
-    HOLIDAY,
-    CUSTOM;
+    PROMOTIONAL("Promotional"),
+    OPERATIONAL("Operational"),
+    BRANDING("Branding"),;
+
+    private final String name;
 }

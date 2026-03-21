@@ -1,4 +1,4 @@
-package kz.genvibe.media_management.service.internal.impl;
+package kz.genvibe.media_management.service.impl;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,8 +10,8 @@ import kz.genvibe.media_management.model.entity.AppUser;
 import kz.genvibe.media_management.model.entity.MusicType;
 import kz.genvibe.media_management.model.entity.Store;
 import kz.genvibe.media_management.repository.AppUserRepository;
-import kz.genvibe.media_management.service.internal.MusicService;
-import kz.genvibe.media_management.service.internal.UserService;
+import kz.genvibe.media_management.service.MusicService;
+import kz.genvibe.media_management.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;

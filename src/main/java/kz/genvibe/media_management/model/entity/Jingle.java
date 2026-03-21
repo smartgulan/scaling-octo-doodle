@@ -21,9 +21,11 @@ import java.util.stream.Collectors;
 @Builder
 public class Jingle extends CreateEntity {
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private JingleVoice voice;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private JingleCategory category;
 

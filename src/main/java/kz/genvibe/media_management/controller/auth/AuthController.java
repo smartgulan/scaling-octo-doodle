@@ -1,7 +1,7 @@
 package kz.genvibe.media_management.controller.auth;
 
 import kz.genvibe.media_management.model.domain.OnboardingSession;
-import kz.genvibe.media_management.service.internal.AuthService;
+import kz.genvibe.media_management.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

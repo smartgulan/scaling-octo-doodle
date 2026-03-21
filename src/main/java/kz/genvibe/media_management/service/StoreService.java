@@ -1,4 +1,4 @@
-package kz.genvibe.media_management.service.internal;
+package kz.genvibe.media_management.service;
 
 import kz.genvibe.media_management.model.domain.dto.store.StoreCreateDto;
 import kz.genvibe.media_management.model.entity.AppUser;

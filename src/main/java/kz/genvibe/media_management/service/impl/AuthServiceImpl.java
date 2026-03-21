@@ -1,4 +1,4 @@
-package kz.genvibe.media_management.service.internal.impl;
+package kz.genvibe.media_management.service.impl;
 
 import jakarta.persistence.EntityNotFoundException;
 import kz.genvibe.media_management.config.props.AppProps;
@@ -6,8 +6,8 @@ import kz.genvibe.media_management.exception.VerificationLinkExpiredException;
 import kz.genvibe.media_management.model.domain.OnboardingSession;
 import kz.genvibe.media_management.model.entity.EmailVerificationToken;
 import kz.genvibe.media_management.repository.EmailVerificationTokenRepository;
-import kz.genvibe.media_management.service.internal.AuthService;
-import kz.genvibe.media_management.service.internal.MailService;
+import kz.genvibe.media_management.service.AuthService;
+import kz.genvibe.media_management.service.MailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
