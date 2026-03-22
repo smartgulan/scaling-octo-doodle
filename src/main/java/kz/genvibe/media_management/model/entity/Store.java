@@ -6,6 +6,7 @@ import lombok.*;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @Entity
 @Table(name = "stores")
@@ -29,8 +30,11 @@ public class Store extends UpdateEntity {
     @Column(nullable = false, columnDefinition = "boolean default false")
     private boolean active = false;
 
-    @Column(columnDefinition = "varchar default null")
+    @Column(unique = true)
     private String musicLink;
+
+    @Column(name = "music_link_UUID")
+    private UUID musicLinkUUID;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)

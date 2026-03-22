@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/api/music")
@@ -17,9 +18,14 @@ public class MusicActionController {
     private final UserService userService;
 
     @PostMapping
-    public String saveMusicType(@RequestParam String musicType, @CurrentUser AppUser appUser) {
+    public String saveMusicType(
+        @RequestParam String musicType,
+        @CurrentUser AppUser appUser,
+        RedirectAttributes redirectAttributes
+    ) {
         userService.saveUserMusicType(appUser, musicType);
-        return "redirect:/music";
+        redirectAttributes.addFlashAttribute("toast", "Music type successfully saved for your company");
+        return "redirect:/dashboard";
     }
 
 }

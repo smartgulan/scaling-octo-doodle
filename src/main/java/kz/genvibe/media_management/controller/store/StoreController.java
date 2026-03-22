@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping("/stores")
@@ -17,7 +18,11 @@ public class StoreController {
     private final StoreService storeService;
 
     @GetMapping
-    public String storesPage(Model model, @CurrentUser AppUser appUser) {
+    public String storesPage(
+        Model model,
+        @CurrentUser AppUser appUser,
+        @RequestParam(required = false) boolean storeAdded
+    ) {
         model.addAttribute("stores", storeService.getAllStores(appUser));
         return "pages/stores";
     }
