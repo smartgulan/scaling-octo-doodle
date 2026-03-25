@@ -13,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -29,6 +31,7 @@ public class AuthServiceImpl implements AuthService {
     private final AppProps appProps;
     private final OnboardingSession onboardingSession;
     private final AppUserRepository appUserRepository;
+    private final TemplateEngine templateEngine;
 
     @Override
     @Transactional
@@ -51,7 +54,11 @@ public class AuthServiceImpl implements AuthService {
         var subject = "Email Address Verification";
         var text = "To verify your email press the link: " + verificationUrl;
 
-        mailService.sendMail(email, subject, text);
+        var context = new Context();
+        context.setVariable("verificationUrl", verificationUrl);
+        var html = templateEngine.process("pages/email/verify-email", context);
+
+        mailService.sendHtmlMail(email, subject, html);
         log.info("Sent email verification to {}", email);
     }
 
