@@ -1,6 +1,6 @@
-package kz.genvibe.media_management.service.impl;
+package kz.genvibe.media_management.service.internal.impl;
 
-import kz.genvibe.media_management.service.MailService;
+import kz.genvibe.media_management.service.internal.MailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.mail.autoconfigure.MailProperties;

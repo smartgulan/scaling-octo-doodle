@@ -8,7 +8,9 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -50,7 +52,7 @@ public class AppUser extends UpdateEntity {
     @Column(nullable = false, columnDefinition = "boolean default false")
     private boolean onboardingCompleted = false;
 
-    @Column(nullable = false)
+    @Column
     private String password;
 
     @Builder.Default
@@ -60,6 +62,10 @@ public class AppUser extends UpdateEntity {
 
     @Column(unique = true, length = 254, nullable = false)
     private String email;
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "email_verification_token_id")
+    private EmailVerificationToken emailVerificationToken;
 
     @Builder.Default
     @Column(columnDefinition = "boolean default false", nullable = false)
@@ -80,6 +86,9 @@ public class AppUser extends UpdateEntity {
     private MusicType musicType;
 
     @OneToMany(mappedBy = "appUser", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Store> stores = new ArrayList<>();
+    private Set<Store> stores = new HashSet<>();
+
+    @OneToMany(mappedBy = "appUser", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Jingle> jingles = new HashSet<>();
 
 }

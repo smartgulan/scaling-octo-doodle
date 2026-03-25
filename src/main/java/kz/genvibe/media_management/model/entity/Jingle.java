@@ -7,6 +7,7 @@ import kz.genvibe.media_management.model.enums.JingleVoice;
 import lombok.*;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -29,11 +30,24 @@ public class Jingle extends CreateEntity {
     @Column(nullable = false)
     private JingleCategory category;
 
+    @Column(nullable = false)
+    private LocalDate startDate;
+
+    @Column(nullable = false)
+    private LocalDate endDate;
+
+    @Column(nullable = false)
+    private Duration duration;
+
     @Column(length = 500, nullable = false)
     private String announcementText;
 
     @Column(nullable = false)
-    private Duration duration;
+    private String fileUrl;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private AppUser appUser;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(

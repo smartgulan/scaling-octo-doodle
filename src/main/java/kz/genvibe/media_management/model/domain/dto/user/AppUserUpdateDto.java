@@ -1,17 +1,10 @@
 package kz.genvibe.media_management.model.domain.dto.user;
 
-import kz.genvibe.media_management.model.enums.*;
-
-import java.util.List;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 
 public record AppUserUpdateDto(
-    String password,
-    String email,
-    String companyName,
-    BusinessType businessType,
-    MusicProvider musicProvider,
-    List<BrandIdentity> brandIdentity,
-    List<CurrentFeel> currentFeel,
-    SpacePurpose spacePurpose,
-    PlaytimeWindow playtimeWindow
+    @NotBlank String fullname,
+    @Email String email,
+    @NotBlank String companyRole
 ) { }

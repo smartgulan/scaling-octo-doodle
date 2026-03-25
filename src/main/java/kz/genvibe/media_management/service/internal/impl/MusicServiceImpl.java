@@ -1,9 +1,9 @@
-package kz.genvibe.media_management.service.impl;
+package kz.genvibe.media_management.service.internal.impl;
 
 import jakarta.persistence.EntityNotFoundException;
 import kz.genvibe.media_management.model.entity.MusicType;
 import kz.genvibe.media_management.repository.MusicTypeRepository;
-import kz.genvibe.media_management.service.MusicService;
+import kz.genvibe.media_management.service.internal.MusicService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

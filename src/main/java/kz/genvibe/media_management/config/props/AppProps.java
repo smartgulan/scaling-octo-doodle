@@ -1,6 +1,5 @@
 package kz.genvibe.media_management.config.props;
 
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -23,16 +22,14 @@ public class AppProps {
     private VerificationTokenProperties verificationToken;
 
     @NotNull
-    private SystemUserProperties systemUser;
-
-    public record SystemUserProperties(
-        @Email String email,
-        @NotBlank String password
-    ) { }
+    private FileStorageProperties fileStorage;
 
     public record VerificationTokenProperties(
         @NotNull Duration expiration
     ) {}
 
+    public record FileStorageProperties(
+        @NotBlank String uploadDir
+    ) {}
 }
 

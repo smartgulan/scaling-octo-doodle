@@ -1,6 +1,6 @@
 package kz.genvibe.media_management.controller.music;
 
-import kz.genvibe.media_management.service.MusicService;
+import kz.genvibe.media_management.service.internal.MusicService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

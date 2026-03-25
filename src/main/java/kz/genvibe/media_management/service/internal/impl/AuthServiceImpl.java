@@ -1,13 +1,14 @@
-package kz.genvibe.media_management.service.impl;
+package kz.genvibe.media_management.service.internal.impl;
 
 import jakarta.persistence.EntityNotFoundException;
 import kz.genvibe.media_management.config.props.AppProps;
 import kz.genvibe.media_management.exception.VerificationLinkExpiredException;
 import kz.genvibe.media_management.model.domain.OnboardingSession;
 import kz.genvibe.media_management.model.entity.EmailVerificationToken;
+import kz.genvibe.media_management.repository.AppUserRepository;
 import kz.genvibe.media_management.repository.EmailVerificationTokenRepository;
-import kz.genvibe.media_management.service.AuthService;
-import kz.genvibe.media_management.service.MailService;
+import kz.genvibe.media_management.service.internal.AuthService;
+import kz.genvibe.media_management.service.internal.MailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,7 @@ public class AuthServiceImpl implements AuthService {
     private final EmailVerificationTokenRepository emailVerificationTokenRepository;
     private final AppProps appProps;
     private final OnboardingSession onboardingSession;
+    private final AppUserRepository appUserRepository;
 
     @Override
     @Transactional
@@ -36,6 +38,13 @@ public class AuthServiceImpl implements AuthService {
         var emailVerificationToken = new EmailVerificationToken(token, expiry);
 
         emailVerificationTokenRepository.save(emailVerificationToken);
+
+        var appUser = onboardingSession.toAppUser();
+        appUser.setOnboardingCompleted(true);
+        appUser.setEmail(email);
+        appUser.setEmailVerificationToken(emailVerificationToken);
+
+        appUserRepository.save(appUser);
 
         var verificationUrl = appProps.getBaseUrl() + VERIFICATION_URL_PATH + token;
 
@@ -56,10 +65,13 @@ public class AuthServiceImpl implements AuthService {
             throw new VerificationLinkExpiredException();
         }
 
-        emailVerificationTokenRepository.delete(emailVerificationToken);
-        onboardingSession.setEmailVerified(true);
+        var appUser = emailVerificationToken.getAppUser();
+        appUser.setEmailVerified(true);
+        appUser.setEmailVerificationToken(null);
 
-        log.info("Email verified for: {}", onboardingSession.getEmail());
+        emailVerificationTokenRepository.delete(emailVerificationToken);
+
+        log.info("Email verified for: {}", appUser.getEmail());
     }
 
 }

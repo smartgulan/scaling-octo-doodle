@@ -1,4 +1,4 @@
-package kz.genvibe.media_management.service;
+package kz.genvibe.media_management.service.internal;
 
 import kz.genvibe.media_management.model.entity.MusicType;
 

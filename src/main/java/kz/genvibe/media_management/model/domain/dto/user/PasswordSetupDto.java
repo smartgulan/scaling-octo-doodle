@@ -15,4 +15,8 @@ public record PasswordSetupDto(
 
     @NotBlank(message = "Please confirm your password")
     String confirmPassword
-) { }
+) {
+    public boolean passwordMatches() {
+        return password.equals(confirmPassword);
+    }
+}

@@ -1,4 +1,4 @@
-package kz.genvibe.media_management.service;
+package kz.genvibe.media_management.service.internal;
 
 public interface MailService {
     void sendMail(String to, String subject, String text);

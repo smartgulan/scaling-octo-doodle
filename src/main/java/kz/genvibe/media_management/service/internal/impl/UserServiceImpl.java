@@ -1,8 +1,9 @@
-package kz.genvibe.media_management.service.impl;
+package kz.genvibe.media_management.service.internal.impl;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import kz.genvibe.media_management.exception.UserAlreadyExistsException;
 import kz.genvibe.media_management.model.domain.OnboardingSession;
 import kz.genvibe.media_management.model.domain.dto.user.AppUserUpdateDto;
 import kz.genvibe.media_management.model.domain.dto.user.PasswordSetupDto;
@@ -10,23 +11,21 @@ import kz.genvibe.media_management.model.entity.AppUser;
 import kz.genvibe.media_management.model.entity.MusicType;
 import kz.genvibe.media_management.model.entity.Store;
 import kz.genvibe.media_management.repository.AppUserRepository;
-import kz.genvibe.media_management.service.MusicService;
-import kz.genvibe.media_management.service.UserService;
+import kz.genvibe.media_management.service.internal.MusicService;
+import kz.genvibe.media_management.service.internal.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
-@Validated
 @RequiredArgsConstructor
 @Slf4j
 public class UserServiceImpl implements UserService {
@@ -43,25 +42,11 @@ public class UserServiceImpl implements UserService {
         HttpServletRequest request,
         HttpServletResponse response
     ) {
-        if (!session.isEmailVerified()) {
-            throw new AccessDeniedException("Email not verified");
-        }
+        var email = passwordSetupDto.email();
+        var appUser = appUserRepository.findByEmail(passwordSetupDto.email())
+            .orElseThrow(() -> new EntityNotFoundException("User with email: " + email + " not found"));
 
-        var appUser = AppUser.builder()
-            .companyName(session.getCompanyName())
-            .businessType(session.getBusinessType())
-            .musicProvider(session.getMusicProvider())
-            .brandIdentity(session.getBrandIdentities())
-            .currentFeel(session.getCurrentFeels())
-            .spacePurpose(session.getSpacePurpose())
-            .playtimeWindow(session.getPlaytimeWindow())
-            .onboardingCompleted(true)
-            .email(session.getEmail())
-            .password(passwordEncoder.encode(passwordSetupDto.password()))
-            .emailVerified(true)
-            .build();
-
-        appUserRepository.save(appUser);
+        appUser.setPassword(passwordEncoder.encode(passwordSetupDto.password()));
 
         var authentication = new UsernamePasswordAuthenticationToken(
             appUser.getEmail(),
@@ -73,25 +58,25 @@ public class UserServiceImpl implements UserService {
         SecurityContextHolder.setContext(context);
 
         new HttpSessionSecurityContextRepository().saveContext(context, request, response);
-
-        log.info("User created with email: {}", appUser.getEmail());
     }
 
     @Override
-    public void updateUser(AppUserUpdateDto dto, long id) {
+    @Transactional
+    public void updateUser(AppUserUpdateDto dto, AppUser appUser) {
+        appUser.setFullName(dto.fullname());
+        appUser.setCompanyRole(dto.companyRole());
 
-    }
+        if (!dto.email().equals(appUser.getEmail())) {
+            if (appUserRepository.existsByEmail(dto.email())) {
+                throw new UserAlreadyExistsException("User with email: " + dto.email() + " already exists");
+            }
+            appUser.setEmail(dto.email());
+            appUser.setEmailVerified(false);
+        }
 
-    @Override
-    public void deleteUser(String email) {
+        appUserRepository.save(appUser);
 
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public AppUser getUserByEmail(String email) {
-        return appUserRepository.findByEmail(email)
-            .orElseThrow(() -> new EntityNotFoundException("User not found with email: " + email));
+        log.info("User updated with email: {}", appUser.getEmail());
     }
 
     @Override
@@ -103,7 +88,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Store> getUserStores(String email) {
+    public Set<Store> getUserStores(String email) {
         var user = getUserForView(email);
         return user.getStores();
     }

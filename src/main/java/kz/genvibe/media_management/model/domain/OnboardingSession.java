@@ -1,5 +1,6 @@
 package kz.genvibe.media_management.model.domain;
 
+import kz.genvibe.media_management.model.entity.AppUser;
 import kz.genvibe.media_management.model.enums.*;
 import lombok.Data;
 import org.springframework.stereotype.Component;
@@ -23,7 +24,16 @@ public class OnboardingSession implements Serializable {
     private List<CurrentFeel> currentFeels;
     private SpacePurpose spacePurpose;
     private PlaytimeWindow playtimeWindow;
-    private String email;
 
-    private boolean emailVerified = false;
+    public AppUser toAppUser() {
+        return AppUser.builder()
+            .companyName(getCompanyName())
+            .businessType(getBusinessType())
+            .musicProvider(getMusicProvider())
+            .brandIdentity(getBrandIdentities())
+            .currentFeel(getCurrentFeels())
+            .spacePurpose(getSpacePurpose())
+            .playtimeWindow(getPlaytimeWindow())
+            .build();
+    }
 }

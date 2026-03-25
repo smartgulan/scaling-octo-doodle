@@ -1,4 +1,4 @@
-package kz.genvibe.media_management.service.impl;
+package kz.genvibe.media_management.service.internal.impl;
 
 import kz.genvibe.media_management.repository.AppUserRepository;
 import lombok.NonNull;

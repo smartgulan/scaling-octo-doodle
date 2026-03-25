@@ -1,7 +1,7 @@
 package kz.genvibe.media_management.controller.auth;
 
 import kz.genvibe.media_management.model.domain.OnboardingSession;
-import kz.genvibe.media_management.service.AuthService;
+import kz.genvibe.media_management.service.internal.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,8 +19,7 @@ public class AuthController {
 
     @GetMapping("/register")
     public String register() {
-        return onboardingSession.getEmail() == null
-            ? "redirect:/onboarding/welcome" : "pages/auth/register";
+        return "pages/auth/register";
     }
 
     @GetMapping("/login")
@@ -30,7 +29,6 @@ public class AuthController {
 
     @PostMapping("/send-email")
     public String sendEmail(@RequestParam String email) {
-        onboardingSession.setEmail(email);
         authService.sendEmailVerification(email);
         return "redirect:/onboarding/verification-sent";
     }

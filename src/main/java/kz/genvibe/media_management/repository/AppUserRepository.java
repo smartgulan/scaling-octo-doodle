@@ -11,4 +11,6 @@ public interface AppUserRepository extends JpaRepository<AppUser, Long> {
 
     @EntityGraph(attributePaths = {"stores", "musicType"})
     Optional<AppUser> findAppUserByEmail(String email);
+
+    boolean existsByEmail(String email);
 }

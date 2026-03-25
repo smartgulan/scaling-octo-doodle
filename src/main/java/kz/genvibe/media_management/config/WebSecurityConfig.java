@@ -1,5 +1,6 @@
 package kz.genvibe.media_management.config;
 
+import kz.genvibe.media_management.config.props.AppProps;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
 import org.springframework.context.annotation.Bean;
@@ -21,6 +22,7 @@ import java.util.List;
 public class WebSecurityConfig implements WebMvcConfigurer {
 
     private final CurrentUserArgumentResolver currentUserArgumentResolver;
+    private final AppProps appProps;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -29,8 +31,8 @@ public class WebSecurityConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/uploads/**")
-            .addResourceLocations("file:/mnt/data/files/");
+        registry.addResourceHandler("/files/**")
+            .addResourceLocations("file:" + appProps.getFileStorage().uploadDir());
     }
 
     @Override
@@ -39,10 +41,7 @@ public class WebSecurityConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(
-        HttpSecurity http,
-        UserVerificationFailureHandler failureHandler
-    ) {
+    public SecurityFilterChain filterChain(HttpSecurity http) {
         http
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
@@ -61,7 +60,6 @@ public class WebSecurityConfig implements WebMvcConfigurer {
                 .loginPage("/auth/login")
                 .usernameParameter("email")
                 .passwordParameter("password")
-                .failureHandler(failureHandler)
                 .defaultSuccessUrl("/dashboard", true)
                 .permitAll()
             )
