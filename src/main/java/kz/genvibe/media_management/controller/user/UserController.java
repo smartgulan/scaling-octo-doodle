@@ -2,6 +2,7 @@ package kz.genvibe.media_management.controller.user;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import kz.genvibe.media_management.config.annotations.CurrentUser;
 import kz.genvibe.media_management.model.domain.dto.user.AppUserUpdateDto;
 import kz.genvibe.media_management.model.domain.dto.user.PasswordSetupDto;
@@ -34,10 +35,13 @@ public class UserController {
     @PatchMapping
     public String updateUser(
         @ModelAttribute AppUserUpdateDto dto,
-        @CurrentUser AppUser appUser
+        @CurrentUser AppUser appUser,
+        HttpSession session
     ) {
         var isEmailChanged = !dto.email().equals(appUser.getEmail());
         userService.updateUser(dto, appUser);
+        if (isEmailChanged) session.invalidate();
+
         return isEmailChanged ? "pages/auth/confirm-email" : "redirect:/settings";
     }
 

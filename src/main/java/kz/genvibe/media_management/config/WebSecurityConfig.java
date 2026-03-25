@@ -10,6 +10,10 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.session.HttpSessionEventPublisher;
+import org.springframework.session.FindByIndexNameSessionRepository;
+import org.springframework.session.Session;
+import org.springframework.session.security.SpringSessionBackedSessionRegistry;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -41,7 +45,10 @@ public class WebSecurityConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) {
+    public SecurityFilterChain filterChain(
+        HttpSecurity http,
+        SpringSessionBackedSessionRegistry<? extends Session> sessionRegistry
+    ) {
         http
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
@@ -68,8 +75,25 @@ public class WebSecurityConfig implements WebMvcConfigurer {
                 .logoutSuccessUrl("/auth/login?logout")
                 .invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID")
+            )
+            .sessionManagement(session -> session
+                .maximumSessions(1)
+                .sessionRegistry(sessionRegistry)
+                .expiredUrl("/auth/login?expired")
             );
         return http.build();
+    }
+
+    @Bean
+    public HttpSessionEventPublisher httpSessionEventPublisher() {
+        return new HttpSessionEventPublisher();
+    }
+
+    @Bean
+    public SpringSessionBackedSessionRegistry<? extends Session> sessionRegistry(
+        FindByIndexNameSessionRepository<? extends Session> sessionRepository
+    ) {
+        return new SpringSessionBackedSessionRegistry<>(sessionRepository);
     }
 
 }
