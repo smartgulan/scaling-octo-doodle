@@ -8,6 +8,7 @@ import kz.genvibe.media_management.service.StoreService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/api/stores")
@@ -19,10 +20,12 @@ public class StoreActionController {
     @PostMapping
     public String createStore(
         @ModelAttribute @Valid StoreCreateDto dto,
-        @CurrentUser AppUser appUser
+        @CurrentUser AppUser appUser,
+        RedirectAttributes redirectAttributes
     ) {
         storeService.addStore(appUser, dto);
-        return "redirect:/stores";
+        redirectAttributes.addFlashAttribute("toast", "Store added successfully");
+        return "redirect:/stores?storeAdded=true";
     }
 
     @PostMapping("/activate/{id}")
@@ -32,6 +35,15 @@ public class StoreActionController {
     ) {
         storeService.activateStore(id, appUser);
         return "redirect:/stores";
+    }
+
+    @ResponseBody
+    @PostMapping("/regenerate-link/{id}")
+    public String regenerateLink(
+        @PathVariable long id,
+        @CurrentUser AppUser appUser
+    ) {
+        return storeService.regenerateMusicAccessLink(id, appUser);
     }
 
 }

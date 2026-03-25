@@ -10,4 +10,5 @@ public interface StoreService {
     List<Store> getAllStores(AppUser appUser);
     void addStore(AppUser appUser, StoreCreateDto dto);
     void activateStore(long id, AppUser appUser);
+    String regenerateMusicAccessLink(long id, AppUser appUser);
 }

@@ -2,56 +2,75 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
 
-<div th:fragment="sidebar">
+<div th:fragment="sidebar(activePage)">
     <nav class="sidebar">
         <div class="sidebar-header">
-            <h2>Resona AI</h2>
-            <p>Admin Panel</p>
+            <div class="title-content">
+                <h2>Resona AI</h2>
+                <p>Admin Panel</p>
+            </div>
             <hr>
         </div>
         <div class="sidebar-menu">
-            <a th:href="@{/dashboard}" class="menu-item">
+
+            <a th:href="@{/dashboard}" class="menu-item"
+               th:classappend="${activePage == 'dashboard'} ? 'active'">
                 <span class="icon" th:replace="~{fragments/icons :: icon-dashboard}"></span>
                 Dashboard
             </a>
-            <a th:href="@{/music}" class="menu-item">
+
+            <a th:href="@{/music}" class="menu-item"
+               th:classappend="${activePage == 'music'} ? 'active'">
                 <span class="icon" th:replace="~{fragments/icons :: icon-music}"></span>
                 Music Library
             </a>
-            <a th:href="@{/stores}" class="menu-item">
+
+            <a th:href="@{/stores}" class="menu-item"
+               th:classappend="${activePage == 'stores'} ? 'active'">
                 <span class="icon" th:replace="~{fragments/icons :: icon-store}"></span>
                 Stores
             </a>
-            <a th:href="@{/jingles}" class="menu-item">
+
+            <a th:href="@{/jingles}" class="menu-item"
+               th:classappend="${activePage == 'jingles'} ? 'active'">
                 <span class="icon" th:replace="~{fragments/icons :: icon-jingle}"></span>
                 Jingles
             </a>
-            <a th:href="@{/analytics}" class="menu-item">
+
+            <a th:href="@{/analytics}" class="menu-item"
+               th:classappend="${activePage == 'analytics'} ? 'active'">
                 <span class="icon" th:replace="~{fragments/icons :: icon-analytics}"></span>
                 Analytics
             </a>
-            <a th:href="@{/settings}" class="menu-item">
+
+            <a th:href="@{/settings}" class="menu-item"
+               th:classappend="${activePage == 'settings'} ? 'active'">
                 <span class="icon" th:replace="~{fragments/icons :: icon-settings}"></span>
                 Settings
             </a>
+
         </div>
 
+        <!-- Footer -->
         <div class="sidebar-footer">
-            <div class="footer-action">
-                <a th:href="@{/library}" class="btn-black">
-                    <span class="icon" th:replace="~{fragments/icons :: icon-help}"></span> Help Center
-                </a>
-            </div>
 
-            <hr class="divider">
+            <a th:href="@{/library}" class="footer-action">
+                <span class="icon" th:replace="~{fragments/icons :: icon-help}"></span>
+                Help Center
+            </a>
+
+            <hr>
 
             <div class="user-profile">
+                <span class="icon" th:replace="~{fragments/icons :: icon-account}"></span>
                 <div class="user-info">
                     <span class="user-name">User Name</span>
                     <span class="user-role">Admin</span>
                 </div>
             </div>
+
         </div>
+
     </nav>
 </div>
 

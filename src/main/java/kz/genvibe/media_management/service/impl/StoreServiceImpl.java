@@ -1,6 +1,7 @@
 package kz.genvibe.media_management.service.impl;
 
 import jakarta.persistence.EntityNotFoundException;
+import kz.genvibe.media_management.config.props.AppProps;
 import kz.genvibe.media_management.model.domain.dto.store.StoreCreateDto;
 import kz.genvibe.media_management.model.entity.AppUser;
 import kz.genvibe.media_management.model.entity.Store;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -19,6 +21,7 @@ import java.util.List;
 public class StoreServiceImpl implements StoreService {
 
     private final StoreRepository storeRepository;
+    private final AppProps appProps;
 
     @Override
     @Transactional(readOnly = true)
@@ -46,13 +49,34 @@ public class StoreServiceImpl implements StoreService {
         var store = storeRepository.findStoreByIdAndAppUser(id, appUser)
             .orElseThrow(() -> new EntityNotFoundException("Store not found"));
 
+        var uuid = UUID.randomUUID();
+
         store.setActive(true);
-        store.setMusicLink(generateMusicAccessLink());
+        store.setMusicLinkUUID(uuid);
+        store.setMusicLink(generateMusicAccessLink(id, uuid));
+
         log.info("Activated store: {} with id: {}", store.getName(), id);
     }
 
-    private String generateMusicAccessLink() {
-        return "";
+    @Override
+    @Transactional
+    public String regenerateMusicAccessLink(long id, AppUser appUser) {
+        var store = storeRepository.findStoreByIdAndAppUser(id, appUser)
+            .orElseThrow(() -> new EntityNotFoundException("Store not found"));
+
+        var newUuid = UUID.randomUUID();
+        String newLink = generateMusicAccessLink(id, newUuid);
+
+        store.setMusicLinkUUID(newUuid);
+        store.setMusicLink(newLink);
+
+        log.info("Regenerated music access link for store: {} with id: {}", store.getName(), id);
+
+        return newLink;
+    }
+
+    private String generateMusicAccessLink(long id, UUID uuid) {
+        return appProps.getBaseUrl() + "/stores/" + id + "/" + uuid;
     }
 
 }
