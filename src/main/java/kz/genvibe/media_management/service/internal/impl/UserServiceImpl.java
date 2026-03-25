@@ -37,14 +37,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void createUser(
+    public void setupUserPassword(
         PasswordSetupDto passwordSetupDto,
         HttpServletRequest request,
         HttpServletResponse response
     ) {
         var email = passwordSetupDto.email();
-        var appUser = appUserRepository.findByEmail(passwordSetupDto.email())
-            .orElseThrow(() -> new EntityNotFoundException("User with email: " + email + " not found"));
+        var appUser = getUserByEmail(email);
 
         appUser.setPassword(passwordEncoder.encode(passwordSetupDto.password()));
 
@@ -71,6 +70,7 @@ public class UserServiceImpl implements UserService {
                 throw new UserAlreadyExistsException("User with email: " + dto.email() + " already exists");
             }
             appUser.setEmail(dto.email());
+            appUser.setEmailChanged(true);
             appUser.setEmailVerified(false);
         }
 
@@ -91,6 +91,13 @@ public class UserServiceImpl implements UserService {
     public Set<Store> getUserStores(String email) {
         var user = getUserForView(email);
         return user.getStores();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public AppUser getUserByEmail(String email) {
+        return appUserRepository.findByEmail(email)
+            .orElseThrow(() -> new EntityNotFoundException("User with email: " + email + " not found"));
     }
 
     @Override

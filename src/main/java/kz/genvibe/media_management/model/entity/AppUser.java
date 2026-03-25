@@ -63,6 +63,10 @@ public class AppUser extends UpdateEntity {
     @Column(unique = true, length = 254, nullable = false)
     private String email;
 
+    @Builder.Default
+    @Column(columnDefinition = "boolean default false", nullable = false)
+    private boolean emailChanged = false;
+
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "email_verification_token_id")
     private EmailVerificationToken emailVerificationToken;

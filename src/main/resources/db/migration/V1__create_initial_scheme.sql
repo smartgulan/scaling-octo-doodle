@@ -89,6 +89,7 @@ CREATE TABLE users
     password                    VARCHAR(255),
     role                        VARCHAR(20)                             NOT NULL,
     email                       VARCHAR(254)                            NOT NULL,
+    email_changed               BOOLEAN DEFAULT FALSE                   NOT NULL,
     email_verification_token_id BIGINT,
     email_verified              BOOLEAN DEFAULT FALSE                   NOT NULL,
     enabled                     BOOLEAN DEFAULT TRUE                    NOT NULL,

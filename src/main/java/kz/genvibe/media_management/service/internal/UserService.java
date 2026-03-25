@@ -12,7 +12,7 @@ import java.util.Set;
 
 public interface UserService {
     // User modification methods
-    void createUser(
+    void setupUserPassword(
         PasswordSetupDto passwordSetupDto,
         HttpServletRequest request,
         HttpServletResponse response
@@ -22,6 +22,7 @@ public interface UserService {
     // User read methods
     MusicType getUserMusicType(String email);
     Set<Store> getUserStores(String email);
+    AppUser getUserByEmail(String email);
 
     // User entity fields modification methods
     void saveUserMusicType(AppUser appUser, String musicType);

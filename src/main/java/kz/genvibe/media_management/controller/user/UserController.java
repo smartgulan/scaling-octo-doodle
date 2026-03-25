@@ -22,12 +22,12 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public String createUser(
+    public String setupUserPassword(
         @ModelAttribute PasswordSetupDto passwordSetupDto,
         HttpServletRequest request,
         HttpServletResponse response
     ) {
-        userService.createUser(passwordSetupDto, request, response);
+        userService.setupUserPassword(passwordSetupDto, request, response);
         return "redirect:/dashboard";
     }
 
