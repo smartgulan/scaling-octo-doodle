@@ -8,9 +8,8 @@
     color: var(--text-muted);
 }
 
-/* Пустое состояние */
 .empty-state-container {
-    background-color: #f0e6e6; /* Легкий розоватый оттенок как на макете */
+    background-color: #f0e6e6;
     border-radius: 24px;
     height: 400px;
     display: flex;
@@ -34,7 +33,6 @@
     margin: 0 auto 20px;
 }
 
-/* Сетка магазинов */
 .stores-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
