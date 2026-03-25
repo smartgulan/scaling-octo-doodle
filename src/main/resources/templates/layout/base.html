@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ru"
       xmlns:th="http://www.thymeleaf.org"
-      th:fragment="layout(content, pageTitle, pageCss, mainTitle)">
+      th:fragment="layout(content, pageTitle, pageCss, mainTitle, activePage)">
 
 <head>
     <meta charset="UTF-8">
@@ -19,20 +19,22 @@
 </head>
 
 <body>
-<aside th:replace="~{fragments/sidebar :: sidebar}"></aside>
 
+<!-- Sidebar -->
+<aside th:replace="~{fragments/sidebar :: sidebar(activePage=${activePage})}"></aside>
+
+<!-- Main -->
 <main class="main-container">
     <header class="header-panel">
-        <h1 class="main-title" th:text="${mainTitle}">Page Title</h1>
+        <h1 th:text="${mainTitle}">Page Title</h1>
 
-        <form th:action="@{/auth/logout}" method="post">
-            <button type="submit" class="logout-link">Log Out</button>
-        </form>
+        <form th:action="@{/auth/logout}" method="post"> <button type="submit" class="logout-link">Log Out</button> </form>
     </header>
 
     <div class="content-wrapper">
         <th:block th:insert="${content}"></th:block>
     </div>
 </main>
+
 </body>
 </html>
