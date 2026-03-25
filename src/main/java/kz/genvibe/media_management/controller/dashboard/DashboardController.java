@@ -18,7 +18,7 @@ public class DashboardController {
 
     @GetMapping
     public String dashboard(Model model, @CurrentUser AppUser appUser) {
-        model.addAttribute("musicType", appUser.getMusicType());
+        model.addAttribute("musicType", appUser.getMusicTypes());
         model.addAttribute("stores", appUser.getStores());
         return "pages/dashboard";
     }

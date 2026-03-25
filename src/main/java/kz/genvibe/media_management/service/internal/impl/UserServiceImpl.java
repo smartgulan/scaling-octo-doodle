@@ -79,12 +79,12 @@ public class UserServiceImpl implements UserService {
         log.info("User updated with email: {}", appUser.getEmail());
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public MusicType getUserMusicType(String email) {
-        var user = getUserForView(email);
-        return user.getMusicType();
-    }
+//    @Override
+//    @Transactional(readOnly = true)
+//    public MusicType getUserMusicType(String email) {
+//        var user = getUserForView(email);
+//        return user.getMusicType();
+//    }
 
     @Override
     @Transactional(readOnly = true)
@@ -102,9 +102,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void saveUserMusicType(AppUser appUser, String musicTypeName) {
-        var musicType = musicService.getMusicTypeByName(musicTypeName);
-        appUser.setMusicType(musicType);
+    public void saveUserMusicTypes(AppUser appUser, List<String> musicTypeNames) {
+        var musicTypes = musicService.getMusicTypeByNames(musicTypeNames);
+        appUser.setMusicTypes(musicTypes);
 
         appUserRepository.save(appUser);
 

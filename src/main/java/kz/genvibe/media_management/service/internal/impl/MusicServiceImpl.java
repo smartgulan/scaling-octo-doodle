@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +27,11 @@ public class MusicServiceImpl implements MusicService {
     public MusicType getMusicTypeByName(String musicTypeName) {
         return musicTypeRepository.findByName(musicTypeName)
             .orElseThrow(() -> new EntityNotFoundException("Music type not found for name: " + musicTypeName));
+    }
+
+    @Override
+    public Set<MusicType> getMusicTypeByNames(List<String> musicTypeNames) {
+        return musicTypeRepository.findMusicTypesByNameIn(musicTypeNames);
     }
 
 }

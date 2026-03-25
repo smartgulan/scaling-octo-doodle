@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.List;
+
 @Controller
 @RequestMapping("/api/music")
 @RequiredArgsConstructor
@@ -19,11 +21,11 @@ public class MusicActionController {
 
     @PostMapping
     public String saveMusicType(
-        @RequestParam String musicType,
+        @RequestParam List<String> musicType,
         @CurrentUser AppUser appUser,
         RedirectAttributes redirectAttributes
     ) {
-        userService.saveUserMusicType(appUser, musicType);
+        userService.saveUserMusicTypes(appUser, musicType);
         redirectAttributes.addFlashAttribute("toast", "Music type successfully saved for your company");
         return "redirect:/dashboard";
     }

@@ -32,10 +32,12 @@ public class AppUser extends UpdateEntity {
     @Column(length = 100, nullable = false)
     private MusicProvider musicProvider;
 
+    @Builder.Default
     @Column(nullable = false)
     @JdbcTypeCode(SqlTypes.ARRAY)
     private List<BrandIdentity> brandIdentity = new ArrayList<>();
 
+    @Builder.Default
     @Column(nullable = false)
     @JdbcTypeCode(SqlTypes.ARRAY)
     private List<CurrentFeel> currentFeel = new ArrayList<>();
@@ -85,13 +87,20 @@ public class AppUser extends UpdateEntity {
     @Column
     private String companyRole;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "music_type_id", nullable = true)
-    private MusicType musicType;
+    @Builder.Default
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+        name = "user_music_types",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "music_type_id")
+    )
+    private Set<MusicType> musicTypes = new HashSet<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "appUser", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Store> stores = new HashSet<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "appUser", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Jingle> jingles = new HashSet<>();
 

@@ -8,6 +8,7 @@ import kz.genvibe.media_management.model.domain.dto.user.AppUserUpdateDto;
 import kz.genvibe.media_management.model.entity.MusicType;
 import kz.genvibe.media_management.model.entity.Store;
 
+import java.util.List;
 import java.util.Set;
 
 public interface UserService {
@@ -20,10 +21,10 @@ public interface UserService {
     void updateUser(AppUserUpdateDto dto, AppUser appUser);
 
     // User read methods
-    MusicType getUserMusicType(String email);
+//    MusicType getUserMusicType(String email);
     Set<Store> getUserStores(String email);
     AppUser getUserByEmail(String email);
 
     // User entity fields modification methods
-    void saveUserMusicType(AppUser appUser, String musicType);
+    void saveUserMusicTypes(AppUser appUser, List<String> musicTypeNames);
 }

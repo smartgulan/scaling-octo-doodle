@@ -52,7 +52,7 @@ public class StoreServiceImpl implements StoreService {
         var uuid = UUID.randomUUID();
 
         store.setActive(true);
-        store.setMusicLinkUUID(uuid);
+        store.setMusicLinkUuid(uuid);
         store.setMusicLink(generateMusicAccessLink(id, uuid));
 
         log.info("Activated store: {} with id: {}", store.getName(), id);
@@ -67,7 +67,7 @@ public class StoreServiceImpl implements StoreService {
         var newUuid = UUID.randomUUID();
         String newLink = generateMusicAccessLink(id, newUuid);
 
-        store.setMusicLinkUUID(newUuid);
+        store.setMusicLinkUuid(newUuid);
         store.setMusicLink(newLink);
 
         log.info("Regenerated music access link for store: {} with id: {}", store.getName(), id);

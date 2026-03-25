@@ -49,6 +49,7 @@ public class Jingle extends CreateEntity {
     @JoinColumn(name = "user_id")
     private AppUser appUser;
 
+    @Builder.Default
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
         name = "jingle_stores",

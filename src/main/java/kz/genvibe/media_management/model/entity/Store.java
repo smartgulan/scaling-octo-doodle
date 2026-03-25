@@ -34,12 +34,13 @@ public class Store extends UpdateEntity {
     private String musicLink;
 
     @Column(name = "music_link_UUID")
-    private UUID musicLinkUUID;
+    private UUID musicLinkUuid;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private AppUser appUser;
 
+    @Builder.Default
     @ManyToMany(mappedBy = "stores")
     private Set<Jingle> jingles = new HashSet<>();
 

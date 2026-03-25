@@ -9,7 +9,7 @@ import java.util.Optional;
 public interface AppUserRepository extends JpaRepository<AppUser, Long> {
     Optional<AppUser> findByEmail(String email);
 
-    @EntityGraph(attributePaths = {"stores", "musicType"})
+    @EntityGraph(attributePaths = {"stores", "musicTypes"})
     Optional<AppUser> findAppUserByEmail(String email);
 
     boolean existsByEmail(String email);
