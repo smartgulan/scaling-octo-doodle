@@ -2,6 +2,7 @@ package kz.genvibe.media_management.model.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import kz.genvibe.media_management.model.entity.base.CreateEntity;
 import lombok.Getter;
@@ -22,6 +23,9 @@ public class EmailVerificationToken extends CreateEntity {
 
     @Column(updatable = false, nullable = false)
     private Instant expiryDate;
+
+    @OneToOne(mappedBy = "emailVerificationToken")
+    private AppUser appUser;
 
     public boolean isExpired() {
         return Instant.now().isAfter(expiryDate);

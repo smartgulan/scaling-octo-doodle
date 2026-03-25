@@ -2,7 +2,7 @@ package kz.genvibe.media_management.controller.dashboard;
 
 import kz.genvibe.media_management.config.annotations.CurrentUser;
 import kz.genvibe.media_management.model.entity.AppUser;
-import kz.genvibe.media_management.service.UserService;
+import kz.genvibe.media_management.service.internal.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,7 +18,7 @@ public class DashboardController {
 
     @GetMapping
     public String dashboard(Model model, @CurrentUser AppUser appUser) {
-        model.addAttribute("musicType", appUser.getMusicType());
+        model.addAttribute("musicType", appUser.getMusicTypes());
         model.addAttribute("stores", appUser.getStores());
         return "pages/dashboard";
     }

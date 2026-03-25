@@ -1,4 +1,4 @@
-package kz.genvibe.media_management.service.impl;
+package kz.genvibe.media_management.service.internal.impl;
 
 import jakarta.persistence.EntityNotFoundException;
 import kz.genvibe.media_management.config.props.AppProps;
@@ -6,7 +6,7 @@ import kz.genvibe.media_management.model.domain.dto.store.StoreCreateDto;
 import kz.genvibe.media_management.model.entity.AppUser;
 import kz.genvibe.media_management.model.entity.Store;
 import kz.genvibe.media_management.repository.StoreRepository;
-import kz.genvibe.media_management.service.StoreService;
+import kz.genvibe.media_management.service.internal.StoreService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -52,7 +52,7 @@ public class StoreServiceImpl implements StoreService {
         var uuid = UUID.randomUUID();
 
         store.setActive(true);
-        store.setMusicLinkUUID(uuid);
+        store.setMusicLinkUuid(uuid);
         store.setMusicLink(generateMusicAccessLink(id, uuid));
 
         log.info("Activated store: {} with id: {}", store.getName(), id);
@@ -67,7 +67,7 @@ public class StoreServiceImpl implements StoreService {
         var newUuid = UUID.randomUUID();
         String newLink = generateMusicAccessLink(id, newUuid);
 
-        store.setMusicLinkUUID(newUuid);
+        store.setMusicLinkUuid(newUuid);
         store.setMusicLink(newLink);
 
         log.info("Regenerated music access link for store: {} with id: {}", store.getName(), id);

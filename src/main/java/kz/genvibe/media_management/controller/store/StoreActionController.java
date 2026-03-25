@@ -4,7 +4,7 @@ import jakarta.validation.Valid;
 import kz.genvibe.media_management.config.annotations.CurrentUser;
 import kz.genvibe.media_management.model.domain.dto.store.StoreCreateDto;
 import kz.genvibe.media_management.model.entity.AppUser;
-import kz.genvibe.media_management.service.StoreService;
+import kz.genvibe.media_management.service.internal.StoreService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
