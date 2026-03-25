@@ -8,7 +8,6 @@ import kz.genvibe.media_management.model.domain.OnboardingSession;
 import kz.genvibe.media_management.model.domain.dto.user.AppUserUpdateDto;
 import kz.genvibe.media_management.model.domain.dto.user.PasswordSetupDto;
 import kz.genvibe.media_management.model.entity.AppUser;
-import kz.genvibe.media_management.model.entity.MusicType;
 import kz.genvibe.media_management.model.entity.Store;
 import kz.genvibe.media_management.repository.AppUserRepository;
 import kz.genvibe.media_management.service.internal.MusicService;
@@ -79,13 +78,6 @@ public class UserServiceImpl implements UserService {
         log.info("User updated with email: {}", appUser.getEmail());
     }
 
-//    @Override
-//    @Transactional(readOnly = true)
-//    public MusicType getUserMusicType(String email) {
-//        var user = getUserForView(email);
-//        return user.getMusicType();
-//    }
-
     @Override
     @Transactional(readOnly = true)
     public Set<Store> getUserStores(String email) {
@@ -108,7 +100,7 @@ public class UserServiceImpl implements UserService {
 
         appUserRepository.save(appUser);
 
-        log.info("Saved music type for user: {}", appUser.getEmail());
+        log.info("Saved music types for user: {}", appUser.getEmail());
     }
 
     @Transactional(readOnly = true)

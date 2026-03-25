@@ -44,8 +44,8 @@
         <div class="footer-buttons">
             <a th:href="@{/dashboard}" class="btn-cancel">Cancel</a>
 
-            <form th:action="@{/api/music}" method="post">
-                <input type="hidden" name="musicType" id="selectedMusicType">
+            <form th:action="@{/api/music}" method="post" id="musicForm">
+                <div id="selectedInputsContainer"></div>
                 <button type="submit" class="btn-save" id="saveButton" disabled>Select and save</button>
             </form>
         </div>
@@ -53,21 +53,40 @@
     </div>
 
     <script>
+        const selectedStyles = new Set();
+
         document.querySelectorAll('.music-card').forEach(card => {
             card.addEventListener('click', () => {
-                document.querySelectorAll('.music-card').forEach(c => c.classList.remove('selected'));
-                card.classList.add('selected');
-
                 const musicName = card.getAttribute('data-name');
-                console.log("Selected style:", musicName);
 
-                document.getElementById('selectedMusicType').value = musicName;
-                document.getElementById('saveButton').disabled = false;
+                if (selectedStyles.has(musicName)) {
+                    selectedStyles.delete(musicName);
+                    card.classList.remove('selected');
+                } else {
+                    selectedStyles.add(musicName);
+                    card.classList.add('selected');
+                }
+
+                const container = document.getElementById('selectedInputsContainer');
+                container.innerHTML = '';
+
+                selectedStyles.forEach(name => {
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'musicType';
+                    input.value = name;
+                    container.appendChild(input);
+                });
+
+                const saveBtn = document.getElementById('saveButton');
+                saveBtn.disabled = selectedStyles.size === 0;
+
+                console.log("Current selection:", Array.from(selectedStyles));
             });
         });
 
         function playPreview(url) {
-            event.stopPropagation();
+            if (event) event.stopPropagation();
             console.log("Playing: " + url);
         }
     </script>

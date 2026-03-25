@@ -6,7 +6,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping("/music")
@@ -16,10 +15,7 @@ public class MusicLibraryController {
     private final MusicService musicService;
 
     @GetMapping
-    public String musicPage(
-        Model model,
-        @RequestParam(required = false) boolean musicTypeSaved
-    ) {
+    public String musicPage(Model model) {
         model.addAttribute("musicTypes", musicService.getAllMusicTypes());
         return "pages/music";
     }
