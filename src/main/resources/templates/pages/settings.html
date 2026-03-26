@@ -93,7 +93,7 @@
     <div id="profileModal" class="modal">
         <div class="modal-content">
             <h2>Edit profile</h2>
-            <form th:action="@{/api/users}" th:method="patch">
+            <form th:action="@{/users}" th:method="patch">
                 <div class="form-group">
                     <label>Full name</label>
                     <input type="text" name="fullName" th:value="${appUser.fullName}" required>
