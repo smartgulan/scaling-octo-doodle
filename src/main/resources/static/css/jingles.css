@@ -1,0 +1,234 @@
+/* Контейнер страницы */
+.jingles-page {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+/* Карточки контента */
+.content-card {
+    background: #FFFFFF;
+    border-radius: 20px;
+    padding: 32px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+}
+
+.content-card h3 {
+    margin-top: 0;
+    margin-bottom: 24px;
+    font-size: 18px;
+    color: var(--text-main);
+}
+
+/* Сетка голосов */
+.voice-grid {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+    margin-bottom: 24px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+}
+
+.voice-card {
+    min-width: 160px;
+    padding: 16px;
+    background: #F9F9F9;
+    border: 1px solid #EEEEEE;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.voice-card input {
+    position: absolute;
+    opacity: 0;
+}
+
+.voice-card.active {
+    background: linear-gradient(135deg, #8E54E9 0%, #4776E6 100%);
+    color: #FFFFFF;
+    border-color: transparent;
+}
+
+.voice-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.voice-name { font-weight: 500; font-size: 14px; }
+.voice-desc { font-size: 11px; opacity: 0.8; }
+
+/* Форма */
+.form-row-triple {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.select-wrapper select {
+    width: 100%;
+    padding: 14px;
+    border: 1px solid #EEE;
+    border-radius: 12px;
+    background-color: #F9F9F9;
+    color: #666;
+    appearance: none;
+}
+
+textarea {
+    width: 100%;
+    height: 120px;
+    padding: 16px;
+    border: 1px solid #EEE;
+    border-radius: 12px;
+    background: #F9F9F9;
+    resize: none;
+    font-family: inherit;
+    margin-bottom: 8px;
+}
+
+.char-counter {
+    font-size: 11px;
+    color: #999;
+    text-align: left;
+}
+
+.btn-generate {
+    background: #000;
+    color: #fff;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    margin-top: 16px;
+}
+
+/* Список истории */
+.jingle-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 16px;
+}
+
+.jingle-item {
+    background: #FFF;
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    border: 1px solid #EEE;
+}
+
+.jingle-item.status-approved {
+    background-color: #F0F9F0;
+    border-color: #E0EFE0;
+}
+
+.play-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: none;
+    background: #000;
+    color: #FFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.jingle-details h4 {
+    margin: 0 0 6px 0;
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+}
+
+.jingle-meta, .jingle-repeat {
+    font-size: 12px;
+    color: #888;
+}
+
+.waveform-placeholder {
+    flex-grow: 1;
+    height: 40px;
+    opacity: 0.3;
+}
+
+/* Кнопки действий */
+.btn-outline {
+    background: #FFF;
+    border: 1px solid #EEE;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.btn-delete-icon {
+    background: none;
+    border: none;
+    color: #FF4D4F;
+    cursor: pointer;
+    padding: 8px;
+}
+
+.badge-approved {
+    background: #E6F4EA;
+    color: #1E8E3E;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.history-section h3 {
+    margin-top: 24px;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.select-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.select-wrapper::after {
+    content: '▼'; /* Или SVG иконка */
+    font-size: 10px;
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: #999;
+}
+
+/* Стили для кастомного календаря-кнопки */
+.date-display {
+    padding: 14px;
+    border: 1px solid #EEE;
+    border-radius: 12px;
+    background-color: #F9F9F9;
+    color: #333;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+/* Для выделения активной карточки голоса при клике через JS */
+.voice-card {
+    transition: transform 0.1s ease, box-shadow 0.2s ease;
+}
+.voice-card:active {
+    transform: scale(0.98);
+}

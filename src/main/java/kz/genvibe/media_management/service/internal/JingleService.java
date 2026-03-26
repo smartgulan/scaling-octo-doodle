@@ -7,6 +7,10 @@ import kz.genvibe.media_management.model.entity.Jingle;
 import java.util.List;
 
 public interface JingleService {
+    // Read methods
+    List<Jingle> getJingleHistory(AppUser appUser);
+    List<Jingle> getJingleRequestsToPause(AppUser appUser);
+
+    // Modify methods
     void createJingle(AppUser appUser, JingleCreateDto dto);
-    List<Jingle> getJingleHistory();
 }

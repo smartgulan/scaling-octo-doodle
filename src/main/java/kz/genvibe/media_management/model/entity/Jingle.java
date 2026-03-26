@@ -45,6 +45,14 @@ public class Jingle extends CreateEntity {
     @Column(nullable = false)
     private String fileUrl;
 
+    @Builder.Default
+    @Column(columnDefinition = "boolean default false", nullable = false)
+    private boolean requestedToPause = false;
+
+    @Builder.Default
+    @Column(columnDefinition = "boolean default false", nullable = false)
+    private boolean pauseApproved = false;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private AppUser appUser;

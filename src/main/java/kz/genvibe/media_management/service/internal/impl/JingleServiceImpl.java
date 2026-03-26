@@ -11,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Duration;
 import java.util.List;
 
 @Service
@@ -25,11 +24,13 @@ public class JingleServiceImpl implements JingleService {
     @Override
     @Transactional
     public void createJingle(AppUser appUser, JingleCreateDto dto) {
-        var speechFileUrl = elevenlabsIntegrationService.getSpeechFileUrl();
+        var speechFileUrl = elevenlabsIntegrationService.getSpeechFileUrl(
+            dto.announcementText(),
+            dto.voice().getElevenlabsVoiceId()
+        );
 
         var jingle = dto.toEntity();
         jingle.setAppUser(appUser);
-        jingle.setDuration(Duration.ZERO);
         jingle.setFileUrl(speechFileUrl);
 
         jingleRepository.save(jingle);
@@ -38,8 +39,15 @@ public class JingleServiceImpl implements JingleService {
     }
 
     @Override
-    public List<Jingle> getJingleHistory() {
-        return List.of();
+    @Transactional(readOnly = true)
+    public List<Jingle> getJingleHistory(AppUser appUser) {
+        return jingleRepository.findJinglesByAppUser(appUser);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Jingle> getJingleRequestsToPause(AppUser appUser) {
+        return jingleRepository.findJinglesByAppUserAndRequestedToPauseIsTrue(appUser);
     }
 
 }
