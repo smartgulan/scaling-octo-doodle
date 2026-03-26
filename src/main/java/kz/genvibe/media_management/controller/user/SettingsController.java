@@ -1,7 +1,10 @@
 package kz.genvibe.media_management.controller.user;
 
+import kz.genvibe.media_management.config.annotations.CurrentUser;
+import kz.genvibe.media_management.model.entity.AppUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -11,7 +14,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class SettingsController {
 
     @GetMapping
-    public String settingsPage() {
+    public String settingsPage(
+        @CurrentUser AppUser appUser,
+        Model model
+    ) {
+        model.addAttribute("appUser", appUser);
         return "pages/settings";
     }
 

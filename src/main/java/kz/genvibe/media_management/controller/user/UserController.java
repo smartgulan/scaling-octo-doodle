@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/users")
+@RequestMapping("/api/users")
 @RequiredArgsConstructor
 public class UserController {
 
@@ -42,7 +42,7 @@ public class UserController {
         userService.updateUser(dto, appUser);
         if (isEmailChanged) session.invalidate();
 
-        return isEmailChanged ? "pages/auth/confirm-email" : "redirect:/settings";
+        return isEmailChanged ? "redirect:/auth/confirm-email?email=" + appUser.getEmail() : "redirect:/settings";
     }
 
 }

@@ -61,7 +61,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void updateUser(AppUserUpdateDto dto, AppUser appUser) {
-        appUser.setFullName(dto.fullname());
+        appUser.setFullName(dto.fullName());
         appUser.setCompanyRole(dto.companyRole());
 
         if (!dto.email().equals(appUser.getEmail())) {

@@ -9,5 +9,114 @@
                     )}">
 
 <th:block th:fragment="content">
+    <div class="settings-container">
+
+        <div class="settings-grid">
+            <section class="settings-card">
+                <div class="card-header">
+                    <h2>Profile</h2>
+                    <button class="btn-edit" onclick="openModal('profileModal')">
+                        <i class="icon-edit"></i> Edit
+                    </button>
+                </div>
+                <div class="form-group">
+                    <label>Full name</label>
+                    <input type="text" th:value="${appUser.fullName}" readonly placeholder="Not set">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" th:value="${appUser.email}" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Role</label>
+                    <input type="text" th:value="${appUser.companyRole}" readonly placeholder="e.g. Marketing Manager">
+                </div>
+            </section>
+
+            <section class="settings-card">
+                <div class="card-header">
+                    <h2>Company</h2>
+                </div>
+                <div class="form-group">
+                    <label>Company name</label>
+                    <input type="text" th:value="${appUser.companyName}" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Type</label>
+                    <input type="text" th:value="${appUser.businessType}" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Space atmosphere</label>
+                    <input type="text" th:value="${appUser.spacePurpose}" readonly>
+                </div>
+            </section>
+        </div>
+
+        <section class="settings-card full-width">
+            <div class="card-header">
+                <div>
+                    <h2>Atmosphere</h2>
+                    <p class="subtitle">Select the AI-generated atmosphere for all your stores.</p>
+                </div>
+                <button class="btn-edit">Edit</button>
+            </div>
+            <div class="tags-container">
+                <span th:each="identity : ${appUser.brandIdentity}"
+                      th:text="${identity}" class="tag"></span>
+                <span th:each="feel : ${appUser.currentFeel}"
+                      th:text="${feel}" class="tag active"></span>
+            </div>
+            <div class="selected-info">
+                <p>Selected: <strong th:text="${appUser.spacePurpose + ' / ' + appUser.businessType}"></strong></p>
+            </div>
+        </section>
+
+        <section class="settings-card full-width">
+            <h2>Notifications</h2>
+            <div class="switch-item">
+                <div class="switch-info">
+                    <h3>Store activity alerts</h3>
+                    <p>When a store accesses music</p>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </section>
+
+        <div class="footer-actions">
+            <button class="btn-save-main">Save changes</button>
+        </div>
+    </div>
+
+    <div id="profileModal" class="modal">
+        <div class="modal-content">
+            <h2>Edit profile</h2>
+            <form th:action="@{/api/users}" th:method="patch">
+                <div class="form-group">
+                    <label>Full name</label>
+                    <input type="text" name="fullName" th:value="${appUser.fullName}" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" name="email" th:value="${appUser.email}" required>
+                </div>
+                <div class="form-group">
+                    <label>Role</label>
+                    <input type="text" name="companyRole" th:value="${appUser.companyRole}">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" onclick="closeModal('profileModal')">Cancel</button>
+                    <button type="submit" class="btn-save-modal">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openModal(id) { document.getElementById(id).classList.add('active'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+    </script>
 </th:block>
 </html>
