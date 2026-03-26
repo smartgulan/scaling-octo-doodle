@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface JingleRepository extends JpaRepository<Jingle, Long> {
     @EntityGraph(attributePaths = "stores")
@@ -13,4 +14,6 @@ public interface JingleRepository extends JpaRepository<Jingle, Long> {
 
     @EntityGraph(attributePaths = "stores")
     List<Jingle> findJinglesByAppUserAndRequestedToPauseIsTrue(AppUser appUser);
+
+    Optional<Jingle> findJingleByIdAndAppUser(Long id, AppUser appUser);
 }

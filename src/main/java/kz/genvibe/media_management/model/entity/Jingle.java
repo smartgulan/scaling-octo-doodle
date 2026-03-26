@@ -39,7 +39,7 @@ public class Jingle extends CreateEntity {
     @Column(nullable = false)
     private Duration duration;
 
-    @Column(length = 500, nullable = false)
+    @Column(length = 500, nullable = false, updatable = false)
     private String announcementText;
 
     @Column(nullable = false)

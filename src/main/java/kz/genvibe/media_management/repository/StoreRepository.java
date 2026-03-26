@@ -9,5 +9,6 @@ import java.util.Optional;
 
 public interface StoreRepository extends JpaRepository<Store, Long> {
     List<Store> findAllByAppUser(AppUser appUser);
+    List<Store> findStoresByAppUserAndNameIn(AppUser appUser, List<String> names);
     Optional<Store> findStoreByIdAndAppUser(Long id, AppUser appUser);
 }
