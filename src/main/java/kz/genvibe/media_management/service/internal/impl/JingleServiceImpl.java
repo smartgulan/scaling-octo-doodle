@@ -78,6 +78,14 @@ public class JingleServiceImpl implements JingleService {
     }
 
     @Override
+    @Transactional
+    public void requestToPauseJingle(long id) {
+        var jingle = jingleRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException("Jingle not found"));
+        jingle.setRequestedToPause(true);
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public List<Jingle> getJingleHistory(AppUser appUser) {
         return jingleRepository.findJinglesByAppUser(appUser);

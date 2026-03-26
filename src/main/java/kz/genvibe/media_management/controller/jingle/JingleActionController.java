@@ -57,4 +57,10 @@ public class JingleActionController {
         return "redirect:/jingles";
     }
 
+    @ResponseBody
+    @PatchMapping("/pause-request/{id}")
+    public void requestToPause(@PathVariable long id) {
+        jingleService.requestToPauseJingle(id);
+    }
+
 }

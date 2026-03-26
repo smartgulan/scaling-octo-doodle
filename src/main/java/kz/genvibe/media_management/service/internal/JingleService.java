@@ -18,4 +18,5 @@ public interface JingleService {
     void deleteJingleById(long id, AppUser appUser);
     void setPauseApprovalStatus(long id, JingleApproveDto dto, AppUser appUser);
     void addJingleToStores(long id, JingleAddStoresDto dto, AppUser appUser);
+    void requestToPauseJingle(long id);
 }
