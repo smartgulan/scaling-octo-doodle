@@ -9,15 +9,21 @@
                     )}">
 
 <th:block th:fragment="content">
+
     <p class="subtitle">Manage all stores under your company</p>
 
-    <div th:if="${#lists.isEmpty(stores)}" class="empty-state-container">
+    <div th:if="${activePage == 'stores'}" class="empty-state-container">
         <div class="empty-card">
-            <div class="empty-icon">🏪</div>
-            <h3>No stores added yet</h3>
-            <p>Add your first store to start playing music</p>
+            <div class="card-icon">
+                <span th:replace="~{fragments/icons :: icon-store}"></span>
+            </div>
+            <div class="empty-icon">
+                <h3>No stores added yet</h3>
+                <p>Add your first store to start playing music</p>
+            </div>
             <button class="btn-add-large" onclick="openModal()">
-                <span class="plus">+</span> Add new store
+                <span th:replace="~{fragments/icons :: icon-plus}"></span>
+                <span class="btn-title">Add new store</span>
             </button>
         </div>
     </div>
@@ -49,7 +55,6 @@
         </button>
     </div>
 
-    <!-- Модалка напрямую, без th:replace -->
     <div id="modalOverlay" class="modal-overlay" onclick="closeModal()"></div>
 
     <div id="modal" class="modal add-store-modal">

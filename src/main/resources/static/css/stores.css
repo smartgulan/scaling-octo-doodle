@@ -5,34 +5,44 @@
 }
 
 .subtitle {
-    color: var(--text-muted);
+    margin-left: 40px;
 }
 
 .empty-state-container {
-    background-color: #f0e6e6;
-    border-radius: 24px;
-    height: 400px;
     display: flex;
     align-items: center;
     justify-content: center;
+    border-radius: 20px;
+    height: 356px;
+
+    border-top: 1.5px solid transparent;
+    background: linear-gradient(
+            90deg,
+            rgba(213, 225, 255, 0.2) 0%,
+            rgba(246, 128, 132, 0.2) 100%
+    );
 }
 
 .empty-card {
-    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+}
+.card-icon svg path{
+    fill: #00000029;
 }
 
 .empty-icon {
-    font-size: 2rem;
-    background: #fff;
-    width: 50px;
-    height: 50px;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    border-radius: 12px;
-    margin: 0 auto 20px;
+    gap: 10px;
 }
-
+.empty-icon p{
+    font-size: 14px;
+}
 .stores-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
@@ -72,16 +82,26 @@
     margin: 5px 0;
 }
 
-.btn-add-card, .btn-add-large {
+.btn-add-large {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     background: #000;
     color: #fff;
     border: none;
-    border-radius: 12px;
-    padding: 12px 24px;
-    font-weight: 500;
+    border-radius: 8px;
+    padding: 14px 16px;
     cursor: pointer;
+    gap: 8px;
 }
-
+.btn-title {
+    font-weight: 400;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+}
+.plus {
+    margin-right: 8px;
+}
 .btn-activate, .btn-view {
     width: 100%;
     padding: 10px;

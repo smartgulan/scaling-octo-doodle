@@ -11,7 +11,7 @@
 <th:block th:fragment="content">
     <p class="subtitle">Choose a music style that matches your brand atmosphere.</p>
 
-    <div class="music-type-list">
+    <div th:if="${activePage == 'music'}" class="music-type-list">
         <div th:each="type : ${musicTypes}"
              class="music-card"
              th:data-id="${type.id}"
