@@ -13,10 +13,12 @@ import kz.genvibe.media_management.service.internal.AuthService;
 import kz.genvibe.media_management.service.internal.EmailVerificationTokenService;
 import kz.genvibe.media_management.service.internal.MailService;
 import kz.genvibe.media_management.service.internal.OrganizationService;
+import kz.genvibe.media_management.service.util.PasswordUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,6 +39,7 @@ public class AuthServiceImpl implements AuthService {
     private final EmailVerificationTokenService emailVerificationTokenService;
     private final MailService mailService;
     private final AppUserRepository appUserRepository;
+    private final PasswordEncoder passwordEncoder;
     private final AppProps appProps;
     private final TemplateEngine templateEngine;
 
@@ -78,9 +81,11 @@ public class AuthServiceImpl implements AuthService {
     public void sendEmailVerificationToStore(String email, Organization organization) {
         var emailVerificationToken = emailVerificationTokenService.generate();
         var verificationLink = appProps.getBaseUrl() + VERIFICATION_URL_PATH + emailVerificationToken.getToken();
+        var password = PasswordUtil.generateRandomPassword(9);
 
         var appUser = AppUser.builder()
             .email(email)
+            .password(passwordEncoder.encode(password))
             .emailVerificationToken(emailVerificationToken)
             .organization(organization)
             .build();
