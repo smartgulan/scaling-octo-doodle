@@ -30,7 +30,7 @@ public class MusicServiceImpl implements MusicService {
     }
 
     @Override
-    public Set<MusicType> getMusicTypeByNames(List<String> musicTypeNames) {
+    public Set<MusicType> getMusicTypesByNames(List<String> musicTypeNames) {
         return musicTypeRepository.findMusicTypesByNameIn(musicTypeNames);
     }
 

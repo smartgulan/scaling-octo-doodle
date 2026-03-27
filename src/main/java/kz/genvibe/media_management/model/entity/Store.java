@@ -37,8 +37,8 @@ public class Store extends UpdateEntity {
     private UUID musicLinkUuid;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private AppUser appUser;
+    @JoinColumn(name = "organization_id", nullable = false)
+    private Organization organization;
 
     @Builder.Default
     @ManyToMany(mappedBy = "stores")

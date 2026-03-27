@@ -8,9 +8,5 @@ public interface AuthService {
     void sendEmailVerification(String email);
     AppUser verifyEmail(String token);
 
-    void authenticate(
-        AppUser appUser,
-        HttpServletRequest request,
-        HttpServletResponse response
-    );
+    void authenticate(AppUser appUser, HttpServletRequest request, HttpServletResponse response);
 }

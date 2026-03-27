@@ -7,7 +7,7 @@ import kz.genvibe.media_management.model.enums.JingleVoice;
 import lombok.*;
 
 import java.time.Duration;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -31,10 +31,10 @@ public class Jingle extends CreateEntity {
     private JingleCategory category;
 
     @Column(nullable = false)
-    private LocalDate startDate;
+    private LocalDateTime startDate;
 
     @Column(nullable = false)
-    private LocalDate endDate;
+    private LocalDateTime endDate;
 
     @Column(nullable = false)
     private Duration duration;
@@ -54,8 +54,8 @@ public class Jingle extends CreateEntity {
     private boolean pauseApproved = false;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private AppUser appUser;
+    @JoinColumn(name = "organization_id")
+    private Organization organization;
 
     @Builder.Default
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})

@@ -8,5 +8,5 @@ import java.util.Set;
 public interface MusicService {
     List<MusicType> getAllMusicTypes();
     MusicType getMusicTypeByName(String musicTypeName);
-    Set<MusicType> getMusicTypeByNames(List<String> musicTypeNames);
+    Set<MusicType> getMusicTypesByNames(List<String> musicTypeNames);
 }

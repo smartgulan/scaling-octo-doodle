@@ -26,13 +26,13 @@ public class StoreServiceImpl implements StoreService {
     @Override
     @Transactional(readOnly = true)
     public List<Store> getAllStores(AppUser appUser) {
-        return storeRepository.findAllByAppUser(appUser);
+        return storeRepository.findAllByOrganization(appUser.getOrganization());
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<Store> getAllStoresByAppUserAndNames(AppUser appUser, List<String> names) {
-        return storeRepository.findStoresByAppUserAndNameIn(appUser, names);
+        return storeRepository.findStoresByOrganizationAndNameIn(appUser.getOrganization(), names);
     }
 
     @Override
@@ -42,7 +42,7 @@ public class StoreServiceImpl implements StoreService {
             .name(dto.name())
             .location(dto.location())
             .email(dto.email())
-            .appUser(appUser)
+            .organization(appUser.getOrganization())
             .build();
 
         storeRepository.save(store);
@@ -52,7 +52,7 @@ public class StoreServiceImpl implements StoreService {
     @Override
     @Transactional
     public void activateStore(long id, AppUser appUser) {
-        var store = storeRepository.findStoreByIdAndAppUser(id, appUser)
+        var store = storeRepository.findStoreByIdAndOrganization(id, appUser.getOrganization())
             .orElseThrow(() -> new EntityNotFoundException("Store not found"));
 
         var uuid = UUID.randomUUID();
@@ -67,7 +67,7 @@ public class StoreServiceImpl implements StoreService {
     @Override
     @Transactional
     public String regenerateMusicAccessLink(long id, AppUser appUser) {
-        var store = storeRepository.findStoreByIdAndAppUser(id, appUser)
+        var store = storeRepository.findStoreByIdAndOrganization(id, appUser.getOrganization())
             .orElseThrow(() -> new EntityNotFoundException("Store not found"));
 
         var newUuid = UUID.randomUUID();

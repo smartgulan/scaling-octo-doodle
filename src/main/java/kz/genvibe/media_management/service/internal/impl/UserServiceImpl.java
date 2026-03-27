@@ -7,9 +7,7 @@ import kz.genvibe.media_management.exception.UserAlreadyExistsException;
 import kz.genvibe.media_management.model.domain.dto.user.AppUserUpdateDto;
 import kz.genvibe.media_management.model.domain.dto.user.PasswordSetupDto;
 import kz.genvibe.media_management.model.entity.AppUser;
-import kz.genvibe.media_management.model.entity.Store;
 import kz.genvibe.media_management.repository.AppUserRepository;
-import kz.genvibe.media_management.service.internal.MusicService;
 import kz.genvibe.media_management.service.internal.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,15 +15,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Set;
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class UserServiceImpl implements UserService {
 
-    private final MusicService musicService;
     private final AppUserRepository appUserRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -68,35 +62,12 @@ public class UserServiceImpl implements UserService {
         log.info("User updated with email: {}", appUser.getEmail());
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public Set<Store> getUserStores(String email) {
-        var user = getUserForView(email);
-        return user.getStores();
-    }
 
     @Override
     @Transactional(readOnly = true)
     public AppUser getUserByEmail(String email) {
         return appUserRepository.findByEmail(email)
             .orElseThrow(() -> new EntityNotFoundException("User with email: " + email + " not found"));
-    }
-
-    @Override
-    @Transactional
-    public void saveUserMusicTypes(AppUser appUser, List<String> musicTypeNames) {
-        var musicTypes = musicService.getMusicTypeByNames(musicTypeNames);
-        appUser.setMusicTypes(musicTypes);
-
-        appUserRepository.save(appUser);
-
-        log.info("Saved music types for user: {}", appUser.getEmail());
-    }
-
-    @Transactional(readOnly = true)
-    public AppUser getUserForView(String email) {
-        return appUserRepository.findAppUserByEmail(email)
-            .orElseThrow(() -> new EntityNotFoundException("User not found with email: " + email));
     }
 
 }

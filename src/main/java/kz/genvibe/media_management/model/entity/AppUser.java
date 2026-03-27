@@ -2,15 +2,8 @@ package kz.genvibe.media_management.model.entity;
 
 import jakarta.persistence.*;
 import kz.genvibe.media_management.model.entity.base.UpdateEntity;
-import kz.genvibe.media_management.model.enums.*;
+import kz.genvibe.media_management.model.enums.UserRole;
 import lombok.*;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -21,38 +14,8 @@ import java.util.Set;
 @Builder
 public class AppUser extends UpdateEntity {
 
-    @Column(length = 160, nullable = false)
-    private String companyName;
-
-    @Enumerated(EnumType.STRING)
-    @Column(length = 160, nullable = false)
-    private BusinessType businessType;
-
-    @Enumerated(EnumType.STRING)
-    @Column(length = 100, nullable = false)
-    private MusicProvider musicProvider;
-
-    @Builder.Default
-    @Column(nullable = false)
-    @JdbcTypeCode(SqlTypes.ARRAY)
-    private List<BrandIdentity> brandIdentity = new ArrayList<>();
-
-    @Builder.Default
-    @Column(nullable = false)
-    @JdbcTypeCode(SqlTypes.ARRAY)
-    private List<CurrentFeel> currentFeel = new ArrayList<>();
-
-    @Enumerated(EnumType.STRING)
-    @Column(length = 128, nullable = false)
-    private SpacePurpose spacePurpose;
-
-    @Enumerated(EnumType.STRING)
-    @Column(length = 128, nullable = false)
-    private PlaytimeWindow playtimeWindow;
-
-    @Builder.Default
-    @Column(nullable = false, columnDefinition = "boolean default false")
-    private boolean onboardingCompleted = false;
+    @Column(unique = true, length = 254, nullable = false)
+    private String email;
 
     @Column
     private String password;
@@ -62,16 +25,9 @@ public class AppUser extends UpdateEntity {
     @Column(length = 20, nullable = false)
     private UserRole role = UserRole.ROLE_USER;
 
-    @Column(unique = true, length = 254, nullable = false)
-    private String email;
-
     @Builder.Default
     @Column(columnDefinition = "boolean default false", nullable = false)
     private boolean emailChanged = false;
-
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "email_verification_token_id")
-    private EmailVerificationToken emailVerificationToken;
 
     @Builder.Default
     @Column(columnDefinition = "boolean default false", nullable = false)
@@ -87,21 +43,12 @@ public class AppUser extends UpdateEntity {
     @Column
     private String companyRole;
 
-    @Builder.Default
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinTable(
-        name = "user_music_types",
-        joinColumns = @JoinColumn(name = "user_id"),
-        inverseJoinColumns = @JoinColumn(name = "music_type_id")
-    )
-    private Set<MusicType> musicTypes = new HashSet<>();
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "email_verification_token_id")
+    private EmailVerificationToken emailVerificationToken;
 
-    @Builder.Default
-    @OneToMany(mappedBy = "appUser", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Store> stores = new HashSet<>();
-
-    @Builder.Default
-    @OneToMany(mappedBy = "appUser", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Jingle> jingles = new HashSet<>();
+    @ManyToOne
+    @JoinColumn(name = "organization_id", updatable = false, nullable = false)
+    private Organization organization;
 
 }

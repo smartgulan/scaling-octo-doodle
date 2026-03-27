@@ -21,9 +21,5 @@ public interface UserService {
     void updateUser(AppUserUpdateDto dto, AppUser appUser);
 
     // User read methods
-    Set<Store> getUserStores(String email);
     AppUser getUserByEmail(String email);
-
-    // User entity fields modification methods
-    void saveUserMusicTypes(AppUser appUser, List<String> musicTypeNames);
 }

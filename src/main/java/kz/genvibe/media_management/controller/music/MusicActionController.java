@@ -3,7 +3,7 @@ package kz.genvibe.media_management.controller.music;
 import jakarta.validation.constraints.Size;
 import kz.genvibe.media_management.config.annotations.CurrentUser;
 import kz.genvibe.media_management.model.entity.AppUser;
-import kz.genvibe.media_management.service.internal.UserService;
+import kz.genvibe.media_management.service.internal.OrganizationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,15 +18,15 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MusicActionController {
 
-    private final UserService userService;
+    private final OrganizationService organizationService;
 
     @PostMapping
     public String saveMusicType(
-        @RequestParam @Size(min = 2) List<String> musicType,
+        @RequestParam @Size(min = 2) List<String> musicTypes,
         @CurrentUser AppUser appUser,
         RedirectAttributes redirectAttributes
     ) {
-        userService.saveUserMusicTypes(appUser, musicType);
+        organizationService.saveMusicTypes(appUser, musicTypes);
         redirectAttributes.addFlashAttribute("toast", "Music type successfully saved for your company");
         return "redirect:/dashboard";
     }

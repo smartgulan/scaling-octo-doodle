@@ -44,7 +44,7 @@ public class CurrentUserArgumentResolver implements HandlerMethodArgumentResolve
 
         var email = authentication.getName();
 
-        return appUserRepository.findAppUserByEmail(email)
+        return appUserRepository.findWithDetailsByEmail(email)
             .orElseThrow(() -> new EntityNotFoundException("User not found for email: " + email));
     }
 
