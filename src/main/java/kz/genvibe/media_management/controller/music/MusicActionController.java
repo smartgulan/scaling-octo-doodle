@@ -1,5 +1,6 @@
 package kz.genvibe.media_management.controller.music;
 
+import jakarta.validation.constraints.Size;
 import kz.genvibe.media_management.config.annotations.CurrentUser;
 import kz.genvibe.media_management.model.entity.AppUser;
 import kz.genvibe.media_management.service.internal.UserService;
@@ -21,7 +22,7 @@ public class MusicActionController {
 
     @PostMapping
     public String saveMusicType(
-        @RequestParam List<String> musicType,
+        @RequestParam @Size(min = 2) List<String> musicType,
         @CurrentUser AppUser appUser,
         RedirectAttributes redirectAttributes
     ) {

@@ -30,6 +30,12 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public List<Store> getAllStoresByAppUserAndNames(AppUser appUser, List<String> names) {
+        return storeRepository.findStoresByAppUserAndNameIn(appUser, names);
+    }
+
+    @Override
     @Transactional
     public void addStore(AppUser appUser, StoreCreateDto dto) {
         var store = Store.builder()

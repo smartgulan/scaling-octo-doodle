@@ -7,6 +7,7 @@ import kz.genvibe.media_management.config.annotations.CurrentUser;
 import kz.genvibe.media_management.model.domain.dto.user.AppUserUpdateDto;
 import kz.genvibe.media_management.model.domain.dto.user.PasswordSetupDto;
 import kz.genvibe.media_management.model.entity.AppUser;
+import kz.genvibe.media_management.service.internal.AuthService;
 import kz.genvibe.media_management.service.internal.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -21,14 +22,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class UserController {
 
     private final UserService userService;
+    private final AuthService authService;
 
-    @PostMapping
+    @PostMapping("/finalize")
     public String setupUserPassword(
         @ModelAttribute PasswordSetupDto passwordSetupDto,
         HttpServletRequest request,
         HttpServletResponse response
     ) {
-        userService.setupUserPassword(passwordSetupDto, request, response);
+        var appUser = userService.setupUserPassword(passwordSetupDto, request, response);
+        authService.authenticate(appUser, request, response);
         return "redirect:/dashboard";
     }
 
@@ -42,7 +45,7 @@ public class UserController {
         userService.updateUser(dto, appUser);
         if (isEmailChanged) session.invalidate();
 
-        return isEmailChanged ? "pages/auth/confirm-email" : "redirect:/settings";
+        return isEmailChanged ? "redirect:/auth/confirm?email=" + appUser.getEmail() : "redirect:/settings";
     }
 
 }

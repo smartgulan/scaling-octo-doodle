@@ -1,9 +1,13 @@
 package kz.genvibe.media_management.controller.auth;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.constraints.Email;
 import kz.genvibe.media_management.service.internal.AuthService;
 import kz.genvibe.media_management.service.internal.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,8 +37,24 @@ public class AuthController {
         return "redirect:/auth/register";
     }
 
+    @GetMapping("/confirm")
+    public String confirmEmail(
+        @RequestParam @Email String email,
+        Model model
+    ) {
+        model.addAttribute("email", email);
+        authService.sendEmailVerification(email);
+        return "pages/auth/confirm";
+    }
+
     @GetMapping("/confirm-email")
-    public String confirmEmail() {
+    public String confirmPage(
+        @RequestParam String token,
+        HttpServletRequest request,
+        HttpServletResponse response
+    ) {
+        var appUser = authService.verifyEmail(token);
+        authService.authenticate(appUser, request, response);
         return "pages/auth/confirm-email";
     }
 

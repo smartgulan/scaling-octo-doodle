@@ -1,7 +1,7 @@
 package kz.genvibe.media_management.service.integration.impl;
 
 import kz.genvibe.media_management.client.base.OutgoingRequestService;
-import kz.genvibe.media_management.client.dto.request.ElevenlabsTTSRequest;
+import kz.genvibe.media_management.client.dto.request.ElevenlabsTtsRequest;
 import kz.genvibe.media_management.client.elevenlabs.ElevenlabsClient;
 import kz.genvibe.media_management.config.props.AppProps;
 import kz.genvibe.media_management.service.integration.ElevenlabsIntegrationService;
@@ -24,13 +24,13 @@ public class ElevenlabsIntegrationServiceImpl implements ElevenlabsIntegrationSe
     private final ElevenlabsClient elevenlabsClient;
     private final AppProps appProps;
 
-    public String getSpeechFileUrl() {
-        var requestBody = new ElevenlabsTTSRequest(
-            "Test text",
+    public String getSpeechFileUrl(String text, String voiceId) {
+        var requestBody = new ElevenlabsTtsRequest(
+            text,
             "eleven_v3"
         );
 
-        var fileBytes = elevenlabsClient.textToSpeech("EXAVITQu4vr4xnSDxMaL", requestBody);
+        var fileBytes = elevenlabsClient.textToSpeech(voiceId, requestBody);
         var fileName = UUID.randomUUID() + ".mp3";
         var directory = Paths.get(appProps.getFileStorage().uploadDir());
         var filePath = directory.resolve(fileName);

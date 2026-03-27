@@ -57,10 +57,8 @@ public class WebSecurityConfig implements WebMvcConfigurer {
                     "/assets/**",
                     "/css/**",
                     "/js/**",
-                    "/users",
-                    "/uploads/**"
+                    "/users/finalize"
                 ).permitAll()
-                .requestMatchers("/users/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form

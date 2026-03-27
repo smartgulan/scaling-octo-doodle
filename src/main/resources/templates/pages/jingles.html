@@ -2,12 +2,193 @@
 <html xmlns:th="http://www.thymeleaf.org"
       th:replace="~{layout/base :: layout(
                     ~{::content},
-                    'Dashboard - GenVibe',
-                    'dashboard.css',
-                    'Jingles',
+                    'Jingles - GenVibe',
+                    'jingles.css',
+                    'Create jingles',
                     'jingles'
                     )}">
 
 <th:block th:fragment="content">
+    <div class="jingles-page">
+        <p class="subtitle">Monthly generation limit: 20 jingles</p>
+
+        <section class="content-card">
+            <h3>Compose Announcement</h3>
+            <form th:action="@{/api/jingles}" method="post" id="jingleForm">
+
+                <div class="voice-selector">
+                    <p class="label">Voice</p>
+                    <div class="voice-grid">
+                        <label th:each="voice : ${jingleVoice}"
+                               th:classappend="${voice.name() == 'RACHEL'} ? 'active' : ''"
+                               class="voice-card">
+                            <input type="radio" name="voice"
+                                   th:value="${voice.name()}"
+                                   th:checked="${voice.name() == 'RACHEL'}"
+                                   style="display: none;">
+                            <div class="voice-info">
+                                <span class="voice-name" th:text="${voice.name}">Rachel</span>
+                                <span class="voice-desc" th:text="${voice.description}">Calm & Clear</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-row-triple">
+                    <div class="select-wrapper custom-dropdown">
+                        <select name="category" required>
+                            <option value="" disabled selected>Select Jingle Category</option>
+                            <option th:each="cat : ${jingleCategory}"
+                                    th:value="${cat.name()}"
+                                    th:text="${cat.name}">Category</option>
+                        </select>
+                    </div>
+
+                    <div class="select-wrapper date-range-picker">
+                        <div class="date-display">Select Start/End Date</div>
+                        <input type="hidden" name="startDate" id="startDate" th:value="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}">
+                        <input type="hidden" name="endDate" id="endDate" th:value="${#temporals.format(#temporals.createNow().plusDays(7), 'yyyy-MM-dd')}">
+                    </div>
+
+                    <div class="select-wrapper custom-dropdown">
+                        <select name="repeatingTime" required>
+                            <option value="" disabled selected>Repeating Time</option>
+                            <option th:each="time : ${jingleRepeatingTime}"
+                                    th:value="${time.name()}"
+                                    th:text="${time.name}">Every hour</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group no-margin">
+                    <label>Announcement Text</label>
+                    <textarea name="announcementText" maxlength="500"
+                              placeholder="e.g. Welcome to our store! Today's special offer: 20% off all items. Enjoy your visit."></textarea>
+                    <div class="char-counter">0/500 characters</div>
+                </div>
+
+                <button type="submit" class="btn-generate">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                    Generate Jingle
+                </button>
+            </form>
+        </section>
+
+        <section class="history-section">
+            <h3>Jingle History</h3>
+            <div class="jingle-list">
+                <div th:each="jingle : ${jingleHistory}" class="jingle-item">
+                    <button class="play-btn"
+                            th:data-src="${jingle.fileUrl}"
+                            onclick="toggleAudio(this)">
+                        <i class="icon-play"></i>
+                    </button>
+
+                    <div class="jingle-details">
+                    </div>
+
+                    <div class="waveform-placeholder">
+                        <div class="progress-bar"></div> <img th:src="@{/assets/img/waveform.svg}" alt="waveform">
+                    </div>
+                </div>
+                <audio id="globalAudioPlayer" style="display: none;"></audio>
+                </div>
+        </section>
+
+        <section class="history-section">
+            <h3>Requests to Pause/Stop</h3>
+            <div class="jingle-list">
+                <div th:each="request : ${jingleRequestsToPause}"
+                     class="jingle-item" th:classappend="${request.pauseApproved} ? 'status-approved' : ''">
+                    <button class="play-btn active"><i class="icon-pause"></i></button>
+                    <div class="jingle-details">
+                        <h4 th:text="${request.announcementText}">Text</h4>
+                        <div class="jingle-meta" th:text="${request.voice.name + ' • ' + #temporals.format(request.startDate, 'dd.MM.yyyy')}">Details</div>
+                        <div class="location-tag" th:if="${not #lists.isEmpty(request.stores)}">
+                            <i class="icon-pin"></i> <span th:text="${request.stores[0].name}">Store</span>
+                        </div>
+                    </div>
+                    <div class="waveform-placeholder small"></div>
+                    <div class="item-actions">
+                        <span th:if="${request.pauseApproved}" class="badge-approved">✓ Approved</span>
+                        <button th:if="${!request.pauseApproved}" class="btn-outline">Approve</button>
+                        <button class="btn-delete-icon"><i class="icon-trash"></i></button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        document.querySelectorAll('.voice-card').forEach(card => {
+            card.addEventListener('click', function() {
+                document.querySelectorAll('.voice-card').forEach(c => c.classList.remove('active'));
+                this.classList.add('active');
+                this.querySelector('input').checked = true;
+            });
+        });
+        const audioPlayer = document.getElementById('globalAudioPlayer');
+        let currentButton = null;
+
+        function toggleAudio(button) {
+            const audioSrc = button.getAttribute('data-src');
+            const icon = button.querySelector('i');
+
+            // Если нажали на ту же кнопку, которая уже играет
+            if (currentButton === button) {
+                if (audioPlayer.paused) {
+                    audioPlayer.play();
+                    updateUI(button, true);
+                } else {
+                    audioPlayer.pause();
+                    updateUI(button, false);
+                }
+                return;
+            }
+
+            // Если играет другой трек — сбрасываем старую кнопку
+            if (currentButton) {
+                updateUI(currentButton, false);
+            }
+
+            // Загружаем новый трек
+            currentButton = button;
+            audioPlayer.src = audioSrc;
+            audioPlayer.play();
+            updateUI(button, true);
+        }
+
+        function updateUI(button, isPlaying) {
+            const icon = button.querySelector('i');
+            if (isPlaying) {
+                button.classList.add('playing');
+                icon.classList.remove('icon-play');
+                icon.classList.add('icon-pause');
+            } else {
+                button.classList.remove('playing');
+                icon.classList.remove('icon-pause');
+                icon.classList.add('icon-play');
+            }
+        }
+
+        // Когда музыка закончилась
+        audioPlayer.onended = () => {
+            if (currentButton) {
+                updateUI(currentButton, false);
+                currentButton = null;
+            }
+        };
+
+        // (Опционально) Обновление полосы прогресса
+        audioPlayer.ontimeupdate = () => {
+            if (currentButton) {
+                const progress = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+                const bar = currentButton.closest('.jingle-item').querySelector('.progress-bar');
+                if (bar) bar.style.width = progress + '%';
+            }
+        };
+    </script>
 </th:block>
 </html>

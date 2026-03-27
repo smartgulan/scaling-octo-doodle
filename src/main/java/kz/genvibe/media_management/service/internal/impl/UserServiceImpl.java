@@ -4,21 +4,16 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import kz.genvibe.media_management.exception.UserAlreadyExistsException;
-import kz.genvibe.media_management.model.domain.OnboardingSession;
 import kz.genvibe.media_management.model.domain.dto.user.AppUserUpdateDto;
 import kz.genvibe.media_management.model.domain.dto.user.PasswordSetupDto;
 import kz.genvibe.media_management.model.entity.AppUser;
-import kz.genvibe.media_management.model.entity.MusicType;
 import kz.genvibe.media_management.model.entity.Store;
 import kz.genvibe.media_management.repository.AppUserRepository;
 import kz.genvibe.media_management.service.internal.MusicService;
 import kz.genvibe.media_management.service.internal.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,11 +28,10 @@ public class UserServiceImpl implements UserService {
     private final MusicService musicService;
     private final AppUserRepository appUserRepository;
     private final PasswordEncoder passwordEncoder;
-    private final OnboardingSession session;
 
     @Override
     @Transactional
-    public void setupUserPassword(
+    public AppUser setupUserPassword(
         PasswordSetupDto passwordSetupDto,
         HttpServletRequest request,
         HttpServletResponse response
@@ -47,22 +41,17 @@ public class UserServiceImpl implements UserService {
 
         appUser.setPassword(passwordEncoder.encode(passwordSetupDto.password()));
 
-        var authentication = new UsernamePasswordAuthenticationToken(
-            appUser.getEmail(),
-            null,
-            List.of(appUser.getRole())
-        );
-        var context = SecurityContextHolder.createEmptyContext();
-        context.setAuthentication(authentication);
-        SecurityContextHolder.setContext(context);
+        appUserRepository.save(appUser);
 
-        new HttpSessionSecurityContextRepository().saveContext(context, request, response);
+        log.info("Setup password for user with email: {}", email);
+
+        return appUser;
     }
 
     @Override
     @Transactional
     public void updateUser(AppUserUpdateDto dto, AppUser appUser) {
-        appUser.setFullName(dto.fullname());
+        appUser.setFullName(dto.fullName());
         appUser.setCompanyRole(dto.companyRole());
 
         if (!dto.email().equals(appUser.getEmail())) {
@@ -78,13 +67,6 @@ public class UserServiceImpl implements UserService {
 
         log.info("User updated with email: {}", appUser.getEmail());
     }
-
-//    @Override
-//    @Transactional(readOnly = true)
-//    public MusicType getUserMusicType(String email) {
-//        var user = getUserForView(email);
-//        return user.getMusicType();
-//    }
 
     @Override
     @Transactional(readOnly = true)
@@ -108,7 +90,7 @@ public class UserServiceImpl implements UserService {
 
         appUserRepository.save(appUser);
 
-        log.info("Saved music type for user: {}", appUser.getEmail());
+        log.info("Saved music types for user: {}", appUser.getEmail());
     }
 
     @Transactional(readOnly = true)
