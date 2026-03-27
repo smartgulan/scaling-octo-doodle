@@ -6,6 +6,7 @@ import kz.genvibe.media_management.model.domain.dto.store.StoreCreateDto;
 import kz.genvibe.media_management.model.entity.AppUser;
 import kz.genvibe.media_management.model.entity.Store;
 import kz.genvibe.media_management.repository.StoreRepository;
+import kz.genvibe.media_management.service.internal.AuthService;
 import kz.genvibe.media_management.service.internal.StoreService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +21,7 @@ import java.util.UUID;
 @Slf4j
 public class StoreServiceImpl implements StoreService {
 
+    private final AuthService authService;
     private final StoreRepository storeRepository;
     private final AppProps appProps;
 
@@ -60,6 +62,8 @@ public class StoreServiceImpl implements StoreService {
         store.setActive(true);
         store.setMusicLinkUuid(uuid);
         store.setMusicLink(generateMusicAccessLink(id, uuid));
+
+        authService.sendEmailVerificationToStore(store.getEmail(), appUser.getOrganization());
 
         log.info("Activated store: {} with id: {}", store.getName(), id);
     }

@@ -6,6 +6,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import kz.genvibe.media_management.config.props.AppProps;
 import kz.genvibe.media_management.exception.VerificationLinkExpiredException;
 import kz.genvibe.media_management.model.entity.AppUser;
+import kz.genvibe.media_management.model.entity.Organization;
+import kz.genvibe.media_management.model.enums.UserRole;
 import kz.genvibe.media_management.repository.AppUserRepository;
 import kz.genvibe.media_management.service.internal.AuthService;
 import kz.genvibe.media_management.service.internal.EmailVerificationTokenService;
@@ -57,6 +59,7 @@ public class AuthServiceImpl implements AuthService {
 
             appUser = AppUser.builder()
                 .email(email)
+                .role(UserRole.ROLE_ADMIN)
                 .organization(organization)
                 .build();
 
@@ -68,6 +71,24 @@ public class AuthServiceImpl implements AuthService {
         sendEmail(verificationLink, email);
 
         log.info("Sent email verification to {}", email);
+    }
+
+    @Override
+    @Transactional
+    public void sendEmailVerificationToStore(String email, Organization organization) {
+        var emailVerificationToken = emailVerificationTokenService.generate();
+        var verificationLink = appProps.getBaseUrl() + VERIFICATION_URL_PATH + emailVerificationToken.getToken();
+
+        var appUser = AppUser.builder()
+            .email(email)
+            .emailVerificationToken(emailVerificationToken)
+            .organization(organization)
+            .build();
+
+        appUserRepository.save(appUser);
+        sendEmail(verificationLink, email);
+
+        log.info("Sent email verification to store {}", email);
     }
 
     @Override
