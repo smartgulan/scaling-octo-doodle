@@ -6,6 +6,7 @@ import kz.genvibe.media_management.model.domain.dto.store.StoreCreateDto;
 import kz.genvibe.media_management.model.entity.AppUser;
 import kz.genvibe.media_management.model.entity.Store;
 import kz.genvibe.media_management.repository.StoreRepository;
+import kz.genvibe.media_management.service.internal.AuthService;
 import kz.genvibe.media_management.service.internal.StoreService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,19 +21,20 @@ import java.util.UUID;
 @Slf4j
 public class StoreServiceImpl implements StoreService {
 
+    private final AuthService authService;
     private final StoreRepository storeRepository;
     private final AppProps appProps;
 
     @Override
     @Transactional(readOnly = true)
     public List<Store> getAllStores(AppUser appUser) {
-        return storeRepository.findAllByAppUser(appUser);
+        return storeRepository.findAllByOrganization(appUser.getOrganization());
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<Store> getAllStoresByAppUserAndNames(AppUser appUser, List<String> names) {
-        return storeRepository.findStoresByAppUserAndNameIn(appUser, names);
+        return storeRepository.findStoresByOrganizationAndNameIn(appUser.getOrganization(), names);
     }
 
     @Override
@@ -42,7 +44,7 @@ public class StoreServiceImpl implements StoreService {
             .name(dto.name())
             .location(dto.location())
             .email(dto.email())
-            .appUser(appUser)
+            .organization(appUser.getOrganization())
             .build();
 
         storeRepository.save(store);
@@ -52,7 +54,7 @@ public class StoreServiceImpl implements StoreService {
     @Override
     @Transactional
     public void activateStore(long id, AppUser appUser) {
-        var store = storeRepository.findStoreByIdAndAppUser(id, appUser)
+        var store = storeRepository.findStoreByIdAndOrganization(id, appUser.getOrganization())
             .orElseThrow(() -> new EntityNotFoundException("Store not found"));
 
         var uuid = UUID.randomUUID();
@@ -61,13 +63,15 @@ public class StoreServiceImpl implements StoreService {
         store.setMusicLinkUuid(uuid);
         store.setMusicLink(generateMusicAccessLink(id, uuid));
 
+        authService.sendEmailVerificationToStore(store.getEmail(), appUser.getOrganization());
+
         log.info("Activated store: {} with id: {}", store.getName(), id);
     }
 
     @Override
     @Transactional
     public String regenerateMusicAccessLink(long id, AppUser appUser) {
-        var store = storeRepository.findStoreByIdAndAppUser(id, appUser)
+        var store = storeRepository.findStoreByIdAndOrganization(id, appUser.getOrganization())
             .orElseThrow(() -> new EntityNotFoundException("Store not found"));
 
         var newUuid = UUID.randomUUID();

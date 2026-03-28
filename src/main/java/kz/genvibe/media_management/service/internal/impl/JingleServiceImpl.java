@@ -1,6 +1,7 @@
 package kz.genvibe.media_management.service.internal.impl;
 
 import jakarta.persistence.EntityNotFoundException;
+import kz.genvibe.media_management.exception.JingleCreationLimitExceededException;
 import kz.genvibe.media_management.model.domain.dto.jingle.JingleAddStoresDto;
 import kz.genvibe.media_management.model.domain.dto.jingle.JingleApproveDto;
 import kz.genvibe.media_management.model.domain.dto.jingle.JingleCreateDto;
@@ -29,24 +30,30 @@ public class JingleServiceImpl implements JingleService {
     @Override
     @Transactional
     public void createJingle(AppUser appUser, JingleCreateDto dto) {
+        var jinglesCount = jingleRepository.countAllByOrganization(appUser.getOrganization());
+
+        if (jinglesCount >= 20) {
+            throw new JingleCreationLimitExceededException("You exceeded the limit of 20");
+        }
+
         var speechFileUrl = elevenlabsIntegrationService.getSpeechFileUrl(
             dto.announcementText(),
             dto.voice().getElevenlabsVoiceId()
         );
 
         var jingle = dto.toEntity();
-        jingle.setAppUser(appUser);
+        jingle.setOrganization(appUser.getOrganization());
         jingle.setFileUrl(speechFileUrl);
 
         jingleRepository.save(jingle);
 
-        log.info("Jingle created");
+        log.info("Jingle created for organization: {}", appUser.getOrganization().getCompanyName());
     }
 
     @Override
     @Transactional
     public void deleteJingleById(long id, AppUser appUser) {
-        var jingle = jingleRepository.findJingleByIdAndAppUser(id, appUser)
+        var jingle = jingleRepository.findJingleByIdAndOrganization(id, appUser.getOrganization())
             .orElseThrow(() -> new EntityNotFoundException("Jingle not found"));
         jingleRepository.delete(jingle);
     }
@@ -58,7 +65,7 @@ public class JingleServiceImpl implements JingleService {
         JingleApproveDto dto,
         AppUser appUser
     ) {
-        var jingle = jingleRepository.findJingleByIdAndAppUser(id, appUser)
+        var jingle = jingleRepository.findJingleByIdAndOrganization(id, appUser.getOrganization())
             .orElseThrow(() -> new EntityNotFoundException("Jingle not found"));
         jingle.setPauseApproved(dto.isApproved());
     }
@@ -70,7 +77,7 @@ public class JingleServiceImpl implements JingleService {
         JingleAddStoresDto dto,
         AppUser appUser
     ) {
-        var jingle = jingleRepository.findJingleByIdAndAppUser(id, appUser)
+        var jingle = jingleRepository.findJingleByIdAndOrganization(id, appUser.getOrganization())
             .orElseThrow(() -> new EntityNotFoundException("Jingle not found"));
         var stores = storeService.getAllStoresByAppUserAndNames(appUser, dto.storeNames());
 
@@ -88,13 +95,13 @@ public class JingleServiceImpl implements JingleService {
     @Override
     @Transactional(readOnly = true)
     public List<Jingle> getJingleHistory(AppUser appUser) {
-        return jingleRepository.findJinglesByAppUser(appUser);
+        return jingleRepository.findJinglesByOrganization(appUser.getOrganization());
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<Jingle> getJingleRequestsToPause(AppUser appUser) {
-        return jingleRepository.findJinglesByAppUserAndRequestedToPauseIsTrue(appUser);
+        return jingleRepository.findJinglesByOrganizationAndRequestedToPauseIsTrue(appUser.getOrganization());
     }
 
 }
