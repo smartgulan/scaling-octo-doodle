@@ -113,3 +113,24 @@
 }
 
 .activation-hint { font-size: 0.8rem; color: #aaa; margin-top: 15px; }
+
+.modal-body {
+    display: flex;
+    flex-direction: column;
+    gap: 34px;
+    margin: 40px;
+}
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.modal-header h2{
+    font-weight: 400;
+    font-size: 32px;
+    letter-spacing: -1px;
+}
+.close {
+    display: flex;
+    justify-content: end;
+}

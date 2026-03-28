@@ -27,7 +27,7 @@
     <header class="header-panel">
 
         <div class="header-left">
-            <a th:if="${activePage == 'stores' or activePage == 'music'}"
+            <a th:if="${activePage == 'stores' and !#lists.isEmpty(stores) or activePage == 'music'}"
                class="back-icon"
                onclick="if (history.length > 1) { history.back(); } else { window.location.href='/dashboard'; }">
                 <span th:replace="~{fragments/icons :: icon-back}"></span>

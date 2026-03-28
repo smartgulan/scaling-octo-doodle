@@ -225,77 +225,90 @@ hr {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.4);
+    background: rgba(245, 243, 241, 0.6);
     display: none;
     z-index: 2000;
 }
 
 .modal {
     position: fixed;
-    top: 50%;
-    left: 50%;
+    top: 42%;
+    left: 52%;
     transform: translate(-50%, -50%);
     background: #fff;
-    padding: 40px;
-    border-radius: 28px;
-    width: 500px;
+    width: 662px;
+    border-radius: 20px;
     display: none;
     z-index: 2001;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    box-shadow:
+            0 1px 1px rgba(255, 255, 255, 0.25),
+            0 -1px 1px rgba(255, 255, 255, 0.05),
+            0 8px 6px rgba(0, 0, 0, 0.05);
+    border-top: 2px solid rgba(255, 255, 255, 0.4);
 }
 
 .modal.active, .modal-overlay.active {
     display: block;
 }
 
-.modal-header .close {
-    position: absolute;
-    right: 25px;
-    top: 20px;
-    font-size: 24px;
-    cursor: pointer;
-    background: #f0f0f0;
-    width: 30px;
-    height: 30px;
+/*.modal-header .close {*/
+/*    position: absolute;*/
+/*    right: 25px;*/
+/*    top: 20px;*/
+/*    font-size: 24px;*/
+/*    cursor: pointer;*/
+/*    background: #f0f0f0;*/
+/*    width: 30px;*/
+/*    height: 30px;*/
+/*    display: flex;*/
+/*    align-items: center;*/
+/*    justify-content: center;*/
+/*    border-radius: 50%;*/
+/*}*/
+
+form {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-}
-
-.add-store-modal h2 {
-    margin-bottom: 30px;
-}
-
-.form-group {
-    margin-bottom: 20px;
+    flex-direction: column;
+    gap: 16px;
 }
 
 .form-group label {
     display: block;
-    font-size: 0.85rem;
-    color: #aaa;
-    margin-bottom: 8px;
+    font-size: 16px;
+    color: #00000080;
+    margin-bottom: 4px;
 }
 
 .form-group input {
     width: 100%;
-    padding: 16px;
-    border: 1px solid #eee;
-    border-radius: 14px;
+    padding: 15px 16px;
+    border: 1px solid #00000033;
+    border-radius: 10px;
     box-sizing: border-box;
-    font-size: 1rem;
+    font-size: 16px;
+    font-weight: 400;
+    font-family: 'Inter', sans-serif;
+    height: 54px;
+    color: #00000080;
+    outline: none;
+}
+input:valid {
+    color: #000000;
 }
 
 .btn-save-store {
-    width: 100%;
+    display: flex;
+    align-items: end;
     background: #ccc;
     color: #fff;
     border: none;
-    padding: 16px;
-    border-radius: 14px;
-    font-weight: 500;
-    margin-top: 20px;
+    padding: 14px 16px;
+    border-radius: 8px;
+    font-weight: 400;
+    font-size: 14px;
+    margin-top: 32px;
+    width: 100px;
+    margin-left: auto;
 }
 
 #toast-container {

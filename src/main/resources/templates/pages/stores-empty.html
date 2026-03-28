@@ -5,39 +5,28 @@
                     'Stores - GenVibe',
                     'stores.css',
                     'Stores',
-                    'stores'
+                    'stores-empty'
                     )}">
 
 <th:block th:fragment="content">
 
     <p class="subtitle">Manage all stores under your company</p>
 
-    <!-- Сетка магазинов -->
-    <div th:unless="${#lists.isEmpty(stores)}" class="stores-grid">
-        <div th:each="store : ${stores}" class="store-card">
-            <div class="store-info">
-                <div class="store-title-row">
-                    <h3 th:text="${store.name}">Downtown store</h3>
-                    <span class="status-badge" th:classappend="${store.active ? 'active' : 'inactive'}"
-                          th:text="${store.active ? 'Active' : 'Inactive'}">Inactive</span>
-                </div>
-                <div class="store-details">
-                    <p><span class="icon">📍</span> <span th:text="${store.location}">123 Main St., City</span></p>
-                    <p><span class="icon">✉️</span> <span th:text="${store.email}">store@email.com</span></p>
-                </div>
-                <p class="last-access" th:if="${store.active}">Last accessed: 24 Nov., 2026</p>
-                <p class="activation-hint" th:unless="${store.active}">Activate this store to generate a music access link</p>
+    <!-- Empty state -->
+    <div class="empty-state-container">
+        <div class="empty-card">
+            <div class="card-icon">
+                <span th:replace="~{fragments/icons :: icon-store}"></span>
             </div>
-
-            <div class="store-actions">
-                <button th:if="${store.active}" class="btn-view">View Store</button>
-                <button th:unless="${store.active}" class="btn-activate">Activate store</button>
+            <div class="empty-icon">
+                <h3>No stores added yet</h3>
+                <p>Add your first store to start playing music</p>
             </div>
+            <button class="btn-add-large" onclick="openModal()">
+                <span th:replace="~{fragments/icons :: icon-plus}"></span>
+                <span class="btn-title">Add new store</span>
+            </button>
         </div>
-
-        <button class="btn-add-card" onclick="openModal()">
-            <span class="plus">+</span> Add new store
-        </button>
     </div>
 
     <!-- Modal для добавления магазина -->
