@@ -215,29 +215,49 @@
                 <audio id="globalAudioPlayer" style="display: none;"></audio>
             </div>
         </section>
+        <div id="storesModalOverlay" class="modal-overlay" onclick="closeStoresModal()"></div>
 
-<!--        <section class="history-section">-->
-<!--            <h3>Requests to Pause/Stop</h3>-->
-<!--            <div class="jingle-list">-->
-<!--                <div th:each="request : ${jingleRequestsToPause}"-->
-<!--                     class="jingle-item" th:classappend="${request.pauseApproved} ? 'status-approved' : ''">-->
-<!--                    <button class="play-btn active"><i class="icon-pause"></i></button>-->
-<!--                    <div class="jingle-details">-->
-<!--                        <h4 th:text="${request.announcementText}">Text</h4>-->
-<!--                        <div class="jingle-meta" th:text="${request.voice.name + ' • ' + #temporals.format(request.startDate, 'dd.MM.yyyy')}">Details</div>-->
-<!--                        <div class="location-tag" th:if="${not #lists.isEmpty(request.stores)}">-->
-<!--                            <i class="icon-pin"></i> <span th:text="${request.stores[0].name}">Store</span>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                    <div class="waveform-placeholder small"></div>-->
-<!--                    <div class="item-actions">-->
-<!--                        <span th:if="${request.pauseApproved}" class="badge-approved">✓ Approved</span>-->
-<!--                        <button th:if="${!request.pauseApproved}" class="btn-outline">Approve</button>-->
-<!--                        <button class="btn-delete-icon"><i class="icon-trash"></i></button>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </section>-->
+        <div id="storesModal" class="modal link-modal">
+            <div class="modal-body">
+
+                <div class="modal-header">
+                    <h2>Add location</h2>
+                    <span class="close" onclick="closeStoresModal()">
+                        <span class="icon" th:replace="~{fragments/icons :: icon-close}"></span>
+                    </span>
+                </div>
+
+                <div id="storesList" class="modal-content"></div>
+
+                <div class="modal-actions">
+                    <button class="btn-secondary" onclick="closeStoresModal()">Cancel</button>
+                    <button class="btn-primary" onclick="saveJingleStores()">Save</button>
+                </div>
+
+            </div>
+        </div>
+        <section class="history-section">
+            <h3>Requests to Pause/Stop</h3>
+            <div class="jingle-list">
+                <div th:each="request : ${jingleRequestsToPause}"
+                     class="jingle-item" th:classappend="${request.pauseApproved} ? 'status-approved' : ''">
+                    <button class="play-btn active"><i class="icon-pause"></i></button>
+                    <div class="jingle-details">
+                        <h4 th:text="${request.announcementText}">Text</h4>
+                        <div class="jingle-meta" th:text="${request.voice.name + ' • ' + #temporals.format(request.startDate, 'dd.MM.yyyy')}">Details</div>
+                        <div class="location-tag" th:if="${not #lists.isEmpty(request.stores)}">
+                            <i class="icon-pin"></i> <span th:text="${request.stores[0].name}">Store</span>
+                        </div>
+                    </div>
+                    <div class="waveform-placeholder small"></div>
+                    <div class="item-actions">
+                        <span th:if="${request.pauseApproved}" class="badge-approved">✓ Approved</span>
+                        <button th:if="${!request.pauseApproved}" class="btn-outline">Approve</button>
+                        <button class="btn-delete-icon"><i class="icon-trash"></i></button>
+                    </div>
+                </div>
+            </div>
+        </section>
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -679,6 +699,180 @@
                 renderBars(currentCtx, currentCanvas.width, currentCanvas.height, currentCanvas._staticBars || [], false);
             }
             currentButton = null;
+        });
+    </script>
+    <script>
+        /* =========================
+           STORES MODAL STATE
+        ========================= */
+        let currentJingleId = null;
+        let allStores = [];
+        let selectedStoreIds = new Set();
+
+        /* =========================
+           OPEN MODAL
+        ========================= */
+        function openStoresModal(jingleId) {
+            currentJingleId = jingleId;
+
+            const modal = document.getElementById("storesModal");
+            const overlay = document.getElementById("storesModalOverlay");
+
+            if (!modal || !overlay) return;
+
+            modal.classList.add("active");
+            overlay.classList.add("active");
+
+            fetch(`/api/jingles/${jingleId}/stores`)
+                .then(r => r.json())
+                .then(data => {
+                    allStores = data.allStores || [];
+                    selectedStoreIds = new Set(data.selectedStoreIds || []);
+
+                    renderStores();
+                })
+                .catch(err => console.error("Load stores error:", err));
+        }
+
+        /* =========================
+           RENDER STORES LIST
+        ========================= */
+        function renderStores() {
+            const container = document.getElementById("storesList");
+            if (!container) return;
+
+            container.innerHTML = allStores.map(store => {
+                const checked = selectedStoreIds.has(store.id);
+
+                return `
+            <label class="store-item">
+                <input type="checkbox"
+                       ${checked ? "checked" : ""}
+                       onchange="toggleStore(${store.id})">
+                <span>${store.name}</span>
+            </label>
+        `;
+            }).join("");
+        }
+
+        /* =========================
+           TOGGLE STORE
+        ========================= */
+        function toggleStore(id) {
+            if (selectedStoreIds.has(id)) {
+                selectedStoreIds.delete(id);
+            } else {
+                selectedStoreIds.add(id);
+            }
+        }
+
+        /* =========================
+           SAVE STORES
+        ========================= */
+        function saveJingleStores() {
+            if (!currentJingleId) return;
+
+            fetch(`/api/jingles/${currentJingleId}/stores`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify([...selectedStoreIds])
+            })
+                .then(res => {
+                    if (!res.ok) throw new Error("Save failed");
+                    return res.text();
+                })
+                .then(() => {
+                    updateJingleButtonUI(currentJingleId);
+                    closeStoresModal();
+                })
+                .catch(err => console.error("Save error:", err));
+        }
+
+        /* =========================
+           CLOSE MODAL
+        ========================= */
+        function closeStoresModal() {
+            const modal = document.getElementById("storesModal");
+            const overlay = document.getElementById("storesModalOverlay");
+
+            if (!modal || !overlay) return;
+
+            modal.classList.remove("active");
+            overlay.classList.remove("active");
+        }
+
+        /* =========================
+           UPDATE BUTTON UI
+        ========================= */
+        function updateJingleButtonUI(id) {
+            const btn = document.querySelector(`.btn-location[data-id="${id}"]`);
+            if (!btn) return;
+
+            const count = selectedStoreIds.size;
+
+            btn.classList.toggle("btn-location--active", count > 0);
+
+            const span = btn.querySelector("span");
+            if (!span) return;
+
+            span.innerText =
+                count > 0
+                    ? `${count} location${count > 1 ? "s" : ""}`
+                    : "+ Add to locations";
+        }
+
+        /* =========================
+           BIND BUTTONS (IMPORTANT)
+        ========================= */
+        document.addEventListener("DOMContentLoaded", () => {
+
+            document.querySelectorAll('.btn-location').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const id = btn.getAttribute('data-id');
+                    if (id) openStoresModal(id);
+                });
+            });
+
+            /* =========================
+               DELETE JINGLE
+            ========================= */
+            document.querySelectorAll('.btn-delete-icon').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    const item = btn.closest('.jingle-item');
+                    const id = btn.getAttribute('data-id');
+
+                    if (!id || !item) return;
+
+                    try {
+                        const csrfToken = document.querySelector('meta[name="_csrf"]')?.content;
+                        const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content;
+
+                        const res = await fetch(`/api/jingles/${id}`, {
+                            method: 'DELETE',
+                            headers: {
+                                [csrfHeader]: csrfToken
+                            }
+                        });
+
+                        if (res.ok) {
+                            item.remove();
+                        }
+                    } catch (e) {
+                        console.error("Delete error:", e);
+                    }
+                });
+            });
+
+            /* =========================
+               CLOSE ON OUTSIDE CLICK
+            ========================= */
+            const overlay = document.getElementById("storesModalOverlay");
+
+            if (overlay) {
+                overlay.addEventListener("click", closeStoresModal);
+            }
         });
     </script>
 </th:block>
