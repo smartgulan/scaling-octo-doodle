@@ -2,12 +2,14 @@ package kz.genvibe.media_management.service.internal.impl;
 
 import jakarta.persistence.EntityNotFoundException;
 import kz.genvibe.media_management.config.props.AppProps;
+import kz.genvibe.media_management.exception.UserAlreadyExistsException;
 import kz.genvibe.media_management.model.domain.dto.store.StoreCreateDto;
 import kz.genvibe.media_management.model.entity.AppUser;
 import kz.genvibe.media_management.model.entity.Store;
 import kz.genvibe.media_management.repository.StoreRepository;
 import kz.genvibe.media_management.service.internal.AuthService;
 import kz.genvibe.media_management.service.internal.StoreService;
+import kz.genvibe.media_management.service.internal.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,7 @@ import java.util.UUID;
 @Slf4j
 public class StoreServiceImpl implements StoreService {
 
+    private final UserService userService;
     private final AuthService authService;
     private final StoreRepository storeRepository;
     private final AppProps appProps;
@@ -40,6 +43,12 @@ public class StoreServiceImpl implements StoreService {
     @Override
     @Transactional
     public void addStore(AppUser appUser, StoreCreateDto dto) {
+        var locationEmail = dto.email();
+
+        if (userService.existsByEmail(locationEmail)) {
+            throw new UserAlreadyExistsException("This email has been taken");
+        }
+
         var store = Store.builder()
             .name(dto.name())
             .location(dto.location())
