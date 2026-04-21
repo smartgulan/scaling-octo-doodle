@@ -93,7 +93,7 @@ public class AuthServiceImpl implements AuthService {
         appUserRepository.save(appUser);
         sendEmail(verificationLink, email);
 
-        log.info("Sent email verification to store {}", email);
+        log.info("Sent store email verification to {}", email);
     }
 
     @Override

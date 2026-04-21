@@ -25,7 +25,7 @@ public class StoreActionController {
     ) {
         storeService.addStore(appUser, dto);
         redirectAttributes.addFlashAttribute("toast", "Store added successfully");
-        return "redirect:/stores?storeAdded=true";
+        return "redirect:/stores";
     }
 
     @PostMapping("/activate/{id}")

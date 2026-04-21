@@ -4,11 +4,17 @@ import kz.genvibe.media_management.config.annotations.CurrentUser;
 import kz.genvibe.media_management.model.entity.AppUser;
 import kz.genvibe.media_management.service.internal.StoreService;
 import lombok.RequiredArgsConstructor;
+import org.apache.tomcat.websocket.AuthenticationException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.UUID;
 
 @Controller
 @RequestMapping("/stores")
@@ -25,6 +31,22 @@ public class StoreController {
     ) {
         model.addAttribute("stores", storeService.getAllStores(appUser));
         return "pages/stores";
+    }
+
+    @GetMapping("/{id}/{uuid}")
+    public String storePage(
+        @PathVariable long id,
+        @PathVariable UUID uuid,
+        @CurrentUser AppUser appUser,
+        Model model
+    ) {
+        if (!storeService.verifyStore(id, uuid, appUser)) {
+            return "error/404";
+        }
+
+        model.addAttribute("musicType", appUser.getOrganization().getMusicTypes());
+        model.addAttribute("stores", appUser.getOrganization().getStores());
+        return "pages/store-dashboard";
     }
 
 }

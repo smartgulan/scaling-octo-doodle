@@ -12,6 +12,7 @@ import kz.genvibe.media_management.service.internal.StoreService;
 import kz.genvibe.media_management.service.internal.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -92,6 +93,14 @@ public class StoreServiceImpl implements StoreService {
         log.info("Regenerated music access link for store: {} with id: {}", store.getName(), id);
 
         return newLink;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public boolean verifyStore(long id, UUID uuid, AppUser appUser) {
+        return storeRepository.findStoreByIdAndOrganization(id, appUser.getOrganization())
+            .map(store -> store.isActive() && uuid.equals(store.getMusicLinkUuid()))
+            .orElse(false);
     }
 
     private String generateMusicAccessLink(long id, UUID uuid) {

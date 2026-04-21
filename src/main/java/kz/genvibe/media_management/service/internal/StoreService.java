@@ -5,6 +5,7 @@ import kz.genvibe.media_management.model.entity.AppUser;
 import kz.genvibe.media_management.model.entity.Store;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface StoreService {
     // Read methods
@@ -15,4 +16,7 @@ public interface StoreService {
     void addStore(AppUser appUser, StoreCreateDto dto);
     void activateStore(long id, AppUser appUser);
     String regenerateMusicAccessLink(long id, AppUser appUser);
+
+    // Verification methods
+    boolean verifyStore(long id, UUID uuid, AppUser appUser);
 }
