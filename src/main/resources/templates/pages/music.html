@@ -50,19 +50,16 @@
                 <p th:text="${type.description}">Style description text goes here.</p>
             </div>
 
-            <div class="waveform">
-                <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
-                <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
-                <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
-                <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
-                <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            <div class="waveform-placeholder">
+                <canvas class="waveCanvas"></canvas>
             </div>
 
-            <button class="btn-play"
-                    th:data-url="${type.previewUrl}"
-                    onclick="playPreview(this.getAttribute('data-url'))">
-                <span class="play-icon">▶</span> Play preview
-            </button>
+<!--            <button class="play-btn"-->
+<!--                    th:data-src="${music.fileUrl}"-->
+<!--                    onclick="toggleAudio(this)">-->
+<!--                <span class="icon" th:replace="~{fragments/icons :: icon-start}"></span>-->
+<!--                <span class="icon" th:replace="~{fragments/icons :: icon-pause}"></span>-->
+<!--            </button>-->
         </div>
     </div>
 
@@ -78,43 +75,180 @@
         <p class="footer-note">This style will be used as the default for all active stores</p>
     </div>
 
-    <script>
-        const selectedStyles = new Set();
+<!--    <script>-->
+<!--        const BAR_COUNT = 55;-->
+<!--        const BAR_GAP = 2;-->
+<!--        const audio = document.getElementById("globalAudioPlayer");-->
 
-        document.querySelectorAll('.music-card').forEach(card => {
-            card.addEventListener('click', () => {
-                const musicName = card.getAttribute('data-name');
+<!--        let audioCtx = null;-->
+<!--        let analyser = null;-->
+<!--        let source = null;-->
+<!--        let animFrameId = null;-->
+<!--        let currentButton = null;-->
+<!--        let currentCanvas = null;-->
+<!--        let currentCtx = null;-->
 
-                if (selectedStyles.has(musicName)) {
-                    selectedStyles.delete(musicName);
-                    card.classList.remove('selected');
-                } else {
-                    selectedStyles.add(musicName);
-                    card.classList.add('selected');
-                }
 
-                const container = document.getElementById('selectedInputsContainer');
-                container.innerHTML = '';
+<!--        function setupAudio() {-->
+<!--            if (audioCtx) return;-->
+<!--            audioCtx = new (window.AudioContext || window.webkitAudioContext)();-->
+<!--            analyser = audioCtx.createAnalyser();-->
+<!--            analyser.fftSize = 256;-->
+<!--            source = audioCtx.createMediaElementSource(audio);-->
+<!--            source.connect(analyser);-->
+<!--            analyser.connect(audioCtx.destination);-->
+<!--        }-->
 
-                selectedStyles.forEach(name => {
-                    const input = document.createElement('input');
-                    input.type = 'hidden';
-                    input.name = 'musicTypes';
-                    input.value = name;
-                    container.appendChild(input);
-                });
+<!--        async function drawStaticWaveform(canvas, src) {-->
+<!--            canvas.width = canvas.getBoundingClientRect().width || 300;-->
+<!--            canvas.height = 34;-->
+<!--            const ctx = canvas.getContext("2d");-->
 
-                const saveBtn = document.getElementById('saveButton');
-                saveBtn.disabled = selectedStyles.size === 0;
+<!--            try {-->
+<!--                const response = await fetch(src);-->
+<!--                const arrayBuffer = await response.arrayBuffer();-->
+<!--                const tmpCtx = new (window.AudioContext || window.webkitAudioContext)();-->
+<!--                const audioBuffer = await tmpCtx.decodeAudioData(arrayBuffer);-->
+<!--                await tmpCtx.close();-->
 
-                console.log("Current selection:", Array.from(selectedStyles));
-            });
-        });
+<!--                const data = audioBuffer.getChannelData(0);-->
+<!--                const step = Math.floor(data.length / BAR_COUNT);-->
+<!--                const bars = [];-->
 
-        function playPreview(url) {
-            if (event) event.stopPropagation();
-            console.log("Playing: " + url);
-        }
-    </script>
+<!--                for (let i = 0; i < BAR_COUNT; i++) {-->
+<!--                    let sum = 0;-->
+<!--                    for (let j = 0; j < step; j++) {-->
+<!--                        sum += Math.abs(data[i * step + j]);-->
+<!--                    }-->
+<!--                    bars.push(sum / step);-->
+<!--                }-->
+
+<!--                const max = Math.max(...bars);-->
+<!--                const normalized = bars.map(b => b / max);-->
+<!--                canvas._staticBars = normalized;-->
+<!--                renderBars(ctx, canvas.width, canvas.height, normalized, false);-->
+
+<!--            } catch (e) {-->
+<!--                const fallback = Array.from({ length: BAR_COUNT }, () => Math.random() * 0.8 + 0.1);-->
+<!--                canvas._staticBars = fallback;-->
+<!--                renderBars(ctx, canvas.width, canvas.height, fallback, false);-->
+<!--            }-->
+<!--        }-->
+
+<!--        function renderBars(ctx, w, h, bars, active, progress = 0) {-->
+<!--            ctx.clearRect(0, 0, w, h);-->
+<!--            const barWidth = (w - (BAR_COUNT - 1) * BAR_GAP) / BAR_COUNT;-->
+<!--            const centerY = h / 2;-->
+
+<!--            bars.forEach((val, i) => {-->
+<!--                const barH = Math.max(3, val * h * 0.95);-->
+<!--                const x = i * (barWidth + BAR_GAP);-->
+<!--                const barProgress = i / BAR_COUNT;-->
+
+<!--                // пройденная часть — чёрная, остаток — серая-->
+<!--                ctx.fillStyle = active && barProgress <= progress ? "#1a1a1a" : "#c0c0c0";-->
+
+<!--                ctx.beginPath();-->
+<!--                ctx.roundRect(x, centerY - barH / 2, barWidth, barH, barWidth / 2);-->
+<!--                ctx.fill();-->
+<!--            });-->
+<!--        }-->
+<!--        function drawAnimated() {-->
+<!--            if (!currentCanvas || !analyser) return;-->
+<!--            animFrameId = requestAnimationFrame(drawAnimated);-->
+
+<!--            const w = currentCanvas.width;-->
+<!--            const h = currentCanvas.height;-->
+<!--            const bars = currentCanvas._staticBars || [];-->
+
+<!--            const progress = audio.duration ? audio.currentTime / audio.duration : 0;-->
+
+<!--            renderBars(currentCtx, w, h, bars, true, progress);-->
+<!--        }-->
+
+<!--        window.toggleAudio = function(btn) {-->
+<!--            const src = btn.getAttribute("data-src");-->
+<!--            const canvas = btn.closest(".jingle-item").querySelector(".waveCanvas");-->
+
+<!--            setupAudio();-->
+<!--            if (audioCtx.state === "suspended") audioCtx.resume();-->
+
+<!--            if (currentButton === btn) {-->
+<!--                if (audio.paused) {-->
+<!--                    audio.play();-->
+<!--                    updateBtn(btn, true);-->
+<!--                    drawAnimated();-->
+<!--                } else {-->
+<!--                    audio.pause();-->
+<!--                    updateBtn(btn, false);-->
+<!--                    cancelAnimationFrame(animFrameId);-->
+<!--                    // ← прогресс сохраняется при паузе-->
+<!--                    const progress = audio.duration ? audio.currentTime / audio.duration : 0;-->
+<!--                    renderBars(currentCtx, currentCanvas.width, currentCanvas.height, currentCanvas._staticBars || [], true, progress);-->
+<!--                }-->
+<!--                return;-->
+<!--            }-->
+
+<!--            if (currentButton) {-->
+<!--                updateBtn(currentButton, false);-->
+<!--                cancelAnimationFrame(animFrameId);-->
+<!--                // ← предыдущий трек сбрасывается в серый-->
+<!--                const prevCtx = currentButton.closest(".jingle-item").querySelector(".waveCanvas");-->
+<!--                if (prevCtx) {-->
+<!--                    const pc = prevCtx.getContext("2d");-->
+<!--                    renderBars(pc, prevCtx.width, prevCtx.height, prevCtx._staticBars || [], false, 0);-->
+<!--                }-->
+<!--            }-->
+
+<!--            currentButton = btn;-->
+<!--            currentCanvas = canvas;-->
+<!--            currentCanvas.width = canvas.getBoundingClientRect().width || 300;-->
+<!--            currentCanvas.height = 34;-->
+<!--            currentCtx = canvas.getContext("2d");-->
+
+<!--            audio.src = src;-->
+<!--            audio.play();-->
+<!--            updateBtn(btn, true);-->
+
+<!--            drawStaticWaveform(canvas, src).then(() => drawAnimated());-->
+<!--        };-->
+
+<!--        document.addEventListener("DOMContentLoaded", () => {-->
+<!--            // скрываем второй svg-->
+<!--            document.querySelectorAll('.play-btn').forEach(btn => {-->
+<!--                const svgs = btn.querySelectorAll('svg');-->
+<!--                if (svgs.length >= 2) svgs[1].style.display = 'none';-->
+<!--            });-->
+
+<!--            // ждём пока layout завершится-->
+<!--            setTimeout(() => {-->
+<!--                document.querySelectorAll(".jingle-item").forEach(item => {-->
+<!--                    const btn = item.querySelector(".play-btn");-->
+<!--                    const canvas = item.querySelector(".waveCanvas");-->
+<!--                    if (!btn || !canvas) return;-->
+<!--                    const src = btn.getAttribute("data-src");-->
+<!--                    if (src) drawStaticWaveform(canvas, src);-->
+<!--                });-->
+<!--            }, 100);-->
+<!--        });-->
+
+<!--        // В updateBtn:-->
+<!--        function updateBtn(btn, playing) {-->
+<!--            btn.classList.toggle("playing", playing);-->
+<!--            const svgs = btn.querySelectorAll("svg");-->
+<!--            if (svgs.length >= 2) {-->
+<!--                svgs[0].style.display = playing ? "none" : "inline";-->
+<!--                svgs[1].style.display = playing ? "inline" : "none";-->
+<!--            }-->
+<!--        }-->
+<!--        audio.addEventListener("ended", () => {-->
+<!--            if (currentButton) updateBtn(currentButton, false);-->
+<!--            cancelAnimationFrame(animFrameId);-->
+<!--            if (currentCtx && currentCanvas) {-->
+<!--                renderBars(currentCtx, currentCanvas.width, currentCanvas.height, currentCanvas._staticBars || [], false);-->
+<!--            }-->
+<!--            currentButton = null;-->
+<!--        });-->
+<!--    </script>-->
 </th:block>
 </html>

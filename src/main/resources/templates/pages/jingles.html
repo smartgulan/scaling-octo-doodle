@@ -191,9 +191,7 @@
                             Voice · Duration · Date
                         </p>
 
-<!--                        <p class="jingle-meta"-->
-<!--                           th:text="${'Repeating: ' + jingle.jingleRepeatingTime}-->
-<!--                        </p>-->
+                        <p class="jingle-meta" th:text="${'Repeating: ' + jingle.repeatingTime.name}"></p>
                     </div>
                     <div class="waveform-placeholder">
                         <canvas class="waveCanvas"></canvas>
@@ -456,17 +454,20 @@
             wrapper.querySelector('.btn-apply').onclick = () => {
                 if (!start || !end) return;
 
-                let h = parseInt(startHour.value) % 12;
-                if (startAmPm.value === 'PM') h += 12;
+                let h = parseInt(startHour.value);
+
+                if (startAmPm.value === 'PM' && h !== 12) h += 12;
+                if (startAmPm.value === 'AM' && h === 12) h = 0;
 
                 const s = new Date(start);
-                s.setHours(h, startMinute.value);
+                s.setHours(h, parseInt(startMinute.value));
+
 
                 const e = new Date(end);
-                e.setHours(h, startMinute.value);
+                e.setHours(h, parseInt(startMinute.value));
 
-                hiddenStart.value = s.toISOString();
-                hiddenEnd.value = e.toISOString();
+                hiddenStart.value = toLocalDateTimeString(s);
+                hiddenEnd.value = toLocalDateTimeString(e);
 
                 dateLabel.textContent = `${format(start)} - ${format(end)}`;
                 wrapper.classList.remove('active');
@@ -488,43 +489,56 @@
             document.addEventListener('click', () => closeAll());
 
             renderCalendar();
-        });
-        document.querySelectorAll('.btn-delete-icon').forEach(btn => {
-            btn.addEventListener('click', async () => {
-                const item = btn.closest('.jingle-item');
-                const playBtn = item.querySelector('.play-btn');
-                const id = btn.getAttribute('data-id');
+            document.querySelectorAll('.btn-delete-icon').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    const item = btn.closest('.jingle-item');
+                    const playBtn = item.querySelector('.play-btn');
+                    const id = btn.getAttribute('data-id');
 
-                // останавливаем если играет
-                if (currentButton && currentButton === playBtn) {
-                    audio.pause();
-                    cancelAnimationFrame(animFrameId);
-                    currentButton = null;
-                    currentCanvas = null;
-                    currentCtx = null;
-                }
-
-                try {
-                    const csrfToken = document.querySelector('meta[name="_csrf"]')?.content;
-                    const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content;
-
-                    const response = await fetch(`/api/jingles/${id}`, {
-                        method: 'DELETE',
-                        headers: {
-                            [csrfHeader]: csrfToken
-                        }
-                    });
-
-                    if (response.ok) {
-                        item.remove();
-                    } else {
-                        console.error('Delete failed, status:', response.status);
+                    // останавливаем если играет
+                    if (currentButton && currentButton === playBtn) {
+                        audio.pause();
+                        cancelAnimationFrame(animFrameId);
+                        currentButton = null;
+                        currentCanvas = null;
+                        currentCtx = null;
                     }
-                } catch (e) {
-                    console.error('Delete failed', e);
-                }
+
+                    try {
+                        const csrfToken = document.querySelector('meta[name="_csrf"]')?.content;
+                        const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content;
+
+                        const response = await fetch(`/api/jingles/${id}`, {
+                            method: 'DELETE',
+                            headers: {
+                                [csrfHeader]: csrfToken
+                            }
+                        });
+
+                        if (response.ok) {
+                            item.remove();
+                        } else {
+                            console.error('Delete failed, status:', response.status);
+                        }
+                    } catch (e) {
+                        console.error('Delete failed', e);
+                    }
+                });
             });
+
         });
+        function toLocalDateTimeString(date) {
+            const pad = n => String(n).padStart(2, '0');
+
+            return (
+                date.getFullYear() + '-' +
+                pad(date.getMonth() + 1) + '-' +
+                pad(date.getDate()) + 'T' +
+                pad(date.getHours()) + ':' +
+                pad(date.getMinutes()) + ':' +
+                pad(date.getSeconds())
+            );
+        }
     </script>
     <script>
         const BAR_COUNT = 55;
