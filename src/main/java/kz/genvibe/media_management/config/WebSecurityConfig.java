@@ -1,6 +1,7 @@
 package kz.genvibe.media_management.config;
 
 import kz.genvibe.media_management.config.props.AppProps;
+import kz.genvibe.media_management.model.enums.UserRole;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
 import org.springframework.context.annotation.Bean;
@@ -25,6 +26,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class WebSecurityConfig implements WebMvcConfigurer {
 
+    private final CustomAuthenticationSuccessHandler successHandler;
     private final CurrentUserArgumentResolver currentUserArgumentResolver;
     private final AppProps appProps;
 
@@ -59,13 +61,14 @@ public class WebSecurityConfig implements WebMvcConfigurer {
                     "/js/**",
                     "/users/finalize"
                 ).permitAll()
-                .anyRequest().authenticated()
+                .requestMatchers("/stores/{id}/{uuid}").hasAuthority(UserRole.ROLE_USER.name())
+                .anyRequest().hasAuthority(UserRole.ROLE_ADMIN.name())
             )
             .formLogin(form -> form
                 .loginPage("/auth/login")
                 .usernameParameter("email")
                 .passwordParameter("password")
-                .defaultSuccessUrl("/dashboard", true)
+                .successHandler(successHandler)
                 .permitAll()
             )
             .logout(logout -> logout

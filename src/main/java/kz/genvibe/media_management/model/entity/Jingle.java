@@ -3,6 +3,7 @@ package kz.genvibe.media_management.model.entity;
 import jakarta.persistence.*;
 import kz.genvibe.media_management.model.entity.base.CreateEntity;
 import kz.genvibe.media_management.model.enums.JingleCategory;
+import kz.genvibe.media_management.model.enums.JingleRepeatingTime;
 import kz.genvibe.media_management.model.enums.JingleVoice;
 import lombok.*;
 
@@ -38,6 +39,10 @@ public class Jingle extends CreateEntity {
 
     @Column(nullable = false)
     private Duration duration;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private JingleRepeatingTime repeatingTime;
 
     @Column(length = 500, nullable = false, updatable = false)
     private String announcementText;

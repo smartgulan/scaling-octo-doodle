@@ -35,11 +35,13 @@ public class Organization extends UpdateEntity {
     @Builder.Default
     @Column(nullable = false)
     @JdbcTypeCode(SqlTypes.ARRAY)
+    @Enumerated(EnumType.STRING)
     private List<BrandIdentity> brandIdentity = new ArrayList<>();
 
     @Builder.Default
     @Column(nullable = false)
     @JdbcTypeCode(SqlTypes.ARRAY)
+    @Enumerated(EnumType.STRING)
     private List<CurrentFeel> currentFeel = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
