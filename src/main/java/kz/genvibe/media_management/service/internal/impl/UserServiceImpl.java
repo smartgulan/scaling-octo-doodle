@@ -49,7 +49,7 @@ public class UserServiceImpl implements UserService {
         appUser.setCompanyRole(dto.companyRole());
 
         if (!dto.email().equals(appUser.getEmail())) {
-            if (appUserRepository.existsByEmail(dto.email())) {
+            if (existsByEmail(dto.email())) {
                 throw new UserAlreadyExistsException("User with email: " + dto.email() + " already exists");
             }
             appUser.setEmail(dto.email());
@@ -68,6 +68,11 @@ public class UserServiceImpl implements UserService {
     public AppUser getUserByEmail(String email) {
         return appUserRepository.findByEmail(email)
             .orElseThrow(() -> new EntityNotFoundException("User with email: " + email + " not found"));
+    }
+
+    @Override
+    public boolean existsByEmail(String email) {
+        return appUserRepository.existsByEmail(email);
     }
 
 }

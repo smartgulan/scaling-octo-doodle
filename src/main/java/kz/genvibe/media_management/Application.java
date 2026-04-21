@@ -8,7 +8,7 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
 @EnableRedisIndexedHttpSession(redisNamespace = "resona:session")
 public class Application {
 
-	public static void main(String[] args) {
+	static void main(String[] args) {
 		SpringApplication.run(Application.class, args);
 	}
 

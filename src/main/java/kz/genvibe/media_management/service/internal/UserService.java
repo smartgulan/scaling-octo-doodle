@@ -22,4 +22,5 @@ public interface UserService {
 
     // User read methods
     AppUser getUserByEmail(String email);
+    boolean existsByEmail(String email);
 }
