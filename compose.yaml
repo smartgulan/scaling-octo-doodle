@@ -3,7 +3,7 @@ services:
     image: 'postgres:latest'
     environment:
       - 'POSTGRES_DB=resona_db'
-      - 'POSTGRES_PASSWORD=root'
+      - 'POSTGRES_PASSWORD=postgres'
       - 'POSTGRES_USER=postgres'
     ports:
       - '5432:5432'

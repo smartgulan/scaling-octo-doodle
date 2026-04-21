@@ -10,14 +10,14 @@
 
 <th:block th:fragment="content">
     <div class="jingles-page">
-        <p class="subtitle">Monthly generation limit: 20 jingles</p>
+        <p>Monthly generation limit: 20 jingles</p>
 
         <section class="content-card">
-            <h3>Compose Announcement</h3>
             <form th:action="@{/api/jingles}" method="post" id="jingleForm">
 
                 <div class="voice-selector">
-                    <p class="label">Voice</p>
+                    <h3>Compose Announcement</h3>
+                    <p>Voice</p>
                     <div class="voice-grid">
                         <label th:each="voice : ${jingleVoice}"
                                th:classappend="${voice.name() == 'RACHEL'} ? 'active' : ''"
@@ -33,36 +33,131 @@
                         </label>
                     </div>
                 </div>
-
                 <div class="form-row-triple">
+
+                    <!-- CATEGORY -->
                     <div class="select-wrapper custom-dropdown">
-                        <select name="category" required>
+                        <div class="custom-select-header">
+                            Select Jingle Category
+                            <span class="icon" th:replace="~{fragments/icons :: icon-select}"></span>
+                        </div>
+
+                        <ul class="custom-select-options">
+                            <li th:each="cat : ${jingleCategory}"
+                                th:data-value="${cat.name()}"
+                                th:text="${cat.name}">Category</li>
+                        </ul>
+
+                        <select name="category" required style="display:none;">
                             <option value="" disabled selected>Select Jingle Category</option>
                             <option th:each="cat : ${jingleCategory}"
                                     th:value="${cat.name()}"
-                                    th:text="${cat.name}">Category</option>
+                                    th:text="${cat.name}"></option>
                         </select>
                     </div>
 
+<!--                    &lt;!&ndash; DATE &ndash;&gt;-->
+<!--                    <div class="select-wrapper date-range-picker">-->
+<!--                        <div class="date-display">-->
+<!--                            Select Start/End Date-->
+<!--                            <span class="icon" th:replace="~{fragments/icons :: icon-select}"></span>-->
+<!--                        </div>-->
+
+<!--                        <div class="date-picker-dropdown">-->
+<!--                            <label>Start</label>-->
+<!--                            <input type="datetime-local" id="startDatePicker">-->
+
+<!--                            <label>End</label>-->
+<!--                            <input type="datetime-local" id="endDatePicker">-->
+
+<!--                            <button type="button" class="btn-apply">Apply</button>-->
+<!--                        </div>-->
+
+<!--                        <input type="hidden" name="startDate" id="startDate"-->
+<!--                               th:value="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd''T''HH:mm')}">-->
+
+<!--                        <input type="hidden" name="endDate" id="endDate"-->
+<!--                               th:value="${#temporals.format(#temporals.createNow().plusDays(7), 'yyyy-MM-dd''T''HH:mm')}">-->
+<!--                    </div>-->
+
                     <div class="select-wrapper date-range-picker">
-                        <div class="date-display">Select Start/End Date</div>
-                        <input type="hidden" name="startDate" id="startDate"
-                               th:value="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd''T''HH:mm')}">
 
-                        <input type="hidden" name="endDate" id="endDate"
-                               th:value="${#temporals.format(#temporals.createNow().plusDays(7), 'yyyy-MM-dd''T''HH:mm')}">
+                        <!-- Trigger -->
+                        <div class="date-display">
+                            <span id="dateLabel">Select Start/End Date</span>
+                            <span class="icon" th:replace="~{fragments/icons :: icon-select}"></span>
+                        </div>
+
+                        <!-- POPUP -->
+                        <div class="date-picker-dropdown">
+
+                            <!-- Header -->
+                            <div class="calendar-header">
+                                <button type="button" class="nav-btn" id="prevMonth">‹</button>
+                                <div id="monthLabel">April 2026</div>
+                                <button type="button" class="nav-btn" id="nextMonth">›</button>
+                            </div>
+
+                            <!-- Calendar -->
+                            <div class="calendar-weekdays">
+                                <div>Su</div>
+                                <div>Mo</div>
+                                <div>Tu</div>
+                                <div>We</div>
+                                <div>Th</div>
+                                <div>Fr</div>
+                                <div>Sa</div>
+                            </div>
+                            <div id="calendarGrid" class="calendar-grid"></div>
+
+                            <!-- Time -->
+                            <div class="time-picker">
+                                <select id="startHour"></select>
+                                <span>:</span>
+                                <select id="startMinute"></select>
+                                <select id="startAmPm">
+                                    <option>AM</option>
+                                    <option>PM</option>
+                                </select>
+                            </div>
+
+                            <!-- Footer -->
+                            <div class="date-footer">
+                                <span id="rangePreview">--</span>
+
+                                <div class="footer-actions">
+                                    <button type="button" class="btn-cancel">Cancel</button>
+                                    <button type="button" class="btn-apply">Apply</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- hidden fields -->
+                        <input type="hidden" name="startDate" id="startDate">
+                        <input type="hidden" name="endDate" id="endDate">
                     </div>
-
+                    <!-- REPEATING -->
                     <div class="select-wrapper custom-dropdown">
-                        <select name="repeatingTime" required>
+                        <div class="custom-select-header">
+                            Repeating Time
+                            <span class="icon" th:replace="~{fragments/icons :: icon-select}"></span>
+                        </div>
+
+                        <ul class="custom-select-options">
+                            <li th:each="time : ${jingleRepeatingTime}"
+                                th:data-value="${time.name()}"
+                                th:text="${time.name}">Every hour</li>
+                        </ul>
+
+                        <select name="repeatingTime" required style="display:none;">
                             <option value="" disabled selected>Repeating Time</option>
                             <option th:each="time : ${jingleRepeatingTime}"
                                     th:value="${time.name()}"
-                                    th:text="${time.name}">Every hour</option>
+                                    th:text="${time.name}"></option>
                         </select>
                     </div>
-                </div>
 
+                </div>
                 <div class="form-group no-margin">
                     <label>Announcement Text</label>
                     <textarea name="announcementText" maxlength="500"
@@ -71,9 +166,7 @@
                 </div>
 
                 <button type="submit" class="btn-generate">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                    </svg>
+                    <span class="icon" th:replace="~{fragments/icons :: icon-generate}"></span>
                     Generate Jingle
                 </button>
             </form>
@@ -90,14 +183,35 @@
                     </button>
 
                     <div class="jingle-details">
-                    </div>
+                        <p class="jingle-title" th:text="${jingle.announcementText}">Text</p>
 
+                        <p class="jingle-meta"
+                           th:text="${jingle.voice + ' · ' + jingle.duration + ' · Start date ' + #temporals.format(jingle.startDate, 'dd.MM.yyyy') + '/ End date ' + #temporals.format(jingle.endDate, 'dd.MM.yyyy')}">
+                            Voice · Duration · Date
+                        </p>
+
+<!--                        <p class="jingle-meta"-->
+<!--                           th:text="${'Repeating: ' + jingle.jingleRepeatingTime}-->
+<!--                        </p>-->
+                    </div>
                     <div class="waveform-placeholder">
-                        <div class="progress-bar"></div> <img th:src="@{/assets/img/waveform.svg}" alt="waveform">
+                        <img th:src="@{/assets/img/waveform.svg}" alt="waveform">
+                    </div>
+                    <div class="item-actions modern-actions">
+                        <button class="btn-location">
+                            <span th:text="${jingle.stores != null ? jingle.stores.size() + ' locations' : '+ Add to locations'}">
+                                + Add to locations
+                            </span>
+                        </button>
+
+                        <button class="btn-delete-icon">
+                            <i class="icon-trash"></i>
+                        </button>
+
                     </div>
                 </div>
                 <audio id="globalAudioPlayer" style="display: none;"></audio>
-                </div>
+            </div>
         </section>
 
         <section class="history-section">
@@ -123,75 +237,268 @@
             </div>
         </section>
     </div>
-
     <script>
-        document.querySelectorAll('.voice-card').forEach(card => {
-            card.addEventListener('click', function() {
-                document.querySelectorAll('.voice-card').forEach(c => c.classList.remove('active'));
-                this.classList.add('active');
-                this.querySelector('input').checked = true;
+        document.addEventListener('DOMContentLoaded', () => {
+
+            /* ================= VOICE ================= */
+            document.querySelectorAll('.voice-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    document.querySelectorAll('.voice-card').forEach(c => c.classList.remove('active'));
+                    this.classList.add('active');
+                    this.querySelector('input').checked = true;
+                });
             });
-        });
-        const audioPlayer = document.getElementById('globalAudioPlayer');
-        let currentButton = null;
 
-        function toggleAudio(button) {
-            const audioSrc = button.getAttribute('data-src');
-            const icon = button.querySelector('i');
+            /* ================= DROPDOWNS ================= */
+            document.querySelectorAll('.custom-dropdown').forEach(wrapper => {
+                const header = wrapper.querySelector('.custom-select-header');
+                const options = wrapper.querySelectorAll('.custom-select-options li');
+                const select = wrapper.querySelector('select');
 
-            // Если нажали на ту же кнопку, которая уже играет
-            if (currentButton === button) {
-                if (audioPlayer.paused) {
-                    audioPlayer.play();
-                    updateUI(button, true);
-                } else {
-                    audioPlayer.pause();
-                    updateUI(button, false);
+                let textNode = Array.from(header.childNodes)
+                    .find(n => n.nodeType === Node.TEXT_NODE);
+
+                if (!textNode) {
+                    textNode = document.createTextNode('');
+                    header.insertBefore(textNode, header.firstChild);
                 }
-                return;
+
+                header.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    closeAll();
+                    wrapper.classList.toggle('active');
+                });
+
+                options.forEach(option => {
+                    option.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        textNode.textContent = option.textContent + ' ';
+                        select.value = option.dataset.value;
+                        wrapper.classList.remove('active');
+                    });
+                });
+            });
+
+            /* ================= DATE PICKER ================= */
+            const wrapper = document.querySelector('.date-range-picker');
+            const display = wrapper.querySelector('.date-display');
+            const dropdown = wrapper.querySelector('.date-picker-dropdown');
+
+            const calendarGrid = document.getElementById('calendarGrid');
+            const monthLabel = document.getElementById('monthLabel');
+
+            const prevBtn = document.getElementById('prevMonth');
+            const nextBtn = document.getElementById('nextMonth');
+
+            const rangePreview = document.getElementById('rangePreview');
+            const dateLabel = document.getElementById('dateLabel');
+
+            const startHour = document.getElementById('startHour');
+            const startMinute = document.getElementById('startMinute');
+            const startAmPm = document.getElementById('startAmPm');
+
+            const hiddenStart = document.getElementById('startDate');
+            const hiddenEnd = document.getElementById('endDate');
+
+            let current = new Date();
+            let start = null;
+            let end = null;
+
+            /* STOP CLOSE WHEN CLICK INSIDE */
+            dropdown.addEventListener('click', e => e.stopPropagation());
+
+            /* INIT TIME */
+            for (let i = 1; i <= 12; i++) {
+                startHour.innerHTML += `<option>${String(i).padStart(2,'0')}</option>`;
+            }
+            for (let i = 0; i < 60; i++) {
+                startMinute.innerHTML += `<option>${String(i).padStart(2,'0')}</option>`;
             }
 
-            // Если играет другой трек — сбрасываем старую кнопку
-            if (currentButton) {
-                updateUI(currentButton, false);
+            display.addEventListener('click', (e) => {
+                e.stopPropagation();
+                closeAll();
+                wrapper.classList.toggle('active');
+            });
+
+            function renderCalendar() {
+                calendarGrid.innerHTML = '';
+
+                const year = current.getFullYear();
+                const month = current.getMonth();
+
+                const firstDay = new Date(year, month, 1).getDay();
+                const daysInMonth = new Date(year, month + 1, 0).getDate();
+                const prevMonthDays = new Date(year, month, 0).getDate();
+
+                monthLabel.textContent = current.toLocaleString('en-US', {
+                    month: 'long',
+                    year: 'numeric'
+                });
+
+                /* ==== PREVIOUS MONTH ==== */
+                for (let i = firstDay - 1; i >= 0; i--) {
+                    const day = prevMonthDays - i;
+
+                    const el = document.createElement('div');
+                    el.className = 'day other-month';
+                    el.textContent = day;
+
+                    calendarGrid.appendChild(el);
+                }
+
+                /* ==== CURRENT MONTH ==== */
+                for (let d = 1; d <= daysInMonth; d++) {
+                    const date = new Date(year, month, d);
+
+                    const el = document.createElement('div');
+                    el.className = 'day';
+                    el.textContent = d;
+
+                    if (start && sameDay(date, start)) {
+                        el.classList.add('selected', 'range-start');
+                    }
+
+                    if (end && sameDay(date, end)) {
+                        el.classList.add('selected', 'range-end');
+                    }
+
+                    if (start && end && date > start && date < end) {
+                        el.classList.add('in-range');
+                    }
+
+                    el.onclick = () => selectDate(date);
+
+                    calendarGrid.appendChild(el);
+                }
+
+                /* ==== NEXT MONTH ==== */
+                const totalCells = calendarGrid.children.length;
+                const nextDays = 42 - totalCells; // 6 rows * 7
+
+                for (let i = 1; i <= nextDays; i++) {
+                    const el = document.createElement('div');
+                    el.className = 'day other-month';
+                    el.textContent = i;
+
+                    calendarGrid.appendChild(el);
+                }
+            }
+            function sameDay(a, b) {
+                return a.toDateString() === b.toDateString();
             }
 
-            // Загружаем новый трек
-            currentButton = button;
-            audioPlayer.src = audioSrc;
-            audioPlayer.play();
-            updateUI(button, true);
-        }
+            function selectDate(date) {
+                if (!start || (start && end)) {
+                    start = date;
+                    end = null;
+                } else if (date < start) {
+                    end = start;
+                    start = date;
+                } else {
+                    end = date;
+                }
 
-        function updateUI(button, isPlaying) {
-            const icon = button.querySelector('i');
-            if (isPlaying) {
-                button.classList.add('playing');
-                icon.classList.remove('icon-play');
-                icon.classList.add('icon-pause');
-            } else {
-                button.classList.remove('playing');
-                icon.classList.remove('icon-pause');
-                icon.classList.add('icon-play');
+                updatePreview();
+                renderCalendar();
             }
-        }
 
-        // Когда музыка закончилась
-        audioPlayer.onended = () => {
-            if (currentButton) {
-                updateUI(currentButton, false);
+            function updatePreview() {
+                if (start && end) {
+                    rangePreview.textContent = `${format(start)} - ${format(end)}`;
+                } else if (start) {
+                    rangePreview.textContent = `Start: ${format(start)} (select end date)`;
+                } else {
+                    rangePreview.textContent = '--';
+                }
+            }
+
+            function format(d) {
+                const day = String(d.getDate()).padStart(2, '0');
+                const month = String(d.getMonth() + 1).padStart(2, '0');
+                const year = String(d.getFullYear()).slice(-2);
+
+                return `${day}/${month}/${year}`;
+            }
+
+            prevBtn.onclick = () => {
+                current.setMonth(current.getMonth() - 1);
+                renderCalendar();
+            };
+
+            nextBtn.onclick = () => {
+                current.setMonth(current.getMonth() + 1);
+                renderCalendar();
+            };
+
+            wrapper.querySelector('.btn-apply').onclick = () => {
+                if (!start || !end) return;
+
+                let h = parseInt(startHour.value) % 12;
+                if (startAmPm.value === 'PM') h += 12;
+
+                const s = new Date(start);
+                s.setHours(h, startMinute.value);
+
+                const e = new Date(end);
+                e.setHours(h, startMinute.value);
+
+                hiddenStart.value = s.toISOString();
+                hiddenEnd.value = e.toISOString();
+
+                dateLabel.textContent = `${format(start)} - ${format(end)}`;
+                wrapper.classList.remove('active');
+            };
+
+            wrapper.querySelector('.btn-cancel').onclick = () => {
+                start = null;
+                end = null;
+                updatePreview();
+                renderCalendar();
+            };
+
+            /* ================= AUDIO ================= */
+            const audioPlayer = document.getElementById('globalAudioPlayer');
+            let currentButton = null;
+
+            window.toggleAudio = function(button) {
+                const src = button.dataset.src;
+
+                if (currentButton === button) {
+                    audioPlayer.paused ? audioPlayer.play() : audioPlayer.pause();
+                    update(button, !audioPlayer.paused);
+                    return;
+                }
+
+                if (currentButton) update(currentButton, false);
+
+                currentButton = button;
+                audioPlayer.src = src;
+                audioPlayer.play();
+                update(button, true);
+            };
+
+            function update(btn, playing) {
+                const icon = btn.querySelector('i');
+                btn.classList.toggle('playing', playing);
+                icon.classList.toggle('icon-play', !playing);
+                icon.classList.toggle('icon-pause', playing);
+            }
+
+            audioPlayer.onended = () => {
+                if (currentButton) update(currentButton, false);
                 currentButton = null;
-            }
-        };
+            };
 
-        // (Опционально) Обновление полосы прогресса
-        audioPlayer.ontimeupdate = () => {
-            if (currentButton) {
-                const progress = (audioPlayer.currentTime / audioPlayer.duration) * 100;
-                const bar = currentButton.closest('.jingle-item').querySelector('.progress-bar');
-                if (bar) bar.style.width = progress + '%';
+            /* ================= GLOBAL CLOSE ================= */
+            function closeAll() {
+                document.querySelectorAll('.select-wrapper').forEach(w => w.classList.remove('active'));
             }
-        };
+
+            document.addEventListener('click', () => closeAll());
+
+            renderCalendar();
+        });
     </script>
 </th:block>
 </html>

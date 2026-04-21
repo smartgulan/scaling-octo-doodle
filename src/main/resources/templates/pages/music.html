@@ -9,9 +9,34 @@
                     )}">
 
 <th:block th:fragment="content">
-    <p class="subtitle">Choose a music style that matches your brand atmosphere.</p>
+<!--    <p class="subtitle">Choose a music style that matches your brand atmosphere.</p>-->
 
     <div th:if="${activePage == 'music'}" class="music-type-list">
+        <div class="atmosphere-cards">
+            <div class="music-subtitle">
+                <h3>Atmosphere</h3>
+                <p>Select the AI-generated atmosphere for all your stores. You can update this anytime.</p>
+            </div>
+            <div class="chips">
+                <label th:each="type : ${musicTypes}" class="chip">
+                    <input type="radio" name="musicTypes" th:value="${type}">
+                    <span th:text="${type.name}">Music Type</span>
+                </label>
+            </div>
+        </div>
+        <div class="atmosphere-cards">
+            <div class="music-subtitle">
+                <h3>Mood</h3>
+                <p>Select the AI-generated mood for all your stores. You can update this anytime.</p>
+            </div>
+            <div class="chips">
+                <label th:each="type : ${spacePurposes}" class="chip">
+                    <input type="radio" name="spacePurposes" th:value="${type}">
+                    <span th:text="${type.name}">Music Type</span>
+                </label>
+            </div>
+        </div>
+
         <div th:each="type : ${musicTypes}"
              class="music-card"
              th:data-id="${type.id}"

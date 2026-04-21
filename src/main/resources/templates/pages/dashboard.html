@@ -42,13 +42,13 @@
             <div class="card-body">
                 <div class="card-icon">
                     <span th:replace="~{fragments/icons :: icon-jingle}"></div>
-                <span class="card-status" th:text="${#lists.size(stores)} + ' stores'">0 generate</span>
+<!--                <span class="card-status" th:text="${#lists.size(jingles)} + ' jingles'">0 generate</span>-->
             </div>
             <div class="card-header">
                 <h3>AI Voice Studio</h3>
                 <p>Add and manage audio messaging</p>
             </div>
-            <a th:href="@{/stores}" class="btn-action" th:disabled="${musicType == null}">Add audio messaging</a>
+            <a th:href="@{/jingles}" class="btn-action" th:disabled="${musicType == null}">Add audio messaging</a>
         </div>
     </div>
 
