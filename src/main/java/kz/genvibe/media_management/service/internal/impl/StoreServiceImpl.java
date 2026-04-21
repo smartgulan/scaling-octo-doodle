@@ -3,6 +3,7 @@ package kz.genvibe.media_management.service.internal.impl;
 import jakarta.persistence.EntityNotFoundException;
 import kz.genvibe.media_management.config.props.AppProps;
 import kz.genvibe.media_management.exception.UserAlreadyExistsException;
+import kz.genvibe.media_management.model.domain.dto.store.ActiveStoreDto;
 import kz.genvibe.media_management.model.domain.dto.store.StoreCreateDto;
 import kz.genvibe.media_management.model.entity.AppUser;
 import kz.genvibe.media_management.model.entity.Store;
@@ -39,6 +40,12 @@ public class StoreServiceImpl implements StoreService {
     @Transactional(readOnly = true)
     public List<Store> getAllStoresByAppUserAndNames(AppUser appUser, List<String> names) {
         return storeRepository.findStoresByOrganizationAndNameIn(appUser.getOrganization(), names);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ActiveStoreDto> getAllActiveStores(AppUser appUser) {
+        return storeRepository.findStoresByActiveIsTrueAndOrganization(appUser.getOrganization());
     }
 
     @Override

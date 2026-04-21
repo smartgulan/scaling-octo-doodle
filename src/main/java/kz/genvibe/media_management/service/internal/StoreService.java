@@ -1,5 +1,6 @@
 package kz.genvibe.media_management.service.internal;
 
+import kz.genvibe.media_management.model.domain.dto.store.ActiveStoreDto;
 import kz.genvibe.media_management.model.domain.dto.store.StoreCreateDto;
 import kz.genvibe.media_management.model.entity.AppUser;
 import kz.genvibe.media_management.model.entity.Store;
@@ -11,6 +12,7 @@ public interface StoreService {
     // Read methods
     List<Store> getAllStores(AppUser appUser);
     List<Store> getAllStoresByAppUserAndNames(AppUser appUser, List<String> names);
+    List<ActiveStoreDto> getAllActiveStores(AppUser appUser);
 
     // Modification methods
     void addStore(AppUser appUser, StoreCreateDto dto);
