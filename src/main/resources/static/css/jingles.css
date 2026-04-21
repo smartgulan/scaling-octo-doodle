@@ -565,65 +565,29 @@ textarea {
 .btn-location--active:hover {
     background-color: #dcfce7;
 }
-.store-list {
-    list-style: none;
-    padding: 0;
-    margin: 0 0 20px;
+
+.modal-body {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    margin: 40px;
+}
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.modal-header h2{
+    font-weight: 400;
+    font-size: 32px;
+    letter-spacing: -1px;
+}
+.close {
+    display: flex;
+    justify-content: end;
+}
+.modal-content {
     display: flex;
     flex-direction: column;
     gap: 8px;
-}
-
-.store-list-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 12px 16px;
-    background: #f5f5f5;
-    border-radius: 10px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background 0.15s;
-}
-
-.store-list-item:hover {
-    background: #ececec;
-}
-
-.store-list-item .store-name {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.store-list-item .store-add {
-    font-size: 18px;
-    color: #333;
-}
-
-.modal-footer {
-    display: flex;
-    justify-content: flex-end;
-}
-.store-list-item.selected {
-    background: #f0fdf4;
-    border: 1px solid #bbf7d0;
-    color: #15803d;
-}
-
-.store-list-item.selected .store-add {
-    color: #15803d;
-}
-#locationModal {
-    position: fixed;
-    top: 42%;
-    left: 52%;
-    transform: translate(-50%, -50%);
-    background: #fff;
-    width: 662px;
-    border-radius: 20px;
-    display: none;
-    z-index: 2001;
-    box-shadow: 0 1px 1px rgba(255, 255, 255, 0.25), 0 -1px 1px rgba(255, 255, 255, 0.05), 0 8px 6px rgba(0, 0, 0, 0.05);
-    border-top: 2px solid rgba(255, 255, 255, 0.4);
 }
