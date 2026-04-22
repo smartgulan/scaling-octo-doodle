@@ -38,9 +38,6 @@ public class Jingle extends CreateEntity {
     private LocalDateTime endDate;
 
     @Column(nullable = false)
-    private Duration duration;
-
-    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private JingleRepeatingTime repeatingTime;
 

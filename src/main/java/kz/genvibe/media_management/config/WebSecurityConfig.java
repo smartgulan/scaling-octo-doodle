@@ -52,6 +52,7 @@ public class WebSecurityConfig implements WebMvcConfigurer {
         SpringSessionBackedSessionRegistry<? extends Session> sessionRegistry
     ) {
         http
+            .csrf(csrf -> csrf.ignoringRequestMatchers("/ws-player/**"))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
                     "/auth/**",
@@ -59,9 +60,10 @@ public class WebSecurityConfig implements WebMvcConfigurer {
                     "/assets/**",
                     "/css/**",
                     "/js/**",
-                    "/users/finalize"
+                    "/users/finalize",
+                    "/ws-player/**"
                 ).permitAll()
-                .requestMatchers("/stores/{id}/{uuid}").hasAuthority(UserRole.ROLE_USER.name())
+                .requestMatchers("/stores/{id}/{uuid}").hasAuthority(UserRole.ROLE_USER.getAuthority())
                 .anyRequest().hasAuthority(UserRole.ROLE_ADMIN.name())
             )
             .formLogin(form -> form

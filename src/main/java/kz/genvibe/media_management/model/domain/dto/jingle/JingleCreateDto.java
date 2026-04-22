@@ -25,7 +25,7 @@ public record JingleCreateDto(
             .category(category)
             .startDate(startDate)
             .endDate(endDate)
-            .duration(repeatingTime.getDuration())
+            .repeatingTime(repeatingTime)
             .announcementText(announcementText)
             .build();
     }
