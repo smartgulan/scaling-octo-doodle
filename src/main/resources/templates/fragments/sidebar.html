@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <body>
 
 <div th:fragment="sidebar(activePage)">
@@ -11,47 +12,52 @@
             </div>
             <hr>
         </div>
+
         <div class="sidebar-menu">
 
+            <!-- Dashboard доступен всем -->
             <a th:href="@{/dashboard}" class="menu-item"
                th:classappend="${activePage == 'dashboard'} ? 'active'">
                 <span class="icon" th:replace="~{fragments/icons :: icon-dashboard}"></span>
                 Dashboard
             </a>
 
-            <a th:href="@{/music}" class="menu-item"
-               th:classappend="${activePage == 'music'} ? 'active'">
-                <span class="icon" th:replace="~{fragments/icons :: icon-music}"></span>
-                Music Library
-            </a>
+            <!-- Остальные только для ADMIN -->
+            <div sec:authorize="hasRole('ADMIN')">
 
-            <a th:href="@{/stores}" class="menu-item"
-               th:classappend="${activePage == 'stores'} ? 'active'">
-                <span class="icon" th:replace="~{fragments/icons :: icon-store}"></span>
-                Stores
-            </a>
+                <a th:href="@{/music}" class="menu-item"
+                   th:classappend="${activePage == 'music'} ? 'active'">
+                    <span class="icon" th:replace="~{fragments/icons :: icon-music}"></span>
+                    Music Library
+                </a>
 
-            <a th:href="@{/jingles}" class="menu-item"
-               th:classappend="${activePage == 'jingles'} ? 'active'">
-                <span class="icon" th:replace="~{fragments/icons :: icon-jingle}"></span>
-                Jingles
-            </a>
+                <a th:href="@{/stores}" class="menu-item"
+                   th:classappend="${activePage == 'stores'} ? 'active'">
+                    <span class="icon" th:replace="~{fragments/icons :: icon-store}"></span>
+                    Stores
+                </a>
 
-            <a th:href="@{/analytics}" class="menu-item"
-               th:classappend="${activePage == 'analytics'} ? 'active'">
-                <span class="icon" th:replace="~{fragments/icons :: icon-analytics}"></span>
-                Analytics
-            </a>
+                <a th:href="@{/jingles}" class="menu-item"
+                   th:classappend="${activePage == 'jingles'} ? 'active'">
+                    <span class="icon" th:replace="~{fragments/icons :: icon-jingle}"></span>
+                    Jingles
+                </a>
 
-            <a th:href="@{/settings}" class="menu-item"
-               th:classappend="${activePage == 'settings'} ? 'active'">
-                <span class="icon" th:replace="~{fragments/icons :: icon-settings}"></span>
-                Settings
-            </a>
+                <a th:href="@{/analytics}" class="menu-item"
+                   th:classappend="${activePage == 'analytics'} ? 'active'">
+                    <span class="icon" th:replace="~{fragments/icons :: icon-analytics}"></span>
+                    Analytics
+                </a>
 
+                <a th:href="@{/settings}" class="menu-item"
+                   th:classappend="${activePage == 'settings'} ? 'active'">
+                    <span class="icon" th:replace="~{fragments/icons :: icon-settings}"></span>
+                    Settings
+                </a>
+
+            </div>
         </div>
 
-        <!-- Footer -->
         <div class="sidebar-footer">
 
             <a th:href="@{/library}" class="footer-action">

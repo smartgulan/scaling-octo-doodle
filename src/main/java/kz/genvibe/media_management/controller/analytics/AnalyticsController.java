@@ -1,7 +1,11 @@
 package kz.genvibe.media_management.controller.analytics;
 
+import kz.genvibe.media_management.config.annotations.CurrentUser;
+import kz.genvibe.media_management.model.entity.AppUser;
+import kz.genvibe.media_management.service.internal.AnalyticsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -10,8 +14,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequiredArgsConstructor
 public class AnalyticsController {
 
+    private final AnalyticsService analyticsService;
+
     @GetMapping
-    public String analyticsPage() {
+    public String analyticsPage(
+        @CurrentUser AppUser appUser,
+        Model model
+    ) {
         return "pages/analytics";
     }
 

@@ -4,15 +4,11 @@ import kz.genvibe.media_management.config.annotations.CurrentUser;
 import kz.genvibe.media_management.model.entity.AppUser;
 import kz.genvibe.media_management.service.internal.StoreService;
 import lombok.RequiredArgsConstructor;
-import org.apache.tomcat.websocket.AuthenticationException;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.UUID;
 
@@ -26,8 +22,7 @@ public class StoreController {
     @GetMapping
     public String storesPage(
         Model model,
-        @CurrentUser AppUser appUser,
-        @RequestParam(required = false) boolean storeAdded
+        @CurrentUser AppUser appUser
     ) {
         model.addAttribute("stores", storeService.getAllStores(appUser));
         return "pages/stores";
