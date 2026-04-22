@@ -47,4 +47,9 @@ public class OrganizationServiceImpl implements OrganizationService {
         log.info("Saved music types for organization: {}", organization.getCompanyName());
     }
 
+    @Override
+    public boolean existsByCompanyName(String companyName) {
+        return organizationRepository.existsByCompanyName(companyName);
+    }
+
 }

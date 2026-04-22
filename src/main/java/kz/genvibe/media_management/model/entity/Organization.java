@@ -21,7 +21,7 @@ import java.util.Set;
 @Builder
 public class Organization extends UpdateEntity {
 
-    @Column(length = 160, nullable = false)
+    @Column(length = 160, nullable = false, unique = true)
     private String companyName;
 
     @Enumerated(EnumType.STRING)

@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import kz.genvibe.media_management.model.domain.OnboardingSession;
 import kz.genvibe.media_management.model.domain.dto.onboarding.*;
 import kz.genvibe.media_management.model.enums.*;
+import kz.genvibe.media_management.service.internal.OrganizationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,20 +12,37 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/onboarding")
 @RequiredArgsConstructor
 public class OnboardingActionController {
 
+    private final OrganizationService organizationService;
     private final OnboardingSession session;
 
     @PostMapping("/step-1")
     public String onboardingStep1(
         @Valid @ModelAttribute Step1Dto dto,
         BindingResult bindingResult,
-        Model model
+        Model model,
+        RedirectAttributes redirectAttributes
     ) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("businessTypes", BusinessType.values());
+            model.addAttribute("musicProviders", MusicProvider.values());
+            return "pages/auth/onboarding/welcome";
+        }
+
+        if (organizationService.existsByCompanyName(dto.companyName())) {
+            bindingResult.rejectValue(
+                "companyName",
+                "companyName.exists",
+                "Organization with this company name already exists"
+            );
+        }
+
         if (bindingResult.hasErrors()) {
             model.addAttribute("businessTypes", BusinessType.values());
             model.addAttribute("musicProviders", MusicProvider.values());
