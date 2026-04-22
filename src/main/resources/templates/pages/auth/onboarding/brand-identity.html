@@ -5,10 +5,12 @@
 
 <th:block th:fragment="content">
     <div class="step-content">
-        <div class="title-content"><h1>What's your brand's identity?</h1>
-        <p>Pick at least 2</p>
+        <div class="title-content">
+            <h1>What's your brand's identity?</h1>
+            <p>Pick at least 2</p>
         </div>
-        <form th:action="@{/onboarding/step-2}" method="post">
+
+        <form th:action="@{/onboarding/step-2}" method="post" id="brandForm">
             <div class="chips">
                 <label th:each="identity : ${brandIdentities}" class="chip">
                     <input type="checkbox" name="brandIdentities" th:value="${identity}">
@@ -17,8 +19,24 @@
             </div>
 
             <hr>
-            <button class="btn-primary" type="submit">Continue</button>
+            <button class="btn-primary" type="submit" id="continueBtn" disabled>
+                Continue
+            </button>
         </form>
     </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const checkboxes = document.querySelectorAll('input[name="brandIdentities"]');
+            const continueBtn = document.getElementById('continueBtn');
+
+            function validateSelection() {
+                const selectedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
+                continueBtn.disabled = selectedCount < 2;
+            }
+
+            checkboxes.forEach(cb => cb.addEventListener('change', validateSelection));
+        });
+    </script>
 </th:block>
 </html>
