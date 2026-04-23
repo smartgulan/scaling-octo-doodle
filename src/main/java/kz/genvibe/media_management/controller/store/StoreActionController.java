@@ -2,7 +2,6 @@ package kz.genvibe.media_management.controller.store;
 
 import jakarta.validation.Valid;
 import kz.genvibe.media_management.config.annotations.CurrentUser;
-import kz.genvibe.media_management.model.domain.dto.store.ActiveStoreDto;
 import kz.genvibe.media_management.model.domain.dto.store.StoreCreateDto;
 import kz.genvibe.media_management.model.entity.AppUser;
 import kz.genvibe.media_management.service.internal.StoreService;
@@ -10,8 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import java.util.List;
 
 @Controller
 @RequestMapping("/api/stores")
@@ -47,14 +44,6 @@ public class StoreActionController {
         @CurrentUser AppUser appUser
     ) {
         return storeService.regenerateMusicAccessLink(id, appUser);
-    }
-
-    @ResponseBody
-    @GetMapping("/active")
-    public List<ActiveStoreDto> getActiveStores(
-        @CurrentUser AppUser appUser
-    ) {
-        return storeService.getAllActiveStores(appUser);
     }
 
 }

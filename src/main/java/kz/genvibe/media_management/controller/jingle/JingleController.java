@@ -6,6 +6,7 @@ import kz.genvibe.media_management.model.enums.JingleCategory;
 import kz.genvibe.media_management.model.enums.JingleRepeatingTime;
 import kz.genvibe.media_management.model.enums.JingleVoice;
 import kz.genvibe.media_management.service.internal.JingleService;
+import kz.genvibe.media_management.service.internal.StoreService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequiredArgsConstructor
 public class JingleController {
 
+    private final StoreService storeService;
     private final JingleService jingleService;
 
     @GetMapping
@@ -29,6 +31,7 @@ public class JingleController {
         model.addAttribute("jingleRepeatingTime", JingleRepeatingTime.values());
         model.addAttribute("jingleHistory", jingleService.getJingleHistory(appUser));
         model.addAttribute("jingleRequestsToPause", jingleService.getJingleRequestsToPause(appUser));
+        model.addAttribute("activeStores", storeService.getAllActiveStores(appUser));
         return "pages/jingles";
     }
 
