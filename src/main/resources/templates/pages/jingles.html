@@ -10,7 +10,7 @@
 
 <th:block th:fragment="content">
     <div class="jingles-page">
-        <p>Monthly generation limit: 20 jingles</p>
+        <p class="subtitle">Monthly generation limit: 20 jingles</p>
 
         <section class="content-card">
             <form th:action="@{/api/jingles}" method="post" id="jingleForm">
@@ -94,7 +94,7 @@
                             <!-- Header -->
                             <div class="calendar-header">
                                 <button type="button" class="nav-btn" id="prevMonth">‹</button>
-                                <div id="monthLabel">April 2026</div>
+                                <div class="calendar-title" id="monthLabel">April 2026</div>
                                 <button type="button" class="nav-btn" id="nextMonth">›</button>
                             </div>
 
@@ -187,7 +187,7 @@
                         <p class="jingle-title" th:text="${jingle.announcementText}">Text</p>
 
                         <p class="jingle-meta"
-                           th:text="${jingle.voice + ' · ' + jingle.duration + ' · Start date ' + #temporals.format(jingle.startDate, 'dd.MM.yyyy') + '/ End date ' + #temporals.format(jingle.endDate, 'dd.MM.yyyy')}">
+                           th:text="${jingle.voice + ' · ' + '30s' + ' · Start date ' + #temporals.format(jingle.startDate, 'dd.MM.yyyy') + '/ End date ' + #temporals.format(jingle.endDate, 'dd.MM.yyyy')}">
                             Voice · Duration · Date
                         </p>
 
@@ -285,7 +285,7 @@
 
                 header.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    closeAll();
+                    closeAll(wrapper);
                     wrapper.classList.toggle('active');
                 });
 
@@ -294,15 +294,16 @@
                         e.stopPropagation();
                         textNode.textContent = option.textContent + ' ';
                         select.value = option.dataset.value;
+                        header.classList.add('selected');
                         wrapper.classList.remove('active');
                     });
                 });
             });
 
             /* ================= DATE PICKER ================= */
-            const wrapper = document.querySelector('.date-range-picker');
-            const display = wrapper.querySelector('.date-display');
-            const dropdown = wrapper.querySelector('.date-picker-dropdown');
+            const datePickerWrapper = document.querySelector('.date-range-picker');
+            const display = datePickerWrapper.querySelector('.date-display');
+            const dropdown = datePickerWrapper.querySelector('.date-picker-dropdown');
 
             const calendarGrid = document.getElementById('calendarGrid');
             const monthLabel = document.getElementById('monthLabel');
@@ -337,8 +338,8 @@
 
             display.addEventListener('click', (e) => {
                 e.stopPropagation();
-                closeAll();
-                wrapper.classList.toggle('active');
+                closeAll(datePickerWrapper);
+                datePickerWrapper.classList.toggle('active');
             });
 
             function renderCalendar() {
@@ -359,18 +360,15 @@
                 /* ==== PREVIOUS MONTH ==== */
                 for (let i = firstDay - 1; i >= 0; i--) {
                     const day = prevMonthDays - i;
-
                     const el = document.createElement('div');
                     el.className = 'day other-month';
                     el.textContent = day;
-
                     calendarGrid.appendChild(el);
                 }
 
                 /* ==== CURRENT MONTH ==== */
                 for (let d = 1; d <= daysInMonth; d++) {
                     const date = new Date(year, month, d);
-
                     const el = document.createElement('div');
                     el.className = 'day';
                     el.textContent = d;
@@ -378,32 +376,29 @@
                     if (start && sameDay(date, start)) {
                         el.classList.add('selected', 'range-start');
                     }
-
                     if (end && sameDay(date, end)) {
                         el.classList.add('selected', 'range-end');
                     }
-
                     if (start && end && date > start && date < end) {
                         el.classList.add('in-range');
                     }
 
                     el.onclick = () => selectDate(date);
-
                     calendarGrid.appendChild(el);
                 }
 
                 /* ==== NEXT MONTH ==== */
                 const totalCells = calendarGrid.children.length;
-                const nextDays = 42 - totalCells; // 6 rows * 7
+                const nextDays = 42 - totalCells;
 
                 for (let i = 1; i <= nextDays; i++) {
                     const el = document.createElement('div');
                     el.className = 'day other-month';
                     el.textContent = i;
-
                     calendarGrid.appendChild(el);
                 }
             }
+
             function sameDay(a, b) {
                 return a.toDateString() === b.toDateString();
             }
@@ -418,7 +413,6 @@
                 } else {
                     end = date;
                 }
-
                 updatePreview();
                 renderCalendar();
             }
@@ -427,7 +421,7 @@
                 if (start && end) {
                     rangePreview.textContent = `${format(start)} - ${format(end)}`;
                 } else if (start) {
-                    rangePreview.textContent = `Start: ${format(start)} (select end date)`;
+                    rangePreview.textContent = `${format(start)} - End date`;
                 } else {
                     rangePreview.textContent = '--';
                 }
@@ -437,7 +431,6 @@
                 const day = String(d.getDate()).padStart(2, '0');
                 const month = String(d.getMonth() + 1).padStart(2, '0');
                 const year = String(d.getFullYear()).slice(-2);
-
                 return `${day}/${month}/${year}`;
             }
 
@@ -451,17 +444,15 @@
                 renderCalendar();
             };
 
-            wrapper.querySelector('.btn-apply').onclick = () => {
+            datePickerWrapper.querySelector('.btn-apply').onclick = () => {
                 if (!start || !end) return;
 
                 let h = parseInt(startHour.value);
-
                 if (startAmPm.value === 'PM' && h !== 12) h += 12;
                 if (startAmPm.value === 'AM' && h === 12) h = 0;
 
                 const s = new Date(start);
                 s.setHours(h, parseInt(startMinute.value));
-
 
                 const e = new Date(end);
                 e.setHours(h, parseInt(startMinute.value));
@@ -470,32 +461,36 @@
                 hiddenEnd.value = toLocalDateTimeString(e);
 
                 dateLabel.textContent = `${format(start)} - ${format(end)}`;
-                wrapper.classList.remove('active');
+                display.classList.add('selected');
+                datePickerWrapper.classList.remove('active');
             };
 
-            wrapper.querySelector('.btn-cancel').onclick = () => {
+            datePickerWrapper.querySelector('.btn-cancel').onclick = () => {
                 start = null;
                 end = null;
                 updatePreview();
                 renderCalendar();
+                datePickerWrapper.classList.remove('active');
             };
 
-
             /* ================= GLOBAL CLOSE ================= */
-            function closeAll() {
-                document.querySelectorAll('.select-wrapper').forEach(w => w.classList.remove('active'));
+            function closeAll(except = null) {
+                document.querySelectorAll('.select-wrapper').forEach(w => {
+                    if (w !== except) w.classList.remove('active');
+                });
             }
 
             document.addEventListener('click', () => closeAll());
 
             renderCalendar();
+
+            /* ================= DELETE JINGLE ================= */
             document.querySelectorAll('.btn-delete-icon').forEach(btn => {
                 btn.addEventListener('click', async () => {
                     const item = btn.closest('.jingle-item');
                     const playBtn = item.querySelector('.play-btn');
                     const id = btn.getAttribute('data-id');
 
-                    // останавливаем если играет
                     if (currentButton && currentButton === playBtn) {
                         audio.pause();
                         cancelAnimationFrame(animFrameId);
@@ -527,9 +522,9 @@
             });
 
         });
+
         function toLocalDateTimeString(date) {
             const pad = n => String(n).padStart(2, '0');
-
             return (
                 date.getFullYear() + '-' +
                 pad(date.getMonth() + 1) + '-' +
@@ -539,6 +534,14 @@
                 pad(date.getSeconds())
             );
         }
+        /* ================= CHAR COUNTER ================= */
+        const textarea = document.querySelector('textarea[name="announcementText"]');
+        const counter = document.querySelector('.char-counter');
+
+        textarea.addEventListener('input', () => {
+            counter.textContent = `${textarea.value.length}/500 characters`;
+            textarea.classList.toggle('has-text', textarea.value.length > 0);
+        });
     </script>
     <script>
         const BAR_COUNT = 55;

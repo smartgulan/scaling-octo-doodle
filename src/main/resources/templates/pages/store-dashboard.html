@@ -3,55 +3,63 @@
       th:replace="~{layout/base :: layout(
                     ~{::content},
                     'Dashboard - GenVibe',
-                    'dashboard.css',
+                    'store-dashboard.css',
                     'Company Dashboard',
                     'dashboard'
                     )}">
 
 <th:block th:fragment="content">
-    <p class="subtitle">Manage your AI music and control which stores are live.</p>
 
-    <div class="dashboard-grid">
-        <div class="card">
-            <div class="card-body">
-                <div class="card-icon">
-                    <span th:replace="~{fragments/icons :: icon-music}"></div>
-                <span class="card-status" th:text="${musicType != null} ? 'Selected' : 'Not selected'">Not selected</span>
+    <!-- ORB -->
+    <div class="orb-container">
+        <div class="orb">
+            <img th:src="@{/assets/icons/play-animated.gif}" alt="orb" />
+            <div class="orb-play">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M8 5v14l11-7z"/>
+                </svg>
             </div>
-            <div class="card-header">
-                <h3>Music Management</h3>
-                <p>Choose the music style for your brand</p>
+        </div>
+    </div>
+
+    <!-- ACTIVE JINGLES -->
+    <div class="active-jingles-card">
+        <h2>Active Jingles</h2>
+
+        <div th:each="jingle : ${activeJingles}" class="jingle-row">
+            <div class="jingle-info">
+                <h4 th:text="${#strings.abbreviate(jingle.announcementText, 55)}">Welcome to our store! Today's special offer: 20% off all items...</h4>
+                <div class="jingle-meta">
+                    <span th:text="${jingle.voiceType}">Rachel</span>
+                    <span>·</span>
+                    <span>0:15</span>
+                    <span>·</span>
+                    <span>Start date <th:block th:text="${#temporals.format(jingle.startDate, 'dd.MM.yyyy')}">06.04.2026</th:block>/End date <th:block th:text="${#temporals.format(jingle.endDate, 'dd.MM.yyyy')}">07.04.2026</th:block></span>
+                </div>
+                <div class="jingle-repeating">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polyline points="12 6 12 12 16 14"/>
+                    </svg>
+                    <span>Repeating: <th:block th:text="${jingle.repeatingTime}">16:00</th:block></span>
+                </div>
             </div>
-            <a th:href="@{/music}" class="btn-action">Select music type</a>
+            <button class="btn-pause">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="6" y="4" width="4" height="16"/>
+                    <rect x="14" y="4" width="4" height="16"/>
+                </svg>
+                Request to Pause
+            </button>
         </div>
 
-        <div class="card">
-            <div class="card-body">
-                <div class="card-icon">
-                    <span th:replace="~{fragments/icons :: icon-store}"></div>
-                <span class="card-status" th:text="${#lists.size(stores)} + ' stores'">0 stores</span>
-            </div>
-            <div class="card-header">
-                <h3>Stores</h3>
-                <p>Add and manage your store locations</p>
-            </div>
-            <a th:href="@{/stores}" class="btn-action" th:disabled="${musicType == null}">Add store</a>
-        </div>
-
-        <div class="card">
-            <div class="card-body">
-                <div class="card-icon">
-                    <span th:replace="~{fragments/icons :: icon-jingle}"></div>
-                <!--                <span class="card-status" th:text="${#lists.size(jingles)} + ' jingles'">0 generate</span>-->
-            </div>
-            <div class="card-header">
-                <h3>AI Voice Studio</h3>
-                <p>Add and manage audio messaging</p>
-            </div>
-            <a th:href="@{/jingles}" class="btn-action" th:disabled="${musicType == null}">Add audio messaging</a>
+        <!-- Empty state -->
+        <div th:if="${#lists.isEmpty(activeJingles)}" style="text-align:center; padding: 32px; color: #888; font-size: 14px;">
+            No active jingles yet.
         </div>
     </div>
 
     <div th:replace="~{fragments/toast :: toast}"></div>
+
 </th:block>
 </html>

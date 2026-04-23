@@ -8,250 +8,13 @@
                       'analytics'
                       )}">
 <th:block th:fragment="content">
-
-  <style>
-    /* ── Reset & Base ── */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --accent: hsl(235, 70%, 60%);
-      --accent-red: hsl(0, 75%, 55%);
-      --accent-amber: hsl(45, 90%, 65%);
-      --bg: hsl(220, 14%, 96%);
-      --card: #ffffff;
-      --border: hsl(220, 13%, 91%);
-      --text: hsl(222, 22%, 14%);
-      --muted: hsl(220, 9%, 52%);
-      --green: hsl(142, 56%, 42%);
-      --green-bg: hsl(142, 56%, 96%);
-      --amber-bg: hsl(45, 90%, 95%);
-      --radius: 16px;
-      --shadow: 0 1px 4px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
-      --font: 'DM Sans', 'Segoe UI', sans-serif;
-    }
-
-    body {
-      font-family: var(--font);
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-    }
-
-    /* ── Layout ── */
-    .analytics-wrap {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 32px 40px 60px;
-    }
-
-    /* ── Header ── */
-    .analytics-header {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      margin-bottom: 28px;
-    }
-    .analytics-header h1 {
-      font-size: 1.6rem;
-      font-weight: 700;
-      letter-spacing: -.3px;
-    }
-    .btn-logout {
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-size: .85rem;
-      color: var(--muted);
-      padding: 4px 0;
-      transition: color .2s;
-    }
-    .btn-logout:hover { color: var(--text); }
-
-    /* ── Card ── */
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-    }
-    .card-inner { padding: 24px; }
-    .card-title {
-      font-size: 1rem;
-      font-weight: 600;
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .card-title-lg {
-      font-size: 1.1rem;
-      font-weight: 700;
-    }
-
-    /* ── Section spacing ── */
-    .section { margin-bottom: 28px; }
-    .section-title {
-      font-size: 1.1rem;
-      font-weight: 700;
-      margin-bottom: 16px;
-    }
-
-    /* ── Music Performance ── */
-    .music-card .card-inner { padding: 24px; }
-    .chart-sub {
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 20px;
-    }
-    .chart-sub-title {
-      font-size: .85rem;
-      font-weight: 600;
-      margin-bottom: 12px;
-      color: var(--text);
-    }
-    canvas { display: block; }
-
-    /* Stats row */
-    .stats-row {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
-    }
-    .stat-item {}
-    .stat-label {
-      font-size: .75rem;
-      color: var(--muted);
-      margin-bottom: 4px;
-    }
-    .stat-value {
-      font-size: 1.4rem;
-      font-weight: 700;
-      letter-spacing: -.5px;
-    }
-    .stat-sub {
-      font-size: .75rem;
-      color: var(--muted);
-      margin-top: 2px;
-    }
-
-    /* ── Two-col grid ── */
-    .grid-2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 24px;
-    }
-
-    /* ── Daily session ── */
-    .session-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 8px;
-    }
-    .session-badge {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: .75rem;
-      color: var(--muted);
-      margin-bottom: 12px;
-    }
-    .badge-dot {
-      width: 8px; height: 8px;
-      border-radius: 50%;
-      background: var(--accent-red);
-      flex-shrink: 0;
-    }
-    select {
-      font-size: .75rem;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 4px 8px;
-      background: var(--card);
-      color: var(--text);
-      cursor: pointer;
-    }
-
-    /* ── KPI Cards ── */
-    .kpi-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
-      margin-bottom: 28px;
-    }
-    .kpi-card { padding: 20px; }
-
-    /* ── Compliance table ── */
-    .compliance-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 16px;
-    }
-    .download-btn {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-size: .8rem;
-      color: var(--muted);
-      transition: color .2s;
-    }
-    .download-btn:hover { color: var(--text); }
-    .download-btn svg { width: 14px; height: 14px; }
-
-    table { width: 100%; border-collapse: collapse; font-size: .875rem; }
-    thead th {
-      text-align: left;
-      padding: 8px 16px 8px 0;
-      font-size: .75rem;
-      font-weight: 600;
-      color: var(--muted);
-      border-bottom: 1px solid var(--border);
-    }
-    tbody td {
-      padding: 14px 16px 14px 0;
-      border-bottom: 1px solid var(--border);
-      color: var(--muted);
-    }
-    tbody td:first-child { color: var(--text); font-weight: 500; }
-    tbody tr:last-child td { border-bottom: none; }
-
-    /* Status badges */
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      padding: 3px 10px;
-      border-radius: 999px;
-      font-size: .75rem;
-      font-weight: 600;
-    }
-    .badge-success { background: var(--green-bg); color: var(--green); }
-    .badge-pending { background: var(--amber-bg); color: hsl(38, 90%, 40%); }
-    .badge-failed { background: hsl(0, 75%, 96%); color: var(--accent-red); }
-
-    /* ── Responsive ── */
-    @media (max-width: 900px) {
-      .analytics-wrap { padding: 20px; }
-      .grid-2 { grid-template-columns: 1fr; }
-      .kpi-grid { grid-template-columns: repeat(2, 1fr); }
-      .stats-row { grid-template-columns: 1fr; }
-    }
-  </style>
-
-  <div class="analytics-wrap">
-
+<div class="analytics-page">
     <!-- Music Performance -->
-    <div class="section">
-      <div class="card music-card">
-        <div class="card-inner">
-          <p class="card-title card-title-lg">Music Performance</p>
+    <div class="analytics-card">
+          <h3>Music Performance</h3>
 
           <div class="chart-sub">
-            <p class="chart-sub-title">Weekly Plays</p>
+            <p>Weekly Plays</p>
             <canvas id="weeklyPlaysChart" height="160"></canvas>
           </div>
 
@@ -271,42 +34,41 @@
               <p class="stat-value">Downtown 12</p>
               <p class="stat-sub">+21.3% plays</p>
             </div>
+            <div class="section grid-2">
+              <!-- Store Performance -->
+              <div class="card">
+                <div class="card-inner">
+                  <p class="card-title">📊 Store Performance</p>
+                  <canvas id="storeChart" height="160"></canvas>
+                </div>
+              </div>
+
+              <!-- Daily Session Activity -->
+              <div class="card">
+                <div class="card-inner">
+                  <div class="session-header">
+                    <p class="card-title" style="margin-bottom:0">Daily Session Activity</p>
+                    <select>
+                      <option>Weekly</option>
+                      <option>Monthly</option>
+                    </select>
+                  </div>
+                  <div class="session-badge" style="margin-top:12px">
+                    <span class="badge-dot"></span>
+                    <span>% 5.41% Not last week</span>
+                  </div>
+                  <canvas id="sessionChart" height="140"></canvas>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
     </div>
 
     <!-- Store Performance & Daily Session -->
-    <div class="section grid-2">
-      <!-- Store Performance -->
-      <div class="card">
-        <div class="card-inner">
-          <p class="card-title">📊 Store Performance</p>
-          <canvas id="storeChart" height="160"></canvas>
-        </div>
-      </div>
 
-      <!-- Daily Session Activity -->
-      <div class="card">
-        <div class="card-inner">
-          <div class="session-header">
-            <p class="card-title" style="margin-bottom:0">Daily Session Activity</p>
-            <select>
-              <option>Weekly</option>
-              <option>Monthly</option>
-            </select>
-          </div>
-          <div class="session-badge" style="margin-top:12px">
-            <span class="badge-dot"></span>
-            <span>% 5.41% Not last week</span>
-          </div>
-          <canvas id="sessionChart" height="140"></canvas>
-        </div>
-      </div>
-    </div>
 
     <!-- Aggregate Jingle Performance -->
-    <div class="section">
+    <div class="analytics-card">
       <p class="section-title">Aggregate Jingle Performance</p>
       <div class="kpi-grid">
         <div class="card kpi-card">
@@ -333,7 +95,7 @@
     </div>
 
     <!-- Jingle Types & Performance Distribution -->
-    <div class="section">
+    <div class="analytics-card">
       <p class="section-title">Jingle Types &amp; Performance Distribution (Weekly)</p>
       <div class="grid-2">
         <!-- Plays by Jingle Type -->
@@ -427,13 +189,16 @@
         </div>
       </div>
     </div>
-
-  </div><!-- /analytics-wrap -->
+</div>
 
   <!-- Chart.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js"></script>
+
   <script>
     (function () {
+      Chart.register(ChartDataLabels); // <- сюда
+
       const ACCENT = 'hsl(235,70%,60%)';
       const GRAY   = 'hsl(0,0%,88%)';
       const RED    = 'hsl(0,75%,55%)';
@@ -452,22 +217,35 @@
         data: {
           labels: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
           datasets: [{
-            data: [620, 430, 740, 890, 1340, 560, 680],
-            backgroundColor: [GRAY,GRAY,GRAY,GRAY,ACCENT,GRAY,GRAY],
-            borderRadius: 4,
+            data: [820, 940, 780, 1100, 1248, 1380, 960],
+            backgroundColor: (ctx) => ctx.raw === Math.max(...[820,940,780,1100,1248,1380,960]) ? ACCENT : GRAY,
+            borderRadius: { topLeft: 6, topRight: 6 },
             borderSkipped: false,
           }]
         },
         options: {
           responsive: true,
-          plugins: { legend: { display: false }, tooltip: { mode: 'index' } },
+          plugins: {
+            legend: { display: false },
+            tooltip: { mode: 'index' },
+            datalabels: {
+              anchor: 'end',
+              align: 'end',
+              color: MUTED,
+              font: { size: 11 },
+              formatter: (value) => value.toLocaleString()
+            }
+          },
           scales: {
             x: { grid: { display: false }, border: { display: false } },
-            y: { grid: { color: BORDER }, border: { display: false }, ticks: { stepSize: 350 } }
+            y: { display: false }
+          },
+          layout: {
+            padding: { top: 24 }
           }
-        }
+        },
+        plugins: [ChartDataLabels]
       });
-
       // ── Store Performance Horizontal Bar ──
       new Chart(document.getElementById('storeChart'), {
         type: 'bar',
@@ -565,6 +343,7 @@
 
     })();
   </script>
+
 
 </th:block>
 </html>
