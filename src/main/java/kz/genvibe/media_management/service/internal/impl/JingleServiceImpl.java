@@ -12,7 +12,6 @@ import kz.genvibe.media_management.model.entity.JingleSlot;
 import kz.genvibe.media_management.model.enums.JingleSlotStatus;
 import kz.genvibe.media_management.repository.JingleRepository;
 import kz.genvibe.media_management.repository.JingleScheduleRepository;
-import kz.genvibe.media_management.repository.JingleSlotRepository;
 import kz.genvibe.media_management.service.integration.ElevenlabsIntegrationService;
 import kz.genvibe.media_management.service.internal.JingleService;
 import kz.genvibe.media_management.service.internal.StoreService;
@@ -34,7 +33,6 @@ public class JingleServiceImpl implements JingleService {
     private final ElevenlabsIntegrationService elevenlabsIntegrationService;
     private final JingleRepository jingleRepository;
     private final JingleScheduleRepository jingleScheduleRepository;
-    private final JingleSlotRepository jingleSlotRepository;
 
     @Override
     @Transactional
