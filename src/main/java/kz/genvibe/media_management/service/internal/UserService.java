@@ -6,6 +6,7 @@ import kz.genvibe.media_management.model.domain.dto.user.PasswordSetupDto;
 import kz.genvibe.media_management.model.entity.AppUser;
 import kz.genvibe.media_management.model.domain.dto.user.AppUserUpdateDto;
 import kz.genvibe.media_management.model.entity.MusicType;
+import kz.genvibe.media_management.model.entity.Organization;
 import kz.genvibe.media_management.model.entity.Store;
 
 import java.util.List;
@@ -19,6 +20,7 @@ public interface UserService {
         HttpServletResponse response
     );
     void updateUser(AppUserUpdateDto dto, AppUser appUser);
+    AppUser createStoreUser(String email, Organization organization);
 
     // User read methods
     AppUser getUserByEmail(String email);

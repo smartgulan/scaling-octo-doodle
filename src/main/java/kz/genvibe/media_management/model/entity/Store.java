@@ -44,4 +44,8 @@ public class Store extends UpdateEntity {
     @ManyToMany(mappedBy = "stores")
     private Set<Jingle> jingles = new HashSet<>();
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id")
+    private AppUser storeUser;
+
 }

@@ -7,6 +7,7 @@ import kz.genvibe.media_management.exception.UserAlreadyExistsException;
 import kz.genvibe.media_management.model.domain.dto.user.AppUserUpdateDto;
 import kz.genvibe.media_management.model.domain.dto.user.PasswordSetupDto;
 import kz.genvibe.media_management.model.entity.AppUser;
+import kz.genvibe.media_management.model.entity.Organization;
 import kz.genvibe.media_management.repository.AppUserRepository;
 import kz.genvibe.media_management.service.internal.UserService;
 import lombok.RequiredArgsConstructor;
@@ -62,6 +63,23 @@ public class UserServiceImpl implements UserService {
         log.info("User updated with email: {}", appUser.getEmail());
     }
 
+    @Override
+    @Transactional
+    public AppUser createStoreUser(String email, Organization organization) {
+        if (existsByEmail(email)) {
+            throw new UserAlreadyExistsException("This email has been already taken");
+        }
+
+        var storeUser = AppUser.builder()
+            .email(email)
+            .organization(organization)
+            .enabled(false)
+            .build();
+
+        appUserRepository.save(storeUser);
+
+        return storeUser;
+    }
 
     @Override
     @Transactional(readOnly = true)

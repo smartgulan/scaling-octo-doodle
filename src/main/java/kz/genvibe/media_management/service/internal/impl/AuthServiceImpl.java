@@ -7,6 +7,7 @@ import kz.genvibe.media_management.config.props.AppProps;
 import kz.genvibe.media_management.exception.VerificationLinkExpiredException;
 import kz.genvibe.media_management.model.entity.AppUser;
 import kz.genvibe.media_management.model.entity.Organization;
+import kz.genvibe.media_management.model.entity.Store;
 import kz.genvibe.media_management.model.enums.UserRole;
 import kz.genvibe.media_management.repository.AppUserRepository;
 import kz.genvibe.media_management.service.internal.AuthService;
@@ -78,22 +79,20 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
-    public void sendEmailVerificationToStore(String email, Organization organization) {
+    public void sendStoreEmailVerification(Store store) {
         var emailVerificationToken = emailVerificationTokenService.generate();
         var verificationLink = appProps.getBaseUrl() + VERIFICATION_URL_PATH + emailVerificationToken.getToken();
         var password = PasswordUtil.generateRandomPassword(9);
 
-        var appUser = AppUser.builder()
-            .email(email)
-            .password(passwordEncoder.encode(password))
-            .emailVerificationToken(emailVerificationToken)
-            .organization(organization)
-            .build();
+        var storeUser = store.getStoreUser();
 
-        appUserRepository.save(appUser);
-        sendEmail(verificationLink, email);
+        storeUser.setEnabled(true);
+        storeUser.setPassword(passwordEncoder.encode(password));
+        storeUser.setEmailVerificationToken(emailVerificationToken);
 
-        log.info("Sent store email verification to {}", email);
+        sendEmail(verificationLink, storeUser.getEmail(), password);
+
+        log.info("Sent store email verification to {}", storeUser.getEmail());
     }
 
     @Override
@@ -137,6 +136,17 @@ public class AuthServiceImpl implements AuthService {
         var context = new Context();
         context.setVariable("verificationUrl", verificationUrl);
         var html = templateEngine.process("pages/email/verify-email", context);
+
+        mailService.sendHtmlMail(email, subject, html);
+    }
+
+    private void sendEmail(String verificationUrl, String email, String password) {
+        var subject = "Email Address Verification";
+
+        var context = new Context();
+        context.setVariable("verificationUrl", verificationUrl);
+        context.setVariable("password", password);
+        var html = templateEngine.process("pages/email/verify-store-email", context);
 
         mailService.sendHtmlMail(email, subject, html);
     }

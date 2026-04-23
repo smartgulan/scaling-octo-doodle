@@ -13,7 +13,6 @@ import kz.genvibe.media_management.service.internal.StoreService;
 import kz.genvibe.media_management.service.internal.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,16 +51,15 @@ public class StoreServiceImpl implements StoreService {
     @Transactional
     public void addStore(AppUser appUser, StoreCreateDto dto) {
         var locationEmail = dto.email();
-
-        if (userService.existsByEmail(locationEmail)) {
-            throw new UserAlreadyExistsException("This email has been taken");
-        }
+        var organization = appUser.getOrganization();
+        var storeUser = userService.createStoreUser(locationEmail, organization);
 
         var store = Store.builder()
             .name(dto.name())
             .location(dto.location())
             .email(dto.email())
             .organization(appUser.getOrganization())
+            .storeUser(storeUser)
             .build();
 
         storeRepository.save(store);
@@ -80,7 +78,7 @@ public class StoreServiceImpl implements StoreService {
         store.setMusicLinkUuid(uuid);
         store.setMusicLink(generateMusicAccessLink(id, uuid));
 
-        authService.sendEmailVerificationToStore(store.getEmail(), appUser.getOrganization());
+        authService.sendStoreEmailVerification(store);
 
         log.info("Activated store: {} with id: {}", store.getName(), id);
     }
