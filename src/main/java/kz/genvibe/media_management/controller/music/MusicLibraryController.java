@@ -1,6 +1,7 @@
 package kz.genvibe.media_management.controller.music;
 
-import kz.genvibe.media_management.model.enums.SpacePurpose;
+import kz.genvibe.media_management.model.enums.MusicAtmosphere;
+import kz.genvibe.media_management.model.enums.MusicMood;
 import kz.genvibe.media_management.service.internal.MusicService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -17,8 +18,9 @@ public class MusicLibraryController {
 
     @GetMapping
     public String musicPage(Model model) {
-        model.addAttribute("musicTypes", musicService.getAllMusicTypes());
-        model.addAttribute("spacePurposes", SpacePurpose.values());
+        model.addAttribute("musicAtmospheres", MusicAtmosphere.values());
+        model.addAttribute("musicMoods", MusicMood.values());
+        model.addAttribute("musics", musicService.getAllDistinctMusic());
         return "pages/music";
     }
 

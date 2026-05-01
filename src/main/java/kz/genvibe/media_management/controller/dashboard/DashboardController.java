@@ -22,11 +22,9 @@ public class DashboardController {
         final var activeStores = stores.stream()
             .filter(Store::isActive)
             .collect(Collectors.toSet());
-        final var isEnhancedView = !appUser.getOrganization().getMusicTypes().isEmpty()
-            && !appUser.getOrganization().getStores().isEmpty()
+        final var isEnhancedView = !appUser.getOrganization().getStores().isEmpty()
             && !appUser.getOrganization().getJingles().isEmpty();
 
-        model.addAttribute("musicType", appUser.getOrganization().getMusicTypes());
         model.addAttribute("stores", stores);
         model.addAttribute("activeStores", activeStores);
         model.addAttribute("atmosphere", new Atmosphere("Warm & Welcoming", "guitar, bass guitar, keys, piano.  BPM range: 102-110"));

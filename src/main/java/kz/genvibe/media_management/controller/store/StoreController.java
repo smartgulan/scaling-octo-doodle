@@ -39,7 +39,6 @@ public class StoreController {
             return "error/404";
         }
 
-        model.addAttribute("musicType", appUser.getOrganization().getMusicTypes());
         model.addAttribute("stores", appUser.getOrganization().getStores());
         return "pages/store-dashboard";
     }

@@ -3,7 +3,8 @@ package kz.genvibe.media_management.controller.auth;
 import jakarta.validation.Valid;
 import kz.genvibe.media_management.model.domain.OnboardingSession;
 import kz.genvibe.media_management.model.domain.dto.onboarding.*;
-import kz.genvibe.media_management.model.enums.*;
+import kz.genvibe.media_management.model.enums.BusinessType;
+import kz.genvibe.media_management.model.enums.MusicProvider;
 import kz.genvibe.media_management.service.internal.OrganizationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -12,7 +13,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/onboarding")
@@ -26,8 +26,7 @@ public class OnboardingActionController {
     public String onboardingStep1(
         @Valid @ModelAttribute Step1Dto dto,
         BindingResult bindingResult,
-        Model model,
-        RedirectAttributes redirectAttributes
+        Model model
     ) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("businessTypes", BusinessType.values());
@@ -61,7 +60,7 @@ public class OnboardingActionController {
         if (bindingResult.hasErrors()) {
             return "pages/auth/onboarding/brand-identity";
         }
-        session.setBrandIdentities(dto.brandIdentities());
+        session.setMusicAtmosphere(dto.atmosphere());
         return "redirect:/onboarding/current-feel";
     }
 
@@ -79,7 +78,7 @@ public class OnboardingActionController {
         if (bindingResult.hasErrors()) {
             return "pages/auth/onboarding/customer-feel";
         }
-        session.setSpacePurpose(dto.spacePurpose());
+        session.setMusicMood(dto.mood());
         return "redirect:/onboarding/playtime-window";
     }
 

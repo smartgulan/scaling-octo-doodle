@@ -32,11 +32,8 @@ public class Organization extends UpdateEntity {
     @Column(length = 100, nullable = false)
     private MusicProvider musicProvider;
 
-    @Builder.Default
-    @Column(nullable = false)
-    @JdbcTypeCode(SqlTypes.ARRAY)
     @Enumerated(EnumType.STRING)
-    private List<BrandIdentity> brandIdentity = new ArrayList<>();
+    private MusicAtmosphere musicAtmosphere;
 
     @Builder.Default
     @Column(nullable = false)
@@ -46,7 +43,7 @@ public class Organization extends UpdateEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(length = 128, nullable = false)
-    private SpacePurpose spacePurpose;
+    private MusicMood musicMood;
 
     @Enumerated(EnumType.STRING)
     @Column(length = 128, nullable = false)
@@ -55,15 +52,6 @@ public class Organization extends UpdateEntity {
     @Builder.Default
     @OneToMany(mappedBy = "organization", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<AppUser> appUsers = new HashSet<>();
-
-    @Builder.Default
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinTable(
-        name = "organization_music_types",
-        joinColumns = @JoinColumn(name = "organization_id"),
-        inverseJoinColumns = @JoinColumn(name = "music_type_id")
-    )
-    private Set<MusicType> musicTypes = new HashSet<>();
 
     @Builder.Default
     @OneToMany(mappedBy = "organization", cascade = CascadeType.ALL, orphanRemoval = true)

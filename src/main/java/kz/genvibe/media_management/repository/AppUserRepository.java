@@ -10,6 +10,6 @@ public interface AppUserRepository extends JpaRepository<AppUser, Long> {
     Optional<AppUser> findByEmail(String email);
     boolean existsByEmail(String email);
 
-    @EntityGraph(attributePaths = {"organization.musicTypes", "organization.stores"})
+    @EntityGraph(attributePaths = {"organization.stores"})
     Optional<AppUser> findWithDetailsByEmail(String email);
 }
