@@ -202,11 +202,9 @@
             const token = document.querySelector('meta[name="_csrf"]').content;
             const header = document.querySelector('meta[name="_csrf_header"]').content;
 
-            // 🔥 1. СРАЗУ UI UPDATE (ВАЖНО)
             openLink(id, name, "Loading...");
             markStoreAsActive(id, name);
 
-            // 🔥 2. activate
             fetch(`/api/stores/activate/${id}`, {
                 method: "POST",
                 headers: {
@@ -214,7 +212,6 @@
                 }
             })
                 .then(() => {
-                    // 🔥 3. regenerate link
                     return fetch(`/api/stores/regenerate-link/${id}`, {
                         method: "POST",
                         headers: {
@@ -309,13 +306,11 @@
 
                 if (button && button.getAttribute("onclick")?.includes(`activateStore(${id}`)) {
 
-                    // 🔥 статус
                     const badge = card.querySelector(".status-badge");
                     badge.innerText = "Active";
                     badge.classList.remove("inactive");
                     badge.classList.add("active");
 
-                    // 🔥 кнопка
                     const actions = card.querySelector(".store-actions");
 
                     actions.innerHTML = `
