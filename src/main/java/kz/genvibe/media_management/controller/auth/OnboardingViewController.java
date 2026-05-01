@@ -26,7 +26,7 @@ public class OnboardingViewController {
 
     @GetMapping("/brand-identity")
     public String onboardingStep2(Model model) {
-        model.addAttribute("brandIdentities", BrandIdentity.values());
+        model.addAttribute("brandIdentities", MusicAtmosphere.values());
         return "pages/auth/onboarding/brand-identity";
     }
 
@@ -38,7 +38,7 @@ public class OnboardingViewController {
 
     @GetMapping("/customer-feel")
     public String onboardingStep4(Model model) {
-        model.addAttribute("spacePurposes", SpacePurpose.values());
+        model.addAttribute("spacePurposes", MusicMood.values());
         return "pages/auth/onboarding/customer-feel";
     }
 

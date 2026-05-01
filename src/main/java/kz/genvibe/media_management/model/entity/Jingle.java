@@ -7,12 +7,9 @@ import kz.genvibe.media_management.model.enums.JingleRepeatingTime;
 import kz.genvibe.media_management.model.enums.JingleVoice;
 import lombok.*;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "jingles")
@@ -67,12 +64,5 @@ public class Jingle extends CreateEntity {
         inverseJoinColumns = @JoinColumn(name = "store_id")
     )
     private Set<Store> stores = new HashSet<>();
-
-    @Transient
-    public List<String> getStoreNames() {
-        return stores.stream()
-            .map(Store::getName)
-            .collect(Collectors.toList());
-    }
 
 }

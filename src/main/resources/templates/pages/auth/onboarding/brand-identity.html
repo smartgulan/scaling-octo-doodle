@@ -7,36 +7,21 @@
     <div class="step-content">
         <div class="title-content">
             <h1>What's your brand's identity?</h1>
-            <p>Pick at least 2</p>
         </div>
 
         <form th:action="@{/onboarding/step-2}" method="post" id="brandForm">
             <div class="chips">
                 <label th:each="identity : ${brandIdentities}" class="chip">
-                    <input type="checkbox" name="brandIdentities" th:value="${identity}">
+                    <input type="radio" name="atmosphere" th:value="${identity}">
                     <span th:text="${identity.name}">Warm & Welcoming</span>
                 </label>
             </div>
 
             <hr>
-            <button class="btn-primary" type="submit" id="continueBtn" disabled>
+            <button class="btn-primary" type="submit" id="continueBtn">
                 Continue
             </button>
         </form>
     </div>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const checkboxes = document.querySelectorAll('input[name="brandIdentities"]');
-            const continueBtn = document.getElementById('continueBtn');
-
-            function validateSelection() {
-                const selectedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
-                continueBtn.disabled = selectedCount < 2;
-            }
-
-            checkboxes.forEach(cb => cb.addEventListener('change', validateSelection));
-        });
-    </script>
 </th:block>
 </html>

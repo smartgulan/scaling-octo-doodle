@@ -20,9 +20,9 @@ public class OnboardingSession implements Serializable {
     private String companyName;
     private BusinessType businessType;
     private MusicProvider musicProvider;
-    private List<BrandIdentity> brandIdentities;
+    private MusicAtmosphere musicAtmosphere;
     private List<CurrentFeel> currentFeels;
-    private SpacePurpose spacePurpose;
+    private MusicMood musicMood;
     private PlaytimeWindow playtimeWindow;
 
     public Organization toOrganization() {
@@ -30,9 +30,9 @@ public class OnboardingSession implements Serializable {
             .companyName(companyName)
             .businessType(businessType)
             .musicProvider(musicProvider)
-            .brandIdentity(brandIdentities)
+            .musicAtmosphere(musicAtmosphere)
             .currentFeel(currentFeels)
-            .spacePurpose(spacePurpose)
+            .musicMood(musicMood)
             .playtimeWindow(playtimeWindow)
             .build();
     }
