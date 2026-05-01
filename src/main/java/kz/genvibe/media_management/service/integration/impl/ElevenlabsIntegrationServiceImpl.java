@@ -6,6 +6,7 @@ import kz.genvibe.media_management.client.elevenlabs.ElevenlabsClient;
 import kz.genvibe.media_management.config.props.AppProps;
 import kz.genvibe.media_management.service.integration.ElevenlabsIntegrationService;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -24,6 +25,7 @@ public class ElevenlabsIntegrationServiceImpl implements ElevenlabsIntegrationSe
     private final ElevenlabsClient elevenlabsClient;
     private final AppProps appProps;
 
+    @SneakyThrows
     public String getSpeechFileUrl(String text, String voiceId) {
         var requestBody = new ElevenlabsTtsRequest(
             text,
@@ -35,11 +37,8 @@ public class ElevenlabsIntegrationServiceImpl implements ElevenlabsIntegrationSe
         var directory = Paths.get(appProps.getFileStorage().uploadDir());
         var filePath = directory.resolve(fileName);
 
-        try {
-            Files.write(filePath, fileBytes);
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
+        Files.createDirectories(directory);
+        Files.write(filePath, fileBytes);
 
         return ServletUriComponentsBuilder.fromCurrentContextPath()
             .path(appProps.getFileStorage().uploadDir())
