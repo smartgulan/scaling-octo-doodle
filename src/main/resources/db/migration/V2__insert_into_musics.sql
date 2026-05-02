@@ -1,2 +1,15 @@
-insert into musics(id, file_url, space_purpose, atmosphere)
-values
+insert into musics(id, file_url, mood, atmosphere)
+values (default, 'https://shaiyosfugzuxnbpqyef.supabase.co/storage/v1/object/public/music/Warm%20&%20welcoming%20+%20Feel%20comfortable%20staying%20longer/bruno.mp3', 'SLOW_DOWN_AND_RELAX', 'WARM_AND_WELCOMING'),
+       (default, 'https://shaiyosfugzuxnbpqyef.supabase.co/storage/v1/object/public/music/Warm%20&%20welcoming%20+%20Feel%20comfortable%20staying%20longer/bruno.mp3', 'FEEL_COMFORTABLE_STAYING_LONGER', 'WARM_AND_WELCOMING'),
+       (default, 'https://shaiyosfugzuxnbpqyef.supabase.co/storage/v1/object/public/music/Warm%20&%20welcoming%20+%20Feel%20comfortable%20staying%20longer/bruno.mp3', 'FEEL_ENERGIZED_AND_SOCIAL', 'WARM_AND_WELCOMING'),
+       (default, 'https://shaiyosfugzuxnbpqyef.supabase.co/storage/v1/object/public/music/Warm%20&%20welcoming%20+%20Feel%20comfortable%20staying%20longer/bruno.mp3', 'FEEL_LUXURIOUS_AND_SOPHISTICATED', 'WARM_AND_WELCOMING'),
+       (default, 'https://shaiyosfugzuxnbpqyef.supabase.co/storage/v1/object/public/music/Warm%20&%20welcoming%20+%20Feel%20comfortable%20staying%20longer/bruno.mp3', 'MOVE_EFFICIENTLY_AND_DECIDE_QUICKLY', 'WARM_AND_WELCOMING'),
+       (default, 'https://shaiyosfugzuxnbpqyef.supabase.co/storage/v1/object/public/music/Warm%20&%20welcoming%20+%20Feel%20comfortable%20staying%20longer/bruno.mp3', 'FEEL_ENERGIZED_AND_SOCIAL', 'MODERN_AND_ENERGETIC'),
+       (default, 'https://shaiyosfugzuxnbpqyef.supabase.co/storage/v1/object/public/music/Warm%20&%20welcoming%20+%20Feel%20comfortable%20staying%20longer/bruno.mp3', 'FEEL_COMFORTABLE_STAYING_LONGER', 'MODERN_AND_ENERGETIC'),
+       (default, 'https://shaiyosfugzuxnbpqyef.supabase.co/storage/v1/object/public/music/Warm%20&%20welcoming%20+%20Feel%20comfortable%20staying%20longer/bruno.mp3', 'SLOW_DOWN_AND_RELAX', 'MODERN_AND_ENERGETIC'),
+       (default, 'https://shaiyosfugzuxnbpqyef.supabase.co/storage/v1/object/public/music/Warm%20&%20welcoming%20+%20Feel%20comfortable%20staying%20longer/bruno.mp3', 'FEEL_LUXURIOUS_AND_SOPHISTICATED', 'PREMIUM_AND_SOPHISTICATED'),
+       (default, 'https://shaiyosfugzuxnbpqyef.supabase.co/storage/v1/object/public/music/Warm%20&%20welcoming%20+%20Feel%20comfortable%20staying%20longer/bruno.mp3', 'SLOW_DOWN_AND_RELAX', 'PREMIUM_AND_SOPHISTICATED'),
+       (default, 'https://shaiyosfugzuxnbpqyef.supabase.co/storage/v1/object/public/music/Warm%20&%20welcoming%20+%20Feel%20comfortable%20staying%20longer/bruno.mp3', 'MOVE_EFFICIENTLY_AND_DECIDE_QUICKLY', 'SOCIAL_AND_STYLISH'),
+       (default, 'https://shaiyosfugzuxnbpqyef.supabase.co/storage/v1/object/public/music/Warm%20&%20welcoming%20+%20Feel%20comfortable%20staying%20longer/bruno.mp3', 'SLOW_DOWN_AND_RELAX', 'NATURAL_AND_MINDFUL'),
+       (default, 'https://shaiyosfugzuxnbpqyef.supabase.co/storage/v1/object/public/music/Warm%20&%20welcoming%20+%20Feel%20comfortable%20staying%20longer/bruno.mp3', 'FEEL_COMFORTABLE_STAYING_LONGER', 'TRADITIONAL_AND_CULTURAL_CHINESE'),
+       (default, 'https://shaiyosfugzuxnbpqyef.supabase.co/storage/v1/object/public/music/Warm%20&%20welcoming%20+%20Feel%20comfortable%20staying%20longer/bruno.mp3', 'SLOW_DOWN_AND_RELAX', 'TRADITIONAL_AND_CULTURAL_JAPANESE')

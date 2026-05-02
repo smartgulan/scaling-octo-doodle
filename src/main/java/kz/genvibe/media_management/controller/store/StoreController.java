@@ -40,6 +40,7 @@ public class StoreController {
         }
 
         model.addAttribute("stores", appUser.getOrganization().getStores());
+        model.addAttribute("organization", appUser.getOrganization());
         return "pages/store-dashboard";
     }
 

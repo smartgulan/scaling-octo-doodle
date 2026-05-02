@@ -21,11 +21,11 @@ public class JingleSlot extends CreateEntity {
     @Column(nullable = false)
     private LocalDateTime playTime;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "jingle_id", nullable = false)
     private Jingle jingle;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "jingle_schedule_id", nullable = false)
     private JingleSchedule jingleSchedule;
 

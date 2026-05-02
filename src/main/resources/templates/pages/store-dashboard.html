@@ -61,5 +61,153 @@
 
     <div th:replace="~{fragments/toast :: toast}"></div>
 
+    <script th:inline="javascript">
+        const orgId = [[${organization.id}]];
+
+        let stompClient = null;
+        let mainAudio = new Audio();
+        let playlist = [];
+        let currentTrackIndex = 0;
+        let isPlaying = false;
+        let isJinglePlaying = false;
+
+        const orbBtn = document.querySelector('.orb-play');
+        const orbIcon = document.querySelector('.orb img');
+        const orbContainer = document.querySelector('.orb');
+
+        mainAudio.crossOrigin = "anonymous";
+        mainAudio.volume = 1.0;
+
+
+        function connect() {
+            const socket = new SockJS('/ws-player');
+            stompClient = Stomp.over(socket);
+            stompClient.debug = null;
+
+            stompClient.connect({}, function (frame) {
+                console.log('STOMP Connected: ' + frame);
+
+                stompClient.subscribe('/topic/org.' + orgId + '.init', function (message) {
+                    const data = JSON.parse(message.body);
+                    console.log('Initial state received:', data);
+
+                    playlist = data.playlistUrls || [];
+                    if (playlist.length > 0 && isPlaying && (mainAudio.paused || !mainAudio.src)) {
+                        playTrack(0);
+                    }
+                });
+
+                stompClient.subscribe('/topic/org.' + orgId + '.commands', function (message) {
+                    const command = JSON.parse(message.body);
+                    handleCommand(command);
+                });
+
+                stompClient.subscribe('/topic/org.' + orgId + '.schedule', function (schedule) {
+                    const slots = JSON.parse(schedule.body);
+                    console.log('Schedule synced. Active slots:', slots.length);
+                });
+
+                stompClient.send("/app/sync." + orgId, {}, {});
+            }, function (error) {
+                console.error('STOMP error:', error);
+                // Реконнект через 5 секунд при ошибке
+                setTimeout(connect, 5000);
+            });
+        }
+
+        function playTrack(index) {
+            if (playlist.length === 0) return;
+
+            currentTrackIndex = index % playlist.length;
+            mainAudio.src = playlist[currentTrackIndex];
+
+            mainAudio.play().catch(err => {
+                console.error("Playback error:", err);
+                setTimeout(() => playTrack(currentTrackIndex + 1), 2000);
+            });
+        }
+
+        mainAudio.onended = () => {
+            if (!isJinglePlaying) {
+                playTrack(currentTrackIndex + 1);
+            }
+        };
+
+        function handleCommand(command) {
+            if (command.type === 'PLAY_JINGLE' && isPlaying) {
+                playJingle(command.jingleUrl, command.volume);
+            } else if (command.type === 'FORCE_DISCONNECT') {
+                stopEverything();
+                alert("This account is logged in from another device.");
+            }
+        }
+
+        function playJingle(url, targetVolume) {
+            if (isJinglePlaying) return;
+
+            isJinglePlaying = true;
+            const jingleAudio = new Audio(url);
+
+            jingleAudio.volume = 1.0;
+            fadeAudio(mainAudio, 0.1, 400);
+            setTimeout(() => {
+                jingleAudio.play().catch(err => {
+                    console.error("Jingle playback failed:", err);
+                    isJinglePlaying = false;
+                    fadeAudio(mainAudio, 1.0, 400);
+                });
+            }, 200);
+
+            jingleAudio.onended = () => {
+                fadeAudio(mainAudio, 1.0, 800);
+                isJinglePlaying = false;
+
+                if (mainAudio.ended) {
+                    playTrack(currentTrackIndex + 1);
+                }
+            };
+        }
+
+        function fadeAudio(audio, targetVolume, duration) {
+            const startVolume = audio.volume;
+            const diff = targetVolume - startVolume;
+            const steps = 25;
+            const stepTime = duration / steps;
+            let currentStep = 0;
+
+            const interval = setInterval(() => {
+                currentStep++;
+                const nextVol = startVolume + (diff * (currentStep / steps));
+                audio.volume = Math.min(Math.max(nextVol, 0), 1); // Clamp 0-1
+
+                if (currentStep >= steps) clearInterval(interval);
+            }, stepTime);
+        }
+
+        function stopEverything() {
+            mainAudio.pause();
+            mainAudio.src = "";
+            isPlaying = false;
+            orbIcon.style.display = 'none';
+            orbBtn.classList.remove('active');
+            if (stompClient) {
+                stompClient.disconnect();
+                stompClient = null;
+            }
+        }
+
+        orbBtn.addEventListener('click', () => {
+            if (!isPlaying) {
+                isPlaying = true;
+                orbIcon.style.display = 'block';
+                orbBtn.classList.add('active');
+                connect();
+            } else {
+                stopEverything();
+            }
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
 </th:block>
 </html>

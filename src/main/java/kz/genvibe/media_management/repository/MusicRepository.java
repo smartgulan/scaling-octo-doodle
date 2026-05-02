@@ -11,4 +11,6 @@ import java.util.Optional;
 public interface MusicRepository extends JpaRepository<Music, Long> {
     List<Music> findDistinctBy();
     Optional<Music> findTopByAtmosphereAndMood(MusicAtmosphere atmosphere, MusicMood mood);
+
+    List<Music> findAllByAtmosphereAndMood(MusicAtmosphere atmosphere, MusicMood mood);
 }

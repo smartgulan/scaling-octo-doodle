@@ -2,6 +2,7 @@ package kz.genvibe.media_management.service.internal.impl;
 
 import jakarta.persistence.EntityNotFoundException;
 import kz.genvibe.media_management.exception.JingleCreationLimitExceededException;
+import kz.genvibe.media_management.model.domain.PlayerCommand;
 import kz.genvibe.media_management.model.domain.dto.jingle.JingleAddStoresDto;
 import kz.genvibe.media_management.model.domain.dto.jingle.JingleApproveDto;
 import kz.genvibe.media_management.model.domain.dto.jingle.JingleCreateDto;
@@ -9,14 +10,18 @@ import kz.genvibe.media_management.model.entity.AppUser;
 import kz.genvibe.media_management.model.entity.Jingle;
 import kz.genvibe.media_management.model.entity.JingleSchedule;
 import kz.genvibe.media_management.model.entity.JingleSlot;
+import kz.genvibe.media_management.model.enums.CommandType;
 import kz.genvibe.media_management.model.enums.JingleSlotStatus;
 import kz.genvibe.media_management.repository.JingleRepository;
 import kz.genvibe.media_management.repository.JingleScheduleRepository;
+import kz.genvibe.media_management.repository.JingleSlotRepository;
 import kz.genvibe.media_management.service.integration.ElevenlabsIntegrationService;
 import kz.genvibe.media_management.service.internal.JingleService;
 import kz.genvibe.media_management.service.internal.StoreService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,6 +38,8 @@ public class JingleServiceImpl implements JingleService {
     private final ElevenlabsIntegrationService elevenlabsIntegrationService;
     private final JingleRepository jingleRepository;
     private final JingleScheduleRepository jingleScheduleRepository;
+    private final JingleSlotRepository jingleSlotRepository;
+    private final SimpMessagingTemplate messagingTemplate;
 
     @Override
     @Transactional
@@ -138,6 +145,33 @@ public class JingleServiceImpl implements JingleService {
 
             schedule.addSlot(slot);
             nextSlotTime = nextSlotTime.plusMinutes(minutesInterval);
+        }
+    }
+
+    @Scheduled(cron = "0 * * * * *")
+    @Transactional
+    public void checkAndBroadcastJingles() {
+        log.info("starting broadcast session");
+        var now = LocalDateTime.now().withSecond(0).withNano(0);
+        var currentSlots = jingleSlotRepository.findJingleSlotsByPlayTimeAndStatus(now, JingleSlotStatus.PENDING);
+
+        for (var slot : currentSlots) {
+            var orgId = slot.getJingleSchedule().getOrganization().getId();
+
+            var command = new PlayerCommand(
+                CommandType.PLAY_JINGLE,
+                slot.getJingle().getFileUrl(),
+                slot.getId(),
+                0.1
+            );
+
+            messagingTemplate.convertAndSend("/topic/org." + orgId + ".commands", command);
+
+            slot.setStatus(JingleSlotStatus.PLAYED);
+        }
+
+        if (!currentSlots.isEmpty()) {
+            log.info("Broadcasted {} jingles at {}", currentSlots.size(), now);
         }
     }
 

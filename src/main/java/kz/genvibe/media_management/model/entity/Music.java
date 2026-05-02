@@ -15,7 +15,7 @@ import lombok.*;
 @Builder
 public class Music extends BaseEntity {
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String fileUrl;
 
     @Column

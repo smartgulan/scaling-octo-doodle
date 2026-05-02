@@ -61,7 +61,8 @@ public class WebSecurityConfig implements WebMvcConfigurer {
                     "/css/**",
                     "/js/**",
                     "/users/finalize",
-                    "/ws-player/**"
+                    "/ws-player/**",
+                    "/files/**"
                 ).permitAll()
                 .requestMatchers("/stores/{id}/{uuid}").hasAuthority(UserRole.ROLE_USER.getAuthority())
                 .anyRequest().hasAuthority(UserRole.ROLE_ADMIN.name())

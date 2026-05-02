@@ -21,7 +21,7 @@ public class JingleSchedule extends UpdateEntity {
     private Organization organization;
 
     @Builder.Default
-    @OneToMany(mappedBy = "jingleSchedule", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "jingleSchedule", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @OrderBy("playTime asc")
     private List<JingleSlot> dailyJingleSlots = new ArrayList<>();
 
