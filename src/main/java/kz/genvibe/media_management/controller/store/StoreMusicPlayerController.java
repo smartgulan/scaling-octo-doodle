@@ -9,6 +9,7 @@ import kz.genvibe.media_management.repository.JingleScheduleRepository;
 import kz.genvibe.media_management.repository.MusicRepository;
 import kz.genvibe.media_management.repository.OrganizationRepository;
 import kz.genvibe.media_management.repository.StoreRepository;
+import kz.genvibe.media_management.service.internal.AnalyticsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Controller;
 @Slf4j
 public class StoreMusicPlayerController {
 
+    private final AnalyticsService analyticsService;
     private final StoreRepository storeRepository;
     private final OrganizationRepository organizationRepository;
     private final JingleScheduleRepository scheduleRepository;
@@ -54,6 +56,11 @@ public class StoreMusicPlayerController {
         );
 
         messagingTemplate.convertAndSend("/topic/store." + storeId + ".init", initialState);
+    }
+
+    @MessageMapping("/track.ping.{storeId}")
+    public void handleHeartbeat(@DestinationVariable long storeId) {
+        analyticsService.recordPing(storeId);
     }
 
 }
