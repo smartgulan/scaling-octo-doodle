@@ -9,61 +9,62 @@
                     )}">
 
 <th:block th:fragment="content">
-<!--    <p class="subtitle">Choose a music style that matches your brand atmosphere.</p>-->
-
     <div th:if="${activePage == 'music'}" class="music-type-list">
-        <div class="atmosphere-cards">
-            <div class="music-subtitle">
-                <h3>Atmosphere</h3>
-                <p>Select the AI-generated atmosphere for all your stores. You can update this anytime.</p>
+        <form th:action="@{/api/music}" method="post" id="musicForm">
+            <div class="atmosphere-cards">
+                <div class="music-subtitle">
+                    <h3>Atmosphere</h3>
+                    <p>Select the AI-generated atmosphere for all your stores. You can update this anytime.</p>
+                </div>
+                <div class="chips">
+                    <label th:each="type : ${musicAtmospheres}" class="chip">
+                        <input type="radio" name="atmosphere" th:value="${type}">
+                        <span th:text="${type.name}">Music Type</span>
+                    </label>
+                </div>
             </div>
-            <div class="chips">
-                <label th:each="type : ${musicAtmospheres}" class="chip">
-                    <input type="radio" name="atmosphere" th:value="${type}">
-                    <span th:text="${type.name}">Music Type</span>
-                </label>
-            </div>
-        </div>
-        <div class="atmosphere-cards">
-            <div class="music-subtitle">
-                <h3>Mood</h3>
-                <p>Select the AI-generated mood for all your stores. You can update this anytime.</p>
-            </div>
-            <div class="chips">
-                <label th:each="type : ${musicMoods}" class="chip">
-                    <input type="radio" name="mood" th:value="${type}">
-                    <span th:text="${type.name}">Music Type</span>
-                </label>
-            </div>
-        </div>
-
-        <div th:each="music : ${musics}"
-             class="music-card">
-<!--             th:data-name="${type.name}">-->
-
-            <div class="music-info">
-                <h3 th:text="${music.atmosphere.name}">Style Name</h3>
-                <p th:text="${music.mood.name}">Style description text goes here.</p>
+            <div class="atmosphere-cards">
+                <div class="music-subtitle">
+                    <h3>Mood</h3>
+                    <p>Select the AI-generated mood for all your stores. You can update this anytime.</p>
+                </div>
+                <div class="chips">
+                    <label th:each="type : ${musicMoods}" class="chip">
+                        <input type="radio" name="mood" th:value="${type}">
+                        <span th:text="${type.name}">Music Type</span>
+                    </label>
+                </div>
             </div>
 
-            <div class="waveform-placeholder">
-                <canvas class="waveCanvas"></canvas>
+            <div th:each="music : ${musics}" class="music-card">
+                <div class="music-info">
+                    <h3 th:text="${music.atmosphere.name}">Style Name</h3>
+                    <p th:text="${music.mood.name}">Style description text goes here.</p>
+                </div>
+                <div class="waveform-placeholder">
+                    <canvas class="waveCanvas"></canvas>
+                </div>
             </div>
 
-        </div>
+            <div class="action-footer">
+                <div class="footer-buttons">
+                    <a th:href="@{/dashboard}" class="btn-cancel">Cancel</a>
+                    <button type="submit" class="btn-save" id="saveButton" disabled>Select and save</button>
+                </div>
+                <p class="footer-note">This style will be used as the default for all active stores</p>
+            </div>
+        </form>
     </div>
 
-    <div class="action-footer">
-        <div class="footer-buttons">
-            <a th:href="@{/dashboard}" class="btn-cancel">Cancel</a>
+    <script>
+        const form = document.getElementById('musicForm');
+        const saveButton = document.getElementById('saveButton');
 
-            <form th:action="@{/api/music}" method="post" id="musicForm">
-                <div id="selectedInputsContainer"></div>
-                <button type="submit" class="btn-save" id="saveButton" disabled>Select and save</button>
-            </form>
-        </div>
-        <p class="footer-note">This style will be used as the default for all active stores</p>
-    </div>
-
+        form.addEventListener('change', () => {
+            const atmosphere = form.querySelector('input[name="atmosphere"]:checked');
+            const mood = form.querySelector('input[name="mood"]:checked');
+            saveButton.disabled = !(atmosphere && mood);
+        });
+    </script>
 </th:block>
 </html>

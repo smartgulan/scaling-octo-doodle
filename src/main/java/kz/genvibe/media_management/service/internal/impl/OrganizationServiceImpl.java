@@ -41,6 +41,8 @@ public class OrganizationServiceImpl implements OrganizationService {
         organization.setMusicAtmosphere(atmosphere);
         organization.setMusicMood(mood);
 
+        organizationRepository.save(organization);
+
         log.info("Saved music types for organization: {}", organization.getCompanyName());
     }
 

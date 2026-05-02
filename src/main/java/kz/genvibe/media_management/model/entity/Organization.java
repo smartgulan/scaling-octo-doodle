@@ -61,4 +61,8 @@ public class Organization extends UpdateEntity {
     @OneToMany(mappedBy = "organization", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Jingle> jingles = new HashSet<>();
 
+    public boolean hasEnhancedDashboardView() {
+        return !stores.isEmpty() && !jingles.isEmpty();
+    }
+
 }

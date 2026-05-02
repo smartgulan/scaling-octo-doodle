@@ -538,10 +538,30 @@
             setTimeout(() => toast.classList.remove("show"), 2500);
         }
     </script>
-    <script>
-        document.getElementById('playPauseBtn').addEventListener('click', function () {
-            this.classList.toggle('is-playing');
+    <script th:inline="javascript">
+        const musicPreviewUrl = /*[[${musicPreviewUrl}]]*/ null;
+
+        const audio = musicPreviewUrl ? new Audio(musicPreviewUrl) : null;
+        const btn = document.getElementById('playPauseBtn');
+
+        btn.addEventListener('click', function () {
+            if (!audio) return;
+
+            if (audio.paused) {
+                audio.play();
+                btn.classList.add('is-playing');
+            } else {
+                audio.pause();
+                btn.classList.remove('is-playing');
+            }
         });
+
+        if (audio) {
+            audio.addEventListener('ended', () => {
+                btn.classList.remove('is-playing');
+            });
+        }
     </script>
+
 </th:block>
 </html>
