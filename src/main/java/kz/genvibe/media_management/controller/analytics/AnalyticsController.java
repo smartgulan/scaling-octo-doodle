@@ -21,6 +21,10 @@ public class AnalyticsController {
         @CurrentUser AppUser appUser,
         Model model
     ) {
+        final var organizationId = appUser.getOrganization().getId();
+        model.addAttribute("jingleData", analyticsService.collectJingleAggregateData(organizationId));
+        model.addAttribute("musicData", analyticsService.collectMusicData(organizationId));
+        model.addAttribute("storeData", analyticsService.collectStoreAggregateData(organizationId));
         return "pages/analytics";
     }
 

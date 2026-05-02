@@ -1,11 +1,19 @@
 package kz.genvibe.media_management.service.internal.impl;
 
+import jakarta.persistence.EntityManager;
+import kz.genvibe.media_management.model.entity.analytics.JingleAggregateAnalyticsData;
+import kz.genvibe.media_management.model.entity.analytics.MusicAnalyticsData;
+import kz.genvibe.media_management.model.entity.analytics.StoreAggregateAnalyticsData;
 import kz.genvibe.media_management.model.entity.analytics.StoreAnalyticsData;
 import kz.genvibe.media_management.repository.StoreRepository;
+import kz.genvibe.media_management.repository.analytics.JingleAggregateAnalyticsDataRepository;
+import kz.genvibe.media_management.repository.analytics.MusicAnalyticsDataRepository;
+import kz.genvibe.media_management.repository.analytics.StoreAggregateAnalyticsDataRepository;
 import kz.genvibe.media_management.repository.analytics.StoreAnalyticsRepository;
 import kz.genvibe.media_management.service.internal.AnalyticsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,8 +24,12 @@ import java.time.LocalDate;
 @Slf4j
 public class AnalyticsServiceImpl implements AnalyticsService {
 
+    private final JingleAggregateAnalyticsDataRepository jingleAggregateAnalyticsDataRepository;
+    private final MusicAnalyticsDataRepository musicAnalyticsDataRepository;
+    private final StoreAggregateAnalyticsDataRepository storeAggregateAnalyticsDataRepository;
     private final StoreAnalyticsRepository storeAnalyticsRepository;
     private final StoreRepository storeRepository;
+    private final EntityManager em;
 
     @Override
     @Transactional
@@ -38,6 +50,28 @@ public class AnalyticsServiceImpl implements AnalyticsService {
         stats.setPlayMinutes(stats.getPlayMinutes() + 1);
 
         storeAnalyticsRepository.save(stats);
+    }
+
+    @Override
+    public JingleAggregateAnalyticsData collectJingleAggregateData(long organizationId) {
+        return jingleAggregateAnalyticsDataRepository.findTopByOrganizationIdAndSnapshotDate(organizationId, LocalDate.now());
+    }
+
+    @Override
+    public MusicAnalyticsData collectMusicData(long organizationId) {
+        return musicAnalyticsDataRepository.findTopByOrganizationIdAndSnapshotDate(organizationId, LocalDate.now());
+    }
+
+    @Override
+    public StoreAggregateAnalyticsData collectStoreAggregateData(long organizationId) {
+        return storeAggregateAnalyticsDataRepository.findTopByOrganizationIdAndSnapshotDate(organizationId, LocalDate.now());
+    }
+
+    @Scheduled(cron = "0 0 * * * *")
+    public void refreshAllAnalyticsDataView() {
+        em.createNativeQuery("refresh materialized view concurrently music_analytics_data_view").executeUpdate();
+        em.createNativeQuery("refresh materialized view concurrently jingle_aggregate_analytics_data_view").executeUpdate();
+        em.createNativeQuery("refresh materialized view concurrently store_aggregate_analytics_data_view").executeUpdate();
     }
 
 }
