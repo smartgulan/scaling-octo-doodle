@@ -811,10 +811,14 @@
         function saveJingleStores() {
             if (!currentJingleId) return;
 
+            const csrfToken = document.querySelector('meta[name="_csrf"]')?.content;
+            const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content;
+
             fetch(`/api/jingles/${currentJingleId}/stores`, {
-                method: "POST",
+                method: "PATCH",
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
+                    [csrfHeader]: csrfToken
                 },
                 body: JSON.stringify([...selectedStoreIds])
             })
@@ -828,7 +832,6 @@
                 })
                 .catch(err => console.error("Save error:", err));
         }
-
         /* =========================
            CLOSE MODAL
         ========================= */
