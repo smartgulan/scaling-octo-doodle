@@ -27,6 +27,7 @@ public class DashboardController {
             .collect(Collectors.toSet());
         final var organization = appUser.getOrganization();
 
+        model.addAttribute("organization", organization);
         model.addAttribute("stores", stores);
         model.addAttribute("activeStores", activeStores);
         model.addAttribute("atmosphere", new Atmosphere("Warm & Welcoming", "guitar, bass guitar, keys, piano.  BPM range: 102-110"));

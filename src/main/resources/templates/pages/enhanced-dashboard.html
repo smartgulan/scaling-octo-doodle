@@ -187,7 +187,7 @@
                 <span class="icon" th:replace="~{fragments/icons :: icon-music}"></span>
                 <p>Selected Atmosphere</p>
             </div>
-            <p class="stat-atmosphere">Warm and Welcoming</p>
+            <p class="stat-atmosphere"><span id="selectedInfo" th:text="${organization.musicAtmosphere.name}"</span></p>
             <p class="stat-label">(modernity)</p>
             <p class="stat-label">Synth, lead, bass guitar, rhythm guitar</p>
             <p class="stat-label">BPM range: 110-115</p>
@@ -251,8 +251,8 @@
                 <span class="icon" th:replace="~{fragments/icons :: icon-store}"></span>
                 <p>Active Stores</p>
             </div>
-            <p class="stat-value">12</p>
-            <p class="stat-sub">15 total</p>
+            <p class="stat-value" th:value="${activeStores.size()}">12</p>
+            <p class="stat-sub" th:value="${stores.size()}">15 total</p>
         </div>
         <div class="stat-card">
             <svg class="stat-card__gradient" width="380" height="133" viewBox="0 0 380 133" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMaxYMax slice">

@@ -32,18 +32,26 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
-    margin-bottom: 100px;
 }
-
+.music-wrapper{
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
 .music-card {
-    background: #fff;
     border-radius: 16px;
-    padding: 16px 24px;
     display: flex;
     align-items: center;
     cursor: pointer;
     transition: all 0.2s ease;
-    border: 2px solid transparent;
+    gap: 24px;
+    border: 1px solid #EEE;
+    background: #FFFFFF66;
+    padding: 16px;
+    border-top: 1.5px solid;
+    border-image-source: linear-gradient(167.06deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 22.24%);
+    border-image-slice: 1;
+    box-shadow: 0px 1px 0px 1px #FFFFFF inset, 0px 2px 8px 0px #00000012;
 }
 
 .music-card:hover {
@@ -63,19 +71,22 @@
 }
 
 .music-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
     width: 300px;
 }
 
 .music-info h3 {
-    margin: 0 0 4px 0;
-    font-size: 1.1rem;
-    font-weight: 600;
+    font-size: 18px;
+    font-weight: 400;
+    color: black;
 }
 
 .music-info p {
-    margin: 0;
-    font-size: 0.9rem;
-    color: var(--text-muted);
+    font-weight: 400;
+    font-size: 14px;
+    color: #00000080;
 }
 
 /* Стилизация волны */
@@ -121,36 +132,41 @@
 
 /* Футер действий */
 .action-footer {
-    position: fixed;
-    bottom: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    margin-top: 8px;
     right: 60px;
     text-align: right;
 }
 
 .footer-buttons {
     display: flex;
-    gap: 16px;
+    gap: 24px;
     justify-content: flex-end;
     margin-bottom: 12px;
 }
 
 .btn-cancel {
-    background: #fff;
-    border: 1px solid #e0e0e0;
-    padding: 12px 30px;
+    background: #F5F3F1;
+    border: 1px solid #00000033;
+    padding: 12px 16px;
     border-radius: 12px;
     text-decoration: none;
     color: #000;
-    font-weight: 500;
+    font-weight: 400;
+    font-size: 14px;
+    cursor: pointer;
 }
 
 .btn-save {
     background: #000;
     color: #fff;
     border: none;
-    padding: 12px 30px;
+    padding: 12px 16px;
     border-radius: 12px;
-    font-weight: 500;
+    font-weight: 400;
+    font-size: 14px;
     cursor: pointer;
 }
 
@@ -229,4 +245,82 @@
 .chip.small span {
     font-size: 12px;
     padding: 8px 14px;
+}
+.selected-info{
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    gap: 8px;
+    background: linear-gradient(90deg, rgba(251, 200, 212, 0.3) 0%, rgba(151, 149, 240, 0.3) 100%);
+    border-radius: 12px;
+    padding: 16px;
+}
+.selected-info span{
+    font-weight: 400;
+    font-size: 14px;
+}
+
+.music-container{
+    background: #FFFFFF66;
+    border-radius: 20px;
+    width: auto;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 16px;
+    border-top: 1.5px solid;
+    border-image-source: linear-gradient(167.06deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 22.24%);
+    border-image-slice: 1;
+    box-shadow: 0px 1px 0px 1px #FFFFFF inset, 0px 2px 8px 0px #00000012;
+}
+.music-container h3{
+    font-size: 16px;
+}
+
+.waveform-placeholder {
+    flex-grow: 1;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    max-width: 300px;
+}
+
+.waveCanvas {
+    width: 300px;
+    height: 34px;
+    display: block;
+}
+
+.play-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: 1px solid #00000033;
+    cursor: pointer;
+    background: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    padding: 0;
+}
+
+.play-btn .icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+}
+
+.play-btn .icon svg {
+    width: 16px;
+    height: 16px;
+}
+.music-card.selected {
+    border: 2px solid #000;
+    background: #f5f5f5;
 }
