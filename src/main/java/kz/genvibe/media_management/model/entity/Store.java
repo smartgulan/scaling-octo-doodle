@@ -41,11 +41,14 @@ public class Store extends UpdateEntity {
     private Organization organization;
 
     @Builder.Default
-    @ManyToMany(mappedBy = "stores")
+    @ManyToMany(mappedBy = "stores", fetch = FetchType.EAGER)
     private Set<Jingle> jingles = new HashSet<>();
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private AppUser storeUser;
+
+    @OneToOne(mappedBy = "store")
+    private JingleSchedule jingleSchedule;
 
 }

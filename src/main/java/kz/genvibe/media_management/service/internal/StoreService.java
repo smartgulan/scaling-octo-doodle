@@ -11,8 +11,9 @@ import java.util.UUID;
 public interface StoreService {
     // Read methods
     List<Store> getAllStores(AppUser appUser);
-    List<Store> getAllStoresByAppUserAndNames(AppUser appUser, List<String> names);
+    List<Store> getAllStoresByAppUserAndIdList(AppUser appUser, List<Long> idList);
     List<ActiveStoreDto> getAllActiveStores(AppUser appUser);
+    Store getStoreById(long id);
 
     // Modification methods
     void addStore(AppUser appUser, StoreCreateDto dto);

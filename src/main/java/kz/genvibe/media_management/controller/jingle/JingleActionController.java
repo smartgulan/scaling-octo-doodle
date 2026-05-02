@@ -2,7 +2,6 @@ package kz.genvibe.media_management.controller.jingle;
 
 import jakarta.validation.Valid;
 import kz.genvibe.media_management.config.annotations.CurrentUser;
-import kz.genvibe.media_management.model.domain.dto.jingle.JingleAddStoresDto;
 import kz.genvibe.media_management.model.domain.dto.jingle.JingleApproveDto;
 import kz.genvibe.media_management.model.domain.dto.jingle.JingleCreateDto;
 import kz.genvibe.media_management.model.entity.AppUser;
@@ -10,6 +9,8 @@ import kz.genvibe.media_management.service.internal.JingleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("/api/jingles")
@@ -37,23 +38,22 @@ public class JingleActionController {
     }
 
     @PatchMapping("/{id}/stores")
-    public String addJingleToLocation(
+    @ResponseBody
+    public void addJingleToLocations(
         @PathVariable long id,
-        @ModelAttribute JingleAddStoresDto dto,
+        @RequestBody List<Long> idList,
         @CurrentUser AppUser appUser
     ) {
-        jingleService.addJingleToStores(id, dto, appUser);
-        return "redirect:/jingles";
+        jingleService.addJingleToStores(id, idList, appUser);
     }
 
     @ResponseBody
-    @PatchMapping("/{id}")
+    @PatchMapping("/approve-pause-request/{id}")
     public String approveJingle(
         @PathVariable long id,
-        @RequestBody JingleApproveDto dto,
         @CurrentUser AppUser appUser
     ) {
-        jingleService.setPauseApprovalStatus(id, dto, appUser);
+        jingleService.setPauseApprovalStatus(id, appUser);
         return "redirect:/jingles";
     }
 

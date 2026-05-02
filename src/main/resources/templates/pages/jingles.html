@@ -255,9 +255,18 @@
                         </div>
                     </div>
                     <div class="waveform-placeholder small"></div>
+                    <!-- Находим эту часть в вашем коде -->
                     <div class="item-actions">
                         <span th:if="${request.pauseApproved}" class="badge-approved">✓ Approved</span>
-                        <button th:if="${!request.pauseApproved}" class="btn-outline">Approve</button>
+
+                        <!-- Измененная кнопка -->
+                        <button th:if="${!request.pauseApproved}"
+                                class="btn-outline btn-approve-pause"
+                                th:data-id="${request.id}"
+                                onclick="handleApprovePause(this)">
+                            Approve
+                        </button>
+
                         <button class="btn-delete-icon"><i class="icon-trash"></i></button>
                     </div>
                 </div>
@@ -916,6 +925,56 @@
                 overlay.addEventListener("click", closeStoresModal);
             }
         });
+
+        async function handleApprovePause(btn) {
+            const id = btn.getAttribute('data-id');
+            const jingleItem = btn.closest('.jingle-item');
+
+            // Визуальный отклик (блокировка кнопки)
+            btn.disabled = true;
+            btn.style.opacity = '0.5';
+
+            try {
+                const csrfToken = document.querySelector('meta[name="_csrf"]')?.content;
+                const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content;
+
+                const response = await fetch(`/api/jingles/approve-pause-request/${id}`, {
+                    method: 'PATCH',
+                    headers: {
+                        [csrfHeader]: csrfToken,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    // Успех: заменяем кнопку на бейдж "Approved" и добавляем класс джинглу
+                    jingleItem.classList.add('status-approved');
+
+                    const actionsDiv = btn.parentElement;
+                    const approvedBadge = document.createElement('span');
+                    approvedBadge.className = 'badge-approved';
+                    approvedBadge.textContent = '✓ Approved';
+
+                    btn.remove(); // Удаляем кнопку Approve
+                    actionsDiv.prepend(approvedBadge); // Добавляем бейдж в начало блока действий
+
+                    // Если у вас есть система уведомлений (toast)
+                    if (typeof showToast === 'function') {
+                        showToast("Request approved successfully", "success");
+                    }
+                } else {
+                    const errorText = await response.text();
+                    console.error('Approve failed:', errorText);
+                    alert('Failed to approve request.');
+                    btn.disabled = false;
+                    btn.style.opacity = '1';
+                }
+            } catch (e) {
+                console.error('Network error:', e);
+                btn.disabled = false;
+                btn.style.opacity = '1';
+            }
+        }
     </script>
 </th:block>
 </html>

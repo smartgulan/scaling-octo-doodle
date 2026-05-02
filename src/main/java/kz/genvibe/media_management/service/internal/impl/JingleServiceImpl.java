@@ -3,13 +3,8 @@ package kz.genvibe.media_management.service.internal.impl;
 import jakarta.persistence.EntityNotFoundException;
 import kz.genvibe.media_management.exception.JingleCreationLimitExceededException;
 import kz.genvibe.media_management.model.domain.PlayerCommand;
-import kz.genvibe.media_management.model.domain.dto.jingle.JingleAddStoresDto;
-import kz.genvibe.media_management.model.domain.dto.jingle.JingleApproveDto;
 import kz.genvibe.media_management.model.domain.dto.jingle.JingleCreateDto;
-import kz.genvibe.media_management.model.entity.AppUser;
-import kz.genvibe.media_management.model.entity.Jingle;
-import kz.genvibe.media_management.model.entity.JingleSchedule;
-import kz.genvibe.media_management.model.entity.JingleSlot;
+import kz.genvibe.media_management.model.entity.*;
 import kz.genvibe.media_management.model.enums.CommandType;
 import kz.genvibe.media_management.model.enums.JingleSlotStatus;
 import kz.genvibe.media_management.repository.JingleRepository;
@@ -28,6 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -62,11 +59,6 @@ public class JingleServiceImpl implements JingleService {
 
         jingleRepository.save(jingle);
 
-        var schedule = jingleScheduleRepository.findJingleScheduleByOrganization(organization)
-            .orElseGet(() -> jingleScheduleRepository.save(JingleSchedule.builder().organization(organization).build()));
-
-        generateSlotsForJingle(jingle, schedule);
-
         log.info("Jingle created for organization: {}", appUser.getOrganization().getCompanyName());
     }
 
@@ -82,26 +74,31 @@ public class JingleServiceImpl implements JingleService {
     @Transactional
     public void setPauseApprovalStatus(
         long id,
-        JingleApproveDto dto,
         AppUser appUser
     ) {
         var jingle = jingleRepository.findJingleByIdAndOrganization(id, appUser.getOrganization())
             .orElseThrow(() -> new EntityNotFoundException("Jingle not found"));
-        jingle.setPauseApproved(dto.isApproved());
+        jingle.setPauseApproved(true);
     }
 
     @Override
     @Transactional
     public void addJingleToStores(
         long id,
-        JingleAddStoresDto dto,
+        List<Long> idList,
         AppUser appUser
     ) {
         var jingle = jingleRepository.findJingleByIdAndOrganization(id, appUser.getOrganization())
             .orElseThrow(() -> new EntityNotFoundException("Jingle not found"));
-        var stores = storeService.getAllStoresByAppUserAndNames(appUser, dto.storeNames());
+        var stores = storeService.getAllStoresByAppUserAndIdList(appUser, idList);
 
         jingle.getStores().addAll(stores);
+
+        final var jingleSchedules = stores.stream()
+            .map(Store::getJingleSchedule)
+            .collect(Collectors.toSet());
+
+        generateSlotsForJingle(jingle, jingleSchedules);
     }
 
     @Override
@@ -124,8 +121,8 @@ public class JingleServiceImpl implements JingleService {
         return jingleRepository.findJinglesByOrganizationAndRequestedToPauseIsTrue(appUser.getOrganization());
     }
 
-    private void generateSlotsForJingle(Jingle jingle, JingleSchedule schedule) {
-        var now = LocalDateTime.now();
+    private void generateSlotsForJingle(Jingle jingle, Set<JingleSchedule> schedules) {
+        var now = LocalDateTime.now().withSecond(0).withNano(0);
 
         if (now.isAfter(jingle.getEndDate()) || now.plusDays(1).isBefore(jingle.getStartDate())) {
             return;
@@ -135,28 +132,33 @@ public class JingleServiceImpl implements JingleService {
         var nextSlotTime = jingle.getStartDate().isAfter(now) ? jingle.getStartDate() : now;
         var endOfDay = now.toLocalDate().atTime(LocalTime.MAX);
 
-        while (nextSlotTime.isBefore(endOfDay) && nextSlotTime.isBefore(jingle.getEndDate())) {
-            var slot = JingleSlot.builder()
-                .jingle(jingle)
-                .jingleSchedule(schedule)
-                .playTime(nextSlotTime)
-                .status(JingleSlotStatus.PENDING)
-                .build();
+        for (final var schedule: schedules) {
+            while (nextSlotTime.isBefore(endOfDay) && nextSlotTime.isBefore(jingle.getEndDate())) {
+                var slot = JingleSlot.builder()
+                    .jingle(jingle)
+                    .jingleSchedule(schedule)
+                    .playTime(nextSlotTime)
+                    .status(JingleSlotStatus.PENDING)
+                    .build();
 
-            schedule.addSlot(slot);
-            nextSlotTime = nextSlotTime.plusMinutes(minutesInterval);
+                schedule.addSlot(slot);
+                nextSlotTime = nextSlotTime.plusMinutes(minutesInterval);
+            }
         }
     }
 
     @Scheduled(cron = "0 * * * * *")
     @Transactional
     public void checkAndBroadcastJingles() {
-        log.info("starting broadcast session");
+        log.info("Starting broadcast");
         var now = LocalDateTime.now().withSecond(0).withNano(0);
-        var currentSlots = jingleSlotRepository.findJingleSlotsByPlayTimeAndStatus(now, JingleSlotStatus.PENDING);
+        var currentSlots = jingleSlotRepository.findJingleSlotsByPlayTimeAndStatusAndJingleRequestedToPauseIsFalse(
+            now,
+            JingleSlotStatus.PENDING
+        );
 
         for (var slot : currentSlots) {
-            var orgId = slot.getJingleSchedule().getOrganization().getId();
+            var storeId = slot.getJingleSchedule().getStore().getId();
 
             var command = new PlayerCommand(
                 CommandType.PLAY_JINGLE,
@@ -165,7 +167,7 @@ public class JingleServiceImpl implements JingleService {
                 0.1
             );
 
-            messagingTemplate.convertAndSend("/topic/org." + orgId + ".commands", command);
+            messagingTemplate.convertAndSend("/topic/store." + storeId + ".commands", command);
 
             slot.setStatus(JingleSlotStatus.PLAYED);
         }

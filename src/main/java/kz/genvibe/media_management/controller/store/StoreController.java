@@ -38,8 +38,10 @@ public class StoreController {
         if (!storeService.verifyStore(id, uuid, appUser)) {
             return "error/404";
         }
+        final var store = storeService.getStoreById(id);
 
-        model.addAttribute("stores", appUser.getOrganization().getStores());
+        model.addAttribute("store", store);
+        model.addAttribute("activeJingles", store.getJingles());
         model.addAttribute("organization", appUser.getOrganization());
         return "pages/store-dashboard";
     }

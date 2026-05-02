@@ -17,8 +17,8 @@ import java.util.List;
 public class JingleSchedule extends UpdateEntity {
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "organization_id", nullable = false)
-    private Organization organization;
+    @JoinColumn(name = "store_id", nullable = false)
+    private Store store;
 
     @Builder.Default
     @OneToMany(mappedBy = "jingleSchedule", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
@@ -32,6 +32,10 @@ public class JingleSchedule extends UpdateEntity {
     public void addSlot(JingleSlot slot) {
         dailyJingleSlots.add(slot);
         slot.setJingleSchedule(this);
+    }
+
+    public JingleSchedule(Store store) {
+        this.store = store;
     }
 
 }

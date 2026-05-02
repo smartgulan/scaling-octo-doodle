@@ -8,5 +8,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface JingleSlotRepository extends JpaRepository<JingleSlot, Long> {
-    List<JingleSlot> findJingleSlotsByPlayTimeAndStatus(LocalDateTime playTime, JingleSlotStatus status);
+    List<JingleSlot> findJingleSlotsByPlayTimeAndStatusAndJingleRequestedToPauseIsFalse(
+        LocalDateTime playTime,
+        JingleSlotStatus status
+    );
 }
