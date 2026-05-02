@@ -1,6 +1,8 @@
-DROP MATERIALIZED VIEW IF EXISTS music_analytics_data_view;
+DROP
+MATERIALIZED VIEW IF EXISTS music_analytics_data_view;
 
-CREATE MATERIALIZED VIEW music_analytics_data_view AS
+CREATE
+MATERIALIZED VIEW music_analytics_data_view AS
 WITH daily_stats AS (
     SELECT
         s.organization_id,
@@ -10,14 +12,17 @@ WITH daily_stats AS (
              JOIN stores s ON sad.store_name = s.name
     GROUP BY s.organization_id, sad.snapshot_date
 ),
-     weekly_map AS (
-         SELECT
-             organization_id,
-             jsonb_object_agg(trim(to_char(snapshot_date, 'Day')), daily_minutes) as weekly_plays_map
-         FROM daily_stats
-         WHERE snapshot_date >= CURRENT_DATE - INTERVAL '7 days'
-         GROUP BY organization_id
-     ),
+weekly_map AS (
+    SELECT
+        organization_id,
+        jsonb_object_agg(
+            to_char(snapshot_date, 'Dy'),  -- Mon, Tue, Wed...
+            daily_minutes
+        ) AS weekly_plays_map
+    FROM daily_stats
+    WHERE snapshot_date >= CURRENT_DATE - INTERVAL '7 days'
+    GROUP BY organization_id
+),
      growth_calc AS (
          SELECT
              organization_id,
@@ -38,18 +43,18 @@ WITH daily_stats AS (
          GROUP BY s.organization_id, sad.store_name
          ORDER BY s.organization_id, ts_total DESC
      )
-SELECT
-    ob.id as id,
-    ob.id as organization_id,
-    CURRENT_DATE as snapshot_date, -- Дата генерации аналитики
-    COALESCE(wm.weekly_plays_map, '{}'::jsonb) as weekly_plays,
-    COALESCE(gc.total_now, 0) as total_plays,
-    CASE
-        WHEN COALESCE(gc.total_prev, 0) = 0 AND COALESCE(gc.total_now, 0) > 0 THEN 100
-        WHEN COALESCE(gc.total_prev, 0) > 0
-            THEN ((gc.total_now::float - gc.total_prev::float) * 100 / gc.total_prev::float)::int
+SELECT ob.id                                      as id,
+       ob.id                                      as organization_id,
+       CURRENT_DATE                               as snapshot_date, -- Дата генерации аналитики
+       COALESCE(wm.weekly_plays_map, '{}'::jsonb) as weekly_plays,
+       COALESCE(gc.total_now, 0)                  as total_plays,
+       CASE
+           WHEN COALESCE(gc.total_prev, 0) = 0 AND COALESCE(gc.total_now, 0) > 0 THEN 100
+           WHEN COALESCE(gc.total_prev, 0) > 0
+               THEN ((gc.total_now::float - gc.total_prev::float) * 100 / gc.total_prev::float)::int
         ELSE 0
-        END as total_plays_growth_percentage,
+END
+as total_plays_growth_percentage,
     ROUND(COALESCE(gc.total_now, 0)::float / 7)::int as average_daily_plays,
     COALESCE(tsp.store_name, 'N/A') as top_store_name,
     0 as top_store_plays_growth_percentage
@@ -62,9 +67,11 @@ WITH DATA;
 CREATE UNIQUE INDEX idx_music_analytics_org_id ON music_analytics_data_view (id);
 
 
-DROP MATERIALIZED VIEW IF EXISTS store_aggregate_analytics_data_view;
+DROP
+MATERIALIZED VIEW IF EXISTS store_aggregate_analytics_data_view;
 
-CREATE MATERIALIZED VIEW store_aggregate_analytics_data_view AS
+CREATE
+MATERIALIZED VIEW store_aggregate_analytics_data_view AS
 WITH slot_with_org AS (
     SELECT
         st.organization_id,
@@ -108,17 +115,17 @@ WITH slot_with_org AS (
                   GROUP BY swo.organization_id, j.category
               ) sub ORDER BY organization_id, task_count DESC
      )
-SELECT
-    ob.id as id,
-    ob.id as organization_id,
-    CURRENT_DATE as snapshot_date,
-    COALESCE(oc.total_played, 0) as total_jingle_broadcasts,
-    CASE
-        WHEN COALESCE(oc.played_last_week, 0) = 0 AND COALESCE(oc.played_this_week, 0) > 0 THEN 100
-        WHEN COALESCE(oc.played_last_week, 0) > 0
-            THEN ((oc.played_this_week::float - oc.played_last_week::float) * 100 / oc.played_last_week::float)::int
+SELECT ob.id                        as id,
+       ob.id                        as organization_id,
+       CURRENT_DATE                 as snapshot_date,
+       COALESCE(oc.total_played, 0) as total_jingle_broadcasts,
+       CASE
+           WHEN COALESCE(oc.played_last_week, 0) = 0 AND COALESCE(oc.played_this_week, 0) > 0 THEN 100
+           WHEN COALESCE(oc.played_last_week, 0) > 0
+               THEN ((oc.played_this_week::float - oc.played_last_week::float) * 100 / oc.played_last_week::float)::int
         ELSE 0
-        END as total_jingle_broadcasts_week_growth,
+END
+as total_jingle_broadcasts_week_growth,
     COALESCE(oc.rate, 0) as completion_rate,
     COALESCE(tj.announcement_text, 'No data') as most_played_jingle_name,
     COALESCE(tj.play_count, 0) as most_played_jingle_play_count,
@@ -133,9 +140,11 @@ WITH DATA;
 CREATE UNIQUE INDEX idx_store_aggregate_org_id ON store_aggregate_analytics_data_view (id);
 
 
-DROP MATERIALIZED VIEW IF EXISTS jingle_aggregate_analytics_data_view;
+DROP
+MATERIALIZED VIEW IF EXISTS jingle_aggregate_analytics_data_view;
 
-CREATE MATERIALIZED VIEW jingle_aggregate_analytics_data_view AS
+CREATE
+MATERIALIZED VIEW jingle_aggregate_analytics_data_view AS
 WITH organization_base AS (
     SELECT id AS org_id FROM organizations
 ),
@@ -187,17 +196,17 @@ WITH organization_base AS (
               ) sub_p
          GROUP BY organization_id, announcement_text, play_time
      )
-SELECT
-    ob.org_id AS id,
-    ob.org_id AS organization_id,
-    CURRENT_DATE as snapshot_date,
-    COALESCE(oc.total_played, 0) AS total_jingle_broadcasts,
-    CASE
-        WHEN COALESCE(oc.played_last_week, 0) = 0 AND COALESCE(oc.played_this_week, 0) > 0 THEN 100
-        WHEN COALESCE(oc.played_last_week, 0) > 0
-            THEN ((oc.played_this_week::float - oc.played_last_week::float) * 100 / oc.played_last_week::float)::int
+SELECT ob.org_id                    AS id,
+       ob.org_id                    AS organization_id,
+       CURRENT_DATE                 as snapshot_date,
+       COALESCE(oc.total_played, 0) AS total_jingle_broadcasts,
+       CASE
+           WHEN COALESCE(oc.played_last_week, 0) = 0 AND COALESCE(oc.played_this_week, 0) > 0 THEN 100
+           WHEN COALESCE(oc.played_last_week, 0) > 0
+               THEN ((oc.played_this_week::float - oc.played_last_week::float) * 100 / oc.played_last_week::float)::int
         ELSE 0
-        END AS total_jingle_broadcasts_week_growth,
+END
+AS total_jingle_broadcasts_week_growth,
     COALESCE(oc.rate, 0) AS completion_rate,
     COALESCE(tj.announcement_text, 'No data') AS most_played_jingle_name,
     COALESCE(tj.cnt, 0) AS most_played_jingle_play_count,
@@ -208,5 +217,33 @@ FROM organization_base ob
          LEFT JOIN top_jingles tj ON ob.org_id = tj.organization_id
 WITH DATA;
 
-ALTER MATERIALIZED VIEW jingle_aggregate_analytics_data_view OWNER TO postgres;
+ALTER
+MATERIALIZED VIEW jingle_aggregate_analytics_data_view OWNER TO postgres;
 CREATE UNIQUE INDEX idx_jingle_aggregate_org_id ON jingle_aggregate_analytics_data_view (id);
+
+
+DROP
+MATERIALIZED VIEW IF EXISTS jingle_types_distribution_data_view;
+
+CREATE MATERIALIZED VIEW jingle_types_distribution_data_view AS
+SELECT
+    ROW_NUMBER() OVER () AS id,
+        j.organization_id,
+    CURRENT_DATE AS snapshot_date, -- Более лаконичная запись для LocalDate
+    j.category,
+    COUNT(*) AS total_plays,
+    ROUND(
+            COUNT(*) * 100.0 / SUM(COUNT(*)) OVER (PARTITION BY j.organization_id),
+            1
+    )::integer AS percentage -- Приводим к integer, если в Java поле int
+FROM jingle_slots js
+         JOIN jingles j ON js.jingle_id = j.id
+WHERE js.status = 'PLAYED'
+  AND js.play_time >= DATE_TRUNC('week', NOW())
+  AND js.play_time < DATE_TRUNC('week', NOW()) + INTERVAL '7 days'
+GROUP BY j.organization_id, j.category
+ORDER BY j.organization_id, total_plays DESC
+WITH DATA;
+
+CREATE UNIQUE INDEX idx_jingle_types_distribution_data_view
+    ON jingle_types_distribution_data_view (id);

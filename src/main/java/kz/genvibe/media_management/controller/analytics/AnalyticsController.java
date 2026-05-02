@@ -25,6 +25,7 @@ public class AnalyticsController {
         model.addAttribute("jingleData", analyticsService.collectJingleAggregateData(organizationId));
         model.addAttribute("musicData", analyticsService.collectMusicData(organizationId));
         model.addAttribute("storeData", analyticsService.collectStoreAggregateData(organizationId));
+        model.addAttribute("jingleDistributionData", analyticsService.collectJingleDistributionData(organizationId));
         return "pages/analytics";
     }
 

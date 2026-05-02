@@ -1,15 +1,9 @@
 package kz.genvibe.media_management.service.internal.impl;
 
 import jakarta.persistence.EntityManager;
-import kz.genvibe.media_management.model.entity.analytics.JingleAggregateAnalyticsData;
-import kz.genvibe.media_management.model.entity.analytics.MusicAnalyticsData;
-import kz.genvibe.media_management.model.entity.analytics.StoreAggregateAnalyticsData;
-import kz.genvibe.media_management.model.entity.analytics.StoreAnalyticsData;
+import kz.genvibe.media_management.model.entity.analytics.*;
 import kz.genvibe.media_management.repository.StoreRepository;
-import kz.genvibe.media_management.repository.analytics.JingleAggregateAnalyticsDataRepository;
-import kz.genvibe.media_management.repository.analytics.MusicAnalyticsDataRepository;
-import kz.genvibe.media_management.repository.analytics.StoreAggregateAnalyticsDataRepository;
-import kz.genvibe.media_management.repository.analytics.StoreAnalyticsRepository;
+import kz.genvibe.media_management.repository.analytics.*;
 import kz.genvibe.media_management.service.internal.AnalyticsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +22,7 @@ public class AnalyticsServiceImpl implements AnalyticsService {
     private final MusicAnalyticsDataRepository musicAnalyticsDataRepository;
     private final StoreAggregateAnalyticsDataRepository storeAggregateAnalyticsDataRepository;
     private final StoreAnalyticsRepository storeAnalyticsRepository;
+    private final JingleTypeDistributionDataRepository jingleTypeDistributionDataRepository;
     private final StoreRepository storeRepository;
     private final EntityManager em;
 
@@ -65,6 +60,11 @@ public class AnalyticsServiceImpl implements AnalyticsService {
     @Override
     public StoreAggregateAnalyticsData collectStoreAggregateData(long organizationId) {
         return storeAggregateAnalyticsDataRepository.findTopByOrganizationIdAndSnapshotDate(organizationId, LocalDate.now());
+    }
+
+    @Override
+    public JingleTypeDistributionData collectJingleDistributionData(long organizationId) {
+        return jingleTypeDistributionDataRepository.findTopByOrganizationIdAndSnapshotDate(organizationId, LocalDate.now());
     }
 
     @Scheduled(cron = "0 0 * * * *")
