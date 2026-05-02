@@ -2,7 +2,6 @@ package kz.genvibe.media_management.service.internal.impl;
 
 import jakarta.persistence.EntityNotFoundException;
 import kz.genvibe.media_management.config.props.AppProps;
-import kz.genvibe.media_management.exception.UserAlreadyExistsException;
 import kz.genvibe.media_management.model.domain.dto.store.ActiveStoreDto;
 import kz.genvibe.media_management.model.domain.dto.store.StoreCreateDto;
 import kz.genvibe.media_management.model.entity.AppUser;

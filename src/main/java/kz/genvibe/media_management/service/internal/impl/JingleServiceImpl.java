@@ -3,7 +3,6 @@ package kz.genvibe.media_management.service.internal.impl;
 import jakarta.persistence.EntityNotFoundException;
 import kz.genvibe.media_management.exception.JingleCreationLimitExceededException;
 import kz.genvibe.media_management.model.domain.PlayerCommand;
-import kz.genvibe.media_management.model.domain.dto.jingle.JingleApproveDto;
 import kz.genvibe.media_management.model.domain.dto.jingle.JingleCreateDto;
 import kz.genvibe.media_management.model.entity.*;
 import kz.genvibe.media_management.model.enums.CommandType;
@@ -75,12 +74,11 @@ public class JingleServiceImpl implements JingleService {
     @Transactional
     public void setPauseApprovalStatus(
         long id,
-        JingleApproveDto dto,
         AppUser appUser
     ) {
         var jingle = jingleRepository.findJingleByIdAndOrganization(id, appUser.getOrganization())
             .orElseThrow(() -> new EntityNotFoundException("Jingle not found"));
-        jingle.setPauseApproved(dto.isApproved());
+        jingle.setPauseApproved(true);
     }
 
     @Override
@@ -154,7 +152,10 @@ public class JingleServiceImpl implements JingleService {
     public void checkAndBroadcastJingles() {
         log.info("Starting broadcast");
         var now = LocalDateTime.now().withSecond(0).withNano(0);
-        var currentSlots = jingleSlotRepository.findJingleSlotsByPlayTimeAndStatus(now, JingleSlotStatus.PENDING);
+        var currentSlots = jingleSlotRepository.findJingleSlotsByPlayTimeAndStatusAndJingleRequestedToPauseIsFalse(
+            now,
+            JingleSlotStatus.PENDING
+        );
 
         for (var slot : currentSlots) {
             var storeId = slot.getJingleSchedule().getStore().getId();

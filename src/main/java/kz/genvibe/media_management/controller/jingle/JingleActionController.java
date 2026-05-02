@@ -48,13 +48,12 @@ public class JingleActionController {
     }
 
     @ResponseBody
-    @PatchMapping("/{id}")
+    @PatchMapping("/approve-pause-request/{id}")
     public String approveJingle(
         @PathVariable long id,
-        @RequestBody JingleApproveDto dto,
         @CurrentUser AppUser appUser
     ) {
-        jingleService.setPauseApprovalStatus(id, dto, appUser);
+        jingleService.setPauseApprovalStatus(id, appUser);
         return "redirect:/jingles";
     }
 
