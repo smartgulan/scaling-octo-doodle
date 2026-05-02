@@ -64,7 +64,10 @@ public class WebSecurityConfig implements WebMvcConfigurer {
                     "/ws-player/**",
                     "/files/**"
                 ).permitAll()
-                .requestMatchers("/stores/{id}/{uuid}").hasAuthority(UserRole.ROLE_USER.getAuthority())
+                .requestMatchers(
+                    "/stores/{id}/{uuid}",
+                    "/api/jingles/pause-request/{id}"
+                ).hasAuthority(UserRole.ROLE_USER.getAuthority())
                 .anyRequest().hasAuthority(UserRole.ROLE_ADMIN.name())
             )
             .formLogin(form -> form
