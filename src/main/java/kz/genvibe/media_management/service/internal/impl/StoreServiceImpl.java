@@ -6,7 +6,9 @@ import kz.genvibe.media_management.exception.UserAlreadyExistsException;
 import kz.genvibe.media_management.model.domain.dto.store.ActiveStoreDto;
 import kz.genvibe.media_management.model.domain.dto.store.StoreCreateDto;
 import kz.genvibe.media_management.model.entity.AppUser;
+import kz.genvibe.media_management.model.entity.JingleSchedule;
 import kz.genvibe.media_management.model.entity.Store;
+import kz.genvibe.media_management.repository.JingleScheduleRepository;
 import kz.genvibe.media_management.repository.StoreRepository;
 import kz.genvibe.media_management.service.internal.AuthService;
 import kz.genvibe.media_management.service.internal.StoreService;
@@ -27,6 +29,7 @@ public class StoreServiceImpl implements StoreService {
     private final UserService userService;
     private final AuthService authService;
     private final StoreRepository storeRepository;
+    private final JingleScheduleRepository jingleScheduleRepository;
     private final AppProps appProps;
 
     @Override
@@ -37,14 +40,20 @@ public class StoreServiceImpl implements StoreService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Store> getAllStoresByAppUserAndNames(AppUser appUser, List<String> names) {
-        return storeRepository.findStoresByOrganizationAndNameIn(appUser.getOrganization(), names);
+    public List<Store> getAllStoresByAppUserAndIdList(AppUser appUser, List<Long> idList) {
+        return storeRepository.findStoresByIdIn(idList);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<ActiveStoreDto> getAllActiveStores(AppUser appUser) {
         return storeRepository.findStoresByActiveIsTrueAndOrganization(appUser.getOrganization());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Store getStoreById(long id) {
+        return storeRepository.findById(id).orElseThrow();
     }
 
     @Override
@@ -77,6 +86,7 @@ public class StoreServiceImpl implements StoreService {
         store.setActive(true);
         store.setMusicLinkUuid(uuid);
         store.setMusicLink(generateMusicAccessLink(id, uuid));
+        store.setJingleSchedule(jingleScheduleRepository.save(new JingleSchedule(store)));
 
         authService.sendStoreEmailVerification(store);
 

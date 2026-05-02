@@ -3,7 +3,6 @@ package kz.genvibe.media_management.service.internal.impl;
 import jakarta.persistence.EntityNotFoundException;
 import kz.genvibe.media_management.exception.JingleCreationLimitExceededException;
 import kz.genvibe.media_management.model.domain.PlayerCommand;
-import kz.genvibe.media_management.model.domain.dto.jingle.JingleAddStoresDto;
 import kz.genvibe.media_management.model.domain.dto.jingle.JingleApproveDto;
 import kz.genvibe.media_management.model.domain.dto.jingle.JingleCreateDto;
 import kz.genvibe.media_management.model.entity.*;
@@ -88,12 +87,12 @@ public class JingleServiceImpl implements JingleService {
     @Transactional
     public void addJingleToStores(
         long id,
-        JingleAddStoresDto dto,
+        List<Long> idList,
         AppUser appUser
     ) {
         var jingle = jingleRepository.findJingleByIdAndOrganization(id, appUser.getOrganization())
             .orElseThrow(() -> new EntityNotFoundException("Jingle not found"));
-        var stores = storeService.getAllStoresByAppUserAndNames(appUser, dto.storeNames());
+        var stores = storeService.getAllStoresByAppUserAndIdList(appUser, idList);
 
         jingle.getStores().addAll(stores);
 
@@ -125,7 +124,7 @@ public class JingleServiceImpl implements JingleService {
     }
 
     private void generateSlotsForJingle(Jingle jingle, Set<JingleSchedule> schedules) {
-        var now = LocalDateTime.now();
+        var now = LocalDateTime.now().withSecond(0).withNano(0);
 
         if (now.isAfter(jingle.getEndDate()) || now.plusDays(1).isBefore(jingle.getStartDate())) {
             return;
@@ -153,6 +152,7 @@ public class JingleServiceImpl implements JingleService {
     @Scheduled(cron = "0 * * * * *")
     @Transactional
     public void checkAndBroadcastJingles() {
+        log.info("Starting broadcast");
         var now = LocalDateTime.now().withSecond(0).withNano(0);
         var currentSlots = jingleSlotRepository.findJingleSlotsByPlayTimeAndStatus(now, JingleSlotStatus.PENDING);
 

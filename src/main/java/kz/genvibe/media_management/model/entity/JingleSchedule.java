@@ -34,4 +34,8 @@ public class JingleSchedule extends UpdateEntity {
         slot.setJingleSchedule(this);
     }
 
+    public JingleSchedule(Store store) {
+        this.store = store;
+    }
+
 }

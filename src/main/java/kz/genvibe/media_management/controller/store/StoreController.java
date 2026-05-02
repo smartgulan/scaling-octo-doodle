@@ -39,7 +39,7 @@ public class StoreController {
             return "error/404";
         }
 
-        model.addAttribute("stores", appUser.getOrganization().getStores());
+        model.addAttribute("store", storeService.getStoreById(id));
         model.addAttribute("organization", appUser.getOrganization());
         return "pages/store-dashboard";
     }
