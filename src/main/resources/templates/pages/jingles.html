@@ -217,21 +217,28 @@
 
         <div id="storesModal" class="modal link-modal">
             <div class="modal-body">
-
                 <div class="modal-header">
                     <h2>Add location</h2>
                     <span class="close" onclick="closeStoresModal()">
-                        <span class="icon" th:replace="~{fragments/icons :: icon-close}"></span>
-                    </span>
+                <span class="icon" th:replace="~{fragments/icons :: icon-close}"></span>
+            </span>
                 </div>
 
-                <div id="storesList" class="modal-content"></div>
+                <div id="storesList" class="modal-content">
+                    <div th:each="store : ${activeStores}"
+                         class="store-item"
+                         th:attr="data-id=${store.id}"
+                         th:onclick="|toggleStore(${store.id}, this)|">
+                        <span th:text="${store.name}"></span>
+                        <span class="store-check">
+        <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.21875 0C7.88149 2.89694e-08 8.41895 0.537454 8.41895 1.2002V6.00879H13.2275L13.3506 6.01562C13.9554 6.07739 14.4277 6.5879 14.4277 7.20898C14.4275 7.82988 13.9553 8.34064 13.3506 8.40234L13.2275 8.40918H8.41895V13.2266L8.41211 13.3496C8.35059 13.9546 7.84002 14.4268 7.21875 14.4268C6.59748 14.4268 6.08691 13.9546 6.02539 13.3496L6.01855 13.2266V8.40918H1.20117C0.538593 8.40918 0.0002638 7.8715 0 7.20898C0 6.54624 0.53843 6.00879 1.20117 6.00879H6.01855V1.2002C6.01855 0.537454 6.55601 -6.06131e-10 7.21875 0Z" fill="black"/></svg>
+    </span>
+                    </div>
+                </div>
 
                 <div class="modal-actions">
-                    <button class="btn-secondary" onclick="closeStoresModal()">Cancel</button>
                     <button class="btn-primary" onclick="saveJingleStores()">Save</button>
                 </div>
-
             </div>
         </div>
         <section class="history-section">
@@ -725,30 +732,29 @@
         let currentJingleId = null;
         let allStores = [];
         let selectedStoreIds = new Set();
+        const plusSvg = `<svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.21875 0C7.88149 2.89694e-08 8.41895 0.537454 8.41895 1.2002V6.00879H13.2275L13.3506 6.01562C13.9554 6.07739 14.4277 6.5879 14.4277 7.20898C14.4275 7.82988 13.9553 8.34064 13.3506 8.40234L13.2275 8.40918H8.41895V13.2266L8.41211 13.3496C8.35059 13.9546 7.84002 14.4268 7.21875 14.4268C6.59748 14.4268 6.08691 13.9546 6.02539 13.3496L6.01855 13.2266V8.40918H1.20117C0.538593 8.40918 0.0002638 7.8715 0 7.20898C0 6.54624 0.53843 6.00879 1.20117 6.00879H6.01855V1.2002C6.01855 0.537454 6.55601 -6.06131e-10 7.21875 0Z" fill="black"/></svg>`;
 
+        const checkSvg = `<svg width="11" height="11" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8.32102 0.560034C8.67445 -0.000539124 9.41471 -0.168315 9.97531 0.185034C10.5356 0.538426 10.7043 1.27882 10.3513 1.83933L5.62863 9.32957C5.54009 9.47 5.43125 9.64417 5.32395 9.78464C5.21303 9.92982 5.01279 10.1647 4.6882 10.3169C4.29339 10.5018 3.84199 10.5281 3.42844 10.3901L3.30637 10.3432C3.03353 10.2252 2.84618 10.05 2.73508 9.93503C2.61218 9.80785 2.48382 9.64731 2.37961 9.51804L0.265353 6.89499C-0.150225 6.3791 -0.0686885 5.62338 0.446994 5.20749C0.962945 4.79185 1.71864 4.87329 2.13449 5.38914L3.89719 7.57566L8.32102 0.560034Z" fill="black"/></svg>`;
         /* =========================
            OPEN MODAL
         ========================= */
         function openStoresModal(jingleId) {
             currentJingleId = jingleId;
+            selectedStoreIds = new Set();
 
             const modal = document.getElementById("storesModal");
             const overlay = document.getElementById("storesModalOverlay");
-
             if (!modal || !overlay) return;
 
+            // сбрасываем все стор-айтемы в начальное состояние
+            document.querySelectorAll('.store-item').forEach(el => {
+                el.classList.remove('selected');
+                el.querySelector('.store-check').innerHTML = plusSvg;
+            });
+
+            updateSaveBtn();
             modal.classList.add("active");
             overlay.classList.add("active");
-
-            fetch(`/api/jingles/${jingleId}/stores`)
-                .then(r => r.json())
-                .then(data => {
-                    allStores = data.allStores || [];
-                    selectedStoreIds = new Set(data.selectedStoreIds || []);
-
-                    renderStores();
-                })
-                .catch(err => console.error("Load stores error:", err));
         }
 
         /* =========================
@@ -758,29 +764,45 @@
             const container = document.getElementById("storesList");
             if (!container) return;
 
+            const plusSvg = `<svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.21875 0C7.88149 2.89694e-08 8.41895 0.537454 8.41895 1.2002V6.00879H13.2275L13.3506 6.01562C13.9554 6.07739 14.4277 6.5879 14.4277 7.20898C14.4275 7.82988 13.9553 8.34064 13.3506 8.40234L13.2275 8.40918H8.41895V13.2266L8.41211 13.3496C8.35059 13.9546 7.84002 14.4268 7.21875 14.4268C6.59748 14.4268 6.08691 13.9546 6.02539 13.3496L6.01855 13.2266V8.40918H1.20117C0.538593 8.40918 0.0002638 7.8715 0 7.20898C0 6.54624 0.53843 6.00879 1.20117 6.00879H6.01855V1.2002C6.01855 0.537454 6.55601 -6.06131e-10 7.21875 0Z" fill="black"/></svg>`;
+
+            const checkSvg = `<svg width="11" height="11" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8.32102 0.560034C8.67445 -0.000539124 9.41471 -0.168315 9.97531 0.185034C10.5356 0.538426 10.7043 1.27882 10.3513 1.83933L5.62863 9.32957C5.54009 9.47 5.43125 9.64417 5.32395 9.78464C5.21303 9.92982 5.01279 10.1647 4.6882 10.3169C4.29339 10.5018 3.84199 10.5281 3.42844 10.3901L3.30637 10.3432C3.03353 10.2252 2.84618 10.05 2.73508 9.93503C2.61218 9.80785 2.48382 9.64731 2.37961 9.51804L0.265353 6.89499C-0.150225 6.3791 -0.0686885 5.62338 0.446994 5.20749C0.962945 4.79185 1.71864 4.87329 2.13449 5.38914L3.89719 7.57566L8.32102 0.560034Z" fill="black"/></svg>`;
+
             container.innerHTML = allStores.map(store => {
                 const checked = selectedStoreIds.has(store.id);
-
                 return `
-            <label class="store-item">
-                <input type="checkbox"
-                       ${checked ? "checked" : ""}
-                       onchange="toggleStore(${store.id})">
+            <div class="store-item ${checked ? 'selected' : ''}" onclick="toggleStore(${store.id}, this)">
                 <span>${store.name}</span>
-            </label>
+                <span class="store-check">${checked ? checkSvg : plusSvg}</span>
+            </div>
         `;
             }).join("");
+
+            updateSaveBtn();
         }
 
         /* =========================
            TOGGLE STORE
         ========================= */
-        function toggleStore(id) {
-            if (selectedStoreIds.has(id)) {
+        function toggleStore(id, el) {
+            id = Number(id);  // ← приводим к числу
+            const isSelected = selectedStoreIds.has(id);
+            if (isSelected) {
                 selectedStoreIds.delete(id);
+                el.classList.remove('selected');
+                el.querySelector('.store-check').innerHTML = plusSvg;
             } else {
                 selectedStoreIds.add(id);
+                el.classList.add('selected');
+                el.querySelector('.store-check').innerHTML = checkSvg;
             }
+            updateSaveBtn();
+        }
+
+        function updateSaveBtn() {
+            const saveBtn = document.querySelector('#storesModal .btn-primary');
+            if (!saveBtn) return;
+            saveBtn.style.background = selectedStoreIds.size > 0 ? '#000' : '#00000033';
         }
 
         /* =========================

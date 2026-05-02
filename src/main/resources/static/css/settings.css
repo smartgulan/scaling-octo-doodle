@@ -1,7 +1,9 @@
 .settings-container {
-    max-width: 1000px;
+    display: flex;
+    flex-direction: column;
     margin: 0 auto;
     padding: 20px;
+    gap: 24px;
 }
 
 .settings-header {
@@ -18,29 +20,46 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 24px;
-    margin-bottom: 24px;
 }
 
 .settings-card {
-    background: #fff;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
     border: 1px solid #f0f0f0;
     border-radius: 16px;
     padding: 24px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+    background: #FFFFFF66;
+    backdrop-filter: blur(40px);
+    box-shadow: 0 1px 1px rgba(255, 255, 255, 0.25), 0 -1px 1px rgba(255, 255, 255, 0.05), 0 8px 6px rgba(0, 0, 0, 0.05);
+    border-top: 2px solid rgba(255, 255, 255, 0.4);
 }
-
-.full-width { grid-column: span 2; margin-top: 24px; }
 
 .card-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 20px;
 }
-
+.header-container{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.company-name{
+    margin-bottom: 14px;
+}
 /* Form Styles */
-.form-group { margin-bottom: 16px; }
-.form-group label { display: block; font-size: 14px; color: #666; margin-bottom: 8px; }
+.form{
+    padding: 24px;
+    margin-top: 24px;
+}
+form h3{
+    font-size: 16px;
+    font-weight: 400;
+    color: #000000;
+    margin-bottom: 8px;
+}
+.form-group label { font-size: 18px; color: #00000080; font-weight: 400; margin-bottom: 8px }
 .form-group input {
     width: 100%;
     padding: 12px 16px;
@@ -52,56 +71,96 @@
 .form-group input[readonly] { background: #f9f9f9; cursor: default; }
 
 /* Tags */
-.tags-container { display: flex; flex-wrap: wrap; gap: 10px; margin: 20px 0; }
+.tags-container { display: flex; flex-wrap: wrap; gap: 10px; }
 .tag {
     padding: 8px 16px;
-    border: 1px solid #e0e0e0;
+    border: 1px solid #00000033;
     border-radius: 20px;
     font-size: 14px;
-    color: #444;
+    font-weight: 400;
+    color: #00000080;
 }
-.tag.active { background: #000; color: #fff; border-color: #000; }
+.tag.active { background: #000; color: #fff; border-color: #000;
+    font-size: 14px;
+    font-weight: 400;
+}
 
 /* Switches */
+.switch-info{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.switch-info span{
+    font-size: 14px;
+}
 .switch-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 16px 0;
     border-bottom: 1px solid #f5f5f5;
 }
 
 /* Modal Styles */
 .modal {
     position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.1);
-    backdrop-filter: blur(4px);
-    display: none;
-    justify-content: center;
+    inset: 0;                    /* ← это top:0; right:0; bottom:0; left:0 */
+    width: 100%;
+    height: 100%;
+    background: rgba(245, 243, 241, 0.6);
+    display: flex;
     align-items: center;
-    z-index: 1000;
+    justify-content: center;
+    z-index: 2000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s;
 }
-.modal.active { display: flex; }
+
+.modal.active {
+    opacity: 1;
+    visibility: visible;
+}
 
 .modal-content {
     background: #fff;
+    width: 500px;
+    border-radius: 20px;
+    z-index: 2001;
+    box-shadow: 0 1px 1px rgba(255, 255, 255, 0.25), 0 -1px 1px rgba(255, 255, 255, 0.05), 0 8px 6px rgba(0, 0, 0, 0.05);
+    border-top: 2px solid rgba(255, 255, 255, 0.4);
     padding: 40px;
-    border-radius: 24px;
-    width: 100%;
-    max-width: 500px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 34px;
+    position: relative;          /* убрал fixed — центрирует flex-родитель */
 }
-
+.modal-title{
+    font-weight: 400;
+    font-size: 32px;
+    color: #000000;
+}
 .modal-footer {
     display: flex;
     gap: 12px;
     margin-top: 30px;
     justify-content: flex-end;
 }
-
+.selected-info{
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    gap: 8px;
+    background: linear-gradient(90deg, rgba(251, 200, 212, 0.3) 0%, rgba(151, 149, 240, 0.3) 100%);
+    border-radius: 12px;
+    padding: 16px;
+}
+.selected-info span{
+    font-weight: 400;
+    font-size: 14px;
+}
 /* Buttons */
-.btn-edit { background: #fff; border: 1px solid #e0e0e0; padding: 6px 16px; border-radius: 8px; cursor: pointer; }
-.btn-save-main { background: #000; color: #fff; padding: 14px 32px; border: none; border-radius: 10px; cursor: pointer; }
-.btn-cancel { background: #fff; border: 1px solid #e0e0e0; padding: 10px 20px; border-radius: 8px; }
-.btn-save-modal { background: #000; color: #fff; padding: 10px 20px; border: none; border-radius: 8px; }
+.btn-edit { display:flex; gap:8px; color: black; font-size:14px; font-weight: 400; background: #FFFFFF; border: 1px solid #00000033; padding: 8px 16px; border-radius: 8px; cursor: pointer; }
+.btn-save-main { background: #000; color: #fff; padding: 12px 16px; border: none; border-radius: 10px; cursor: pointer; font-weight: 400; font-size: 14px}
+.btn-cancel { background: #fff; border: 1px solid #00000033; padding: 12px 16px; border-radius: 8px; font-weight: 400; font-size: 14px}
+.btn-save-modal { background: #000; color: #fff; padding: 12px 16px; border: none; border-radius: 8px; font-weight: 400; font-size: 14px}
