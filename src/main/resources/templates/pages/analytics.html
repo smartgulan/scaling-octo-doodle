@@ -1,93 +1,53 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{layout/base :: layout(
-                      ~{::content},
-                      'Analytics - GenVibe',
-                      'analytics.css',
-                      'Analytics',
-                      'analytics'
-                      )}">
+      th:replace="~{layout/base :: layout(~{::content}, 'Analytics - GenVibe', 'analytics.css', 'Analytics', 'analytics')}">
 <th:block th:fragment="content">
-<div class="analytics-page">
-    <!-- Music Performance -->
-    <div class="analytics-card">
-          <h3>Music Performance</h3>
+  <div class="analytics-page">
 
-          <div class="chart-sub">
-            <p>Weekly Plays</p>
-            <canvas id="weeklyPlaysChart" height="160"></canvas>
-          </div>
+    <!-- Music Performance Section -->
+    <div class="analytics-card">
+      <h3>Music Performance</h3>
+      <div class="chart-sub">
+        <p>Weekly Plays (minutes)</p>
+        <canvas id="weeklyPlaysChart" height="160"></canvas>
+      </div>
+
       <div class="stats-row">
+        <!-- Статические данные атмосферы (можно вынести в настройки организации) -->
         <div class="stat-card">
           <div class="music-icon">
-          <span class="icon" th:replace="~{fragments/icons :: icon-music}">
-          </span>
+            <span th:replace="~{fragments/icons :: icon-music}"></span>
             <p class="stat-label">Selected Atmosphere</p>
           </div>
           <p class="stat-value">Warm and Welcoming</p>
-          <p class="stat-label">(modernity)</p>
-          <p class="stat-label">Synth, lead, bass guitar, rhythm guitar</p>
-          <p class="stat-label">BPM range: 110-115</p>
+          <p class="stat-label">Synth, lead, guitar | BPM: 110-115</p>
         </div>
+
+        <div class="stat-card">
+          <p class="stat-label">Total Plays</p>
+          <p class="stat-value" th:text="${#numbers.formatInteger(musicData.totalPlays, 1, 'WHITESPACE')}">8,228</p>
+          <p class="stat-sub"
+             th:classappend="${musicData.totalPlaysGrowthPercentage >= 0} ? 'text-success' : 'text-danger'"
+             th:text="${(musicData.totalPlaysGrowthPercentage >= 0 ? '+' : '') + musicData.totalPlaysGrowthPercentage + '% this week'}">
+            +6.2%
+          </p>
+        </div>
+
         <div class="stat-card">
           <p class="stat-label">Avg. Daily</p>
-          <p class="stat-value">1,175</p>
+          <p class="stat-value" th:text="${#numbers.formatInteger(musicData.averageDailyPlays, 1, 'WHITESPACE')}">1,175</p>
           <p class="stat-sub">Across all stores</p>
         </div>
-        <div class="stat-card">
-          <p class="stat-label">Top Store</p>
-          <p class="stat-value">Downtown 12</p>
-          <p class="stat-sub">+21.3% plays</p>
+      </div>
+
+      <div class="stats-row" style="margin-top: 16px;">
+        <div class="stat-item">
+          <p class="stat-label">Top Performing Store</p>
+          <p class="stat-value" th:text="${musicData.topStoreName}">Downtown 12</p>
+          <p class="stat-sub" th:text="${'+' + musicData.topStorePlaysGrowthPercentage + '% plays growth'}">+21.3%</p>
         </div>
-
-          <div class="stats-row">
-            <div class="stat-item">
-              <p class="stat-label">Total Plays</p>
-              <p class="stat-value">8,228</p>
-              <p class="stat-sub">+6.2% this week</p>
-            </div>
-            <div class="stat-item">
-              <p class="stat-label">Avg. Daily</p>
-              <p class="stat-value">1,175</p>
-              <p class="stat-sub">Across all stores</p>
-            </div>
-            <div class="stat-item">
-              <p class="stat-label">Top Store</p>
-              <p class="stat-value">Downtown 12</p>
-              <p class="stat-sub">+21.3% plays</p>
-            </div>
-            <div class="section grid-2">
-              <!-- Store Performance -->
-              <div class="card">
-                <div class="card-inner">
-                  <p class="card-title">📊 Store Performance</p>
-                  <canvas id="storeChart" height="160"></canvas>
-                </div>
-              </div>
-
-              <!-- Daily Session Activity -->
-              <div class="card">
-                <div class="card-inner">
-                  <div class="session-header">
-                    <p class="card-title" style="margin-bottom:0">Daily Session Activity</p>
-                    <select>
-                      <option>Weekly</option>
-                      <option>Monthly</option>
-                    </select>
-                  </div>
-                  <div class="session-badge" style="margin-top:12px">
-                    <span class="badge-dot"></span>
-                    <span>% 5.41% Not last week</span>
-                  </div>
-                  <canvas id="sessionChart" height="140"></canvas>
-                </div>
-              </div>
-            </div>
-          </div>
+      </div>
     </div>
-
-    <!-- Store Performance & Daily Session -->
-
 
     <!-- Aggregate Jingle Performance -->
     <div class="analytics-card">
@@ -95,277 +55,59 @@
       <div class="kpi-grid">
         <div class="card kpi-card">
           <p class="stat-label">Total Jingle Broadcasts</p>
-          <p class="stat-value">8,228</p>
-          <p class="stat-sub">+6.0% this week</p>
+          <p class="stat-value" th:text="${jingleData.totalJingleBroadcasts}">8,228</p>
+          <p class="stat-sub" th:text="${(jingleData.totalJingleBroadcastsWeekGrowth >= 0 ? '+' : '') + jingleData.totalJingleBroadcastsWeekGrowth + '% this week'}">+6.0%</p>
         </div>
         <div class="card kpi-card">
           <p class="stat-label">Completion Rate</p>
-          <p class="stat-value">1,175</p>
-          <p class="stat-sub">Across all stores</p>
+          <p class="stat-value" th:text="${jingleData.completionRate + '%'}">98%</p>
+          <p class="stat-sub">Success vs Failed</p>
         </div>
         <div class="card kpi-card">
           <p class="stat-label">Most Played Jingle</p>
-          <p class="stat-value">Downtown 12</p>
-          <p class="stat-sub">+21 of plays</p>
+          <p class="stat-value" style="font-size: 1.1rem" th:text="${jingleData.mostPlayedJingleName}">Promo #1</p>
+          <p class="stat-sub" th:text="${jingleData.mostPlayedJinglePlayCount + ' broadcasts'}">21 plays</p>
         </div>
         <div class="card kpi-card">
-          <p class="stat-label">Scheduled Jingle Tasks</p>
-          <p class="stat-value">Bugis Junction</p>
-          <p class="stat-sub">+25 of tasks</p>
+          <p class="stat-label">Next Scheduled</p>
+          <p class="stat-value" style="font-size: 1.1rem" th:text="${jingleData.scheduledJingleTaskName}">Safety Jingle</p>
+          <p class="stat-sub" th:text="${jingleData.scheduledJingleTaskCount + ' tasks remaining today'}">25 tasks</p>
         </div>
       </div>
     </div>
 
-    <!-- Jingle Types & Performance Distribution -->
+    <!-- Jingle Types Distribution -->
     <div class="analytics-card">
-      <p class="section-title">Jingle Types &amp; Performance Distribution (Weekly)</p>
+      <p class="section-title">Jingle Types Distribution (Weekly)</p>
       <div class="grid-2">
-        <!-- Plays by Jingle Type -->
         <div class="card">
           <div class="card-inner">
-            <p class="card-title">+ Plays by Jingle Type</p>
+            <p class="card-title">Plays by Jingle Type</p>
             <canvas id="jingleTypeChart" height="200"></canvas>
           </div>
         </div>
-
-        <!-- Top Jingles by Volume -->
+        <!-- Сюда можно добавить график Top Jingles или другую метрику -->
         <div class="card">
           <div class="card-inner">
-            <p class="card-title">+ Top Jingles by Volume (Promotions)</p>
-            <canvas id="topJinglesChart" height="200"></canvas>
+            <p class="card-title">Daily Jingle Activity</p>
+            <canvas id="jingleDailyChart" height="200"></canvas>
           </div>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- Jingle Compliance & Store List -->
-    <div class="section">
-      <div class="card">
-        <div class="card-inner">
-          <div class="compliance-header">
-            <p class="card-title" style="margin-bottom:0">📋 Jingle Compliance &amp; Store List</p>
-            <button class="download-btn">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                <polyline points="7 10 12 15 17 10"/>
-                <line x1="12" y1="15" x2="12" y2="3"/>
-              </svg>
-              Download report
-            </button>
-          </div>
-
-          <table>
-            <thead>
-            <tr>
-              <th>Store Name</th>
-              <th>Jingle Category</th>
-              <th>Target Time</th>
-              <th>Actual Time</th>
-              <th>Status</th>
-            </tr>
-            </thead>
-            <tbody>
-            <!-- Thymeleaf iteration example -->
-            <tr th:each="row : ${complianceRows}" th:if="${complianceRows != null}">
-              <td th:text="${row.store}">Store 123</td>
-              <td th:text="${row.category}">Evening Promo (GM)</td>
-              <td th:text="${row.target}">18:00</td>
-              <td th:text="${row.actual}">18:05</td>
-              <td>
-                <span class="badge"
-                      th:classappend="${row.status == 'Success'} ? 'badge-success' : (${row.status == 'Pending'} ? 'badge-pending' : 'badge-failed')"
-                      th:text="${row.status}">Success</span>
-              </td>
-            </tr>
-            <!-- Static fallback rows (shown when no Thymeleaf data) -->
-            <tr th:if="${complianceRows == null}">
-              <td>Store 123</td>
-              <td>Evening Promo (GM)</td>
-              <td>18:00</td>
-              <td>18:05</td>
-              <td><span class="badge badge-success">Success</span></td>
-            </tr>
-            <tr th:if="${complianceRows == null}">
-              <td>Store 123</td>
-              <td>Morning Welcome</td>
-              <td>10:00</td>
-              <td>12:35</td>
-              <td><span class="badge badge-success">Success</span></td>
-            </tr>
-            <tr th:if="${complianceRows == null}">
-              <td>Store 123</td>
-              <td>Evening Promo (GM)</td>
-              <td>18:00</td>
-              <td>—</td>
-              <td><span class="badge badge-pending">Pending</span></td>
-            </tr>
-            <tr th:if="${complianceRows == null}">
-              <td>Store 123</td>
-              <td>Safety Jingle</td>
-              <td>15:00</td>
-              <td>17:00</td>
-              <td><span class="badge badge-success">Success</span></td>
-            </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-</div>
-
-  <!-- Chart.js -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js"></script>
-
-  <script>
-    (function () {
-      Chart.register(ChartDataLabels); // <- сюда
-
-      const ACCENT = 'hsl(235,70%,60%)';
-      const GRAY   = 'hsl(0,0%,88%)';
-      const RED    = 'hsl(0,75%,55%)';
-      const AMBER  = 'hsl(45,90%,65%)';
-      const LGRAY  = 'hsl(0,0%,85%)';
-      const BORDER = 'hsl(220,13%,91%)';
-      const MUTED  = 'hsl(220,9%,52%)';
-
-      Chart.defaults.font.family = "'DM Sans','Segoe UI',sans-serif";
-      Chart.defaults.font.size = 12;
-      Chart.defaults.color = MUTED;
-
-      // ── Weekly Plays Bar ──
-      new Chart(document.getElementById('weeklyPlaysChart'), {
-        type: 'bar',
-        data: {
-          labels: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
-          datasets: [{
-            data: [820, 940, 780, 1100, 1248, 1380, 960],
-            backgroundColor: (ctx) => ctx.raw === Math.max(...[820,940,780,1100,1248,1380,960]) ? ACCENT : GRAY,
-            borderRadius: { topLeft: 6, topRight: 6 },
-            borderSkipped: false,
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: { display: false },
-            tooltip: { mode: 'index' },
-            datalabels: {
-              anchor: 'end',
-              align: 'end',
-              color: MUTED,
-              font: { size: 11 },
-              formatter: (value) => value.toLocaleString()
-            }
-          },
-          scales: {
-            x: { grid: { display: false }, border: { display: false } },
-            y: { display: false }
-          },
-          layout: {
-            padding: { top: 24 }
-          }
-        },
-        plugins: [ChartDataLabels]
-      });
-      // ── Store Performance Horizontal Bar ──
-      new Chart(document.getElementById('storeChart'), {
-        type: 'bar',
-        data: {
-          labels: ['Downtown Store 1','Downtown Store 2','Downtown Store 3','Downtown Store 4'],
-          datasets: [{
-            data: [1200, 900, 700, 400],
-            backgroundColor: ACCENT,
-            borderRadius: 4,
-            borderSkipped: false,
-          }]
-        },
-        options: {
-          indexAxis: 'y',
-          responsive: true,
-          plugins: { legend: { display: false } },
-          scales: {
-            x: { grid: { color: BORDER }, border: { display: false }, ticks: { stepSize: 300 } },
-            y: { grid: { display: false }, border: { display: false }, ticks: { font: { size: 11 } } }
-          }
-        }
-      });
-
-      // ── Daily Session Line ──
-      new Chart(document.getElementById('sessionChart'), {
-        type: 'line',
-        data: {
-          labels: ['Sat','Sun','Mon','Tue','Wed','Thu','Fri'],
-          datasets: [{
-            data: [4.2, 3.8, 5.1, 4.6, 3.2, 6.0, 5.5],
-            borderColor: ACCENT,
-            backgroundColor: 'transparent',
-            borderWidth: 2,
-            pointRadius: 4,
-            pointBackgroundColor: ACCENT,
-            tension: 0.3,
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: { legend: { display: false } },
-          scales: {
-            x: { grid: { display: false }, border: { display: false } },
-            y: { grid: { color: BORDER }, border: { display: false } }
-          }
-        }
-      });
-
-      // ── Jingle Type Doughnut ──
-      new Chart(document.getElementById('jingleTypeChart'), {
-        type: 'doughnut',
-        data: {
-          labels: ['Promo','Welcome Jingles','Informational'],
-          datasets: [{
-            data: [45, 30, 25],
-            backgroundColor: [ACCENT, AMBER, LGRAY],
-            borderWidth: 0,
-            hoverOffset: 4,
-          }]
-        },
-        options: {
-          responsive: true,
-          cutout: '60%',
-          plugins: {
-            legend: {
-              position: 'bottom',
-              labels: { usePointStyle: true, pointStyle: 'circle', padding: 16, font: { size: 12 } }
-            }
-          }
-        }
-      });
-
-      // ── Top Jingles Horizontal Bar ──
-      new Chart(document.getElementById('topJinglesChart'), {
-        type: 'bar',
-        data: {
-          labels: ['Promo Announcement','Safety Announcement','Member Special','Store Closing'],
-          datasets: [{
-            data: [6200, 3800, 2400, 1600],
-            backgroundColor: [RED, ACCENT, ACCENT, ACCENT],
-            borderRadius: 4,
-            borderSkipped: false,
-          }]
-        },
-        options: {
-          indexAxis: 'y',
-          responsive: true,
-          plugins: { legend: { display: false } },
-          scales: {
-            x: { grid: { color: BORDER }, border: { display: false }, ticks: { stepSize: 2000 } },
-            y: { grid: { display: false }, border: { display: false }, ticks: { font: { size: 11 } } }
-          }
-        }
-      });
-
-    })();
+  <!-- Передача данных в JS через скрытые элементы или JSON-скрипт -->
+  <script th:inline="javascript">
+    /* Передаем Map из Java в JS объект */
+    const weeklyPlaysData = [[${musicData.weeklyPlays}]];
+    /* Передаем список распределения категорий */
+    const jingleDistData = [[${jingleDistributionData}]];
   </script>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js"></script>
+  <script th:src="@{/js/analytics-charts.js}"></script>
 
 </th:block>
 </html>
