@@ -10,10 +10,10 @@
 
 <th:block th:fragment="content">
 
-    <!-- ORB -->
+    <!-- ORB - Центральный элемент управления -->
     <div class="orb-container">
         <div class="orb">
-            <img th:src="@{/assets/icons/play-animated.gif}" alt="orb" />
+            <img th:src="@{/assets/icons/play-animated.gif}" alt="orb" style="display: none;" />
             <div class="orb-play">
                 <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path d="M8 5v14l11-7z"/>
@@ -22,15 +22,15 @@
         </div>
     </div>
 
-    <!-- ACTIVE JINGLES -->
+    <!-- ACTIVE JINGLES - Список активных джинглов -->
     <div class="active-jingles-card">
         <h2>Active Jingles</h2>
 
         <div th:each="jingle : ${activeJingles}" class="jingle-row">
             <div class="jingle-info">
-                <h4 th:text="${#strings.abbreviate(jingle.announcementText, 55)}">Welcome to our store! Today's special offer: 20% off all items...</h4>
+                <h4 th:text="${#strings.abbreviate(jingle.announcementText, 55)}">Welcome to our store!</h4>
                 <div class="jingle-meta">
-                    <span th:text="${jingle.voiceType}">Rachel</span>
+                    <span th:text="${jingle.voice.name}">Rachel</span>
                     <span>·</span>
                     <span>0:15</span>
                     <span>·</span>
@@ -41,17 +41,26 @@
                         <circle cx="12" cy="12" r="10"/>
                         <polyline points="12 6 12 12 16 14"/>
                     </svg>
-                    <span>Repeating: <th:block th:text="${jingle.repeatingTime}">16:00</th:block></span>
+                    <span>Repeating: <th:block th:text="${jingle.repeatingTime.name}">16:00</th:block></span>
                 </div>
             </div>
-            <button class="btn-pause">
+            <!-- Измените строку в цикле th:each -->
+            <button class="btn-pause"
+                    th:data-id="${jingle.id}"
+                    th:disabled="${jingle.requestedToPause}"
+                    th:classappend="${jingle.requestedToPause} ? 'btn-disabled' : ''"
+                    onclick="handlePauseRequest(this)">
+
                 <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <rect x="6" y="4" width="4" height="16"/>
                     <rect x="14" y="4" width="4" height="16"/>
                 </svg>
-                Request to Pause
-            </button>
-        </div>
+
+                <!-- Меняем текст в зависимости от состояния -->
+                <span th:text="${jingle.requestedToPause} ? 'Requested' : 'Request to Pause'">
+        Request to Pause
+    </span>
+            </button>        </div>
 
         <!-- Empty state -->
         <div th:if="${#lists.isEmpty(activeJingles)}" style="text-align:center; padding: 32px; color: #888; font-size: 14px;">
@@ -61,10 +70,46 @@
 
     <div th:replace="~{fragments/toast :: toast}"></div>
 
+    <!-- SCRIPTS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+
     <script th:inline="javascript">
+        function handlePauseRequest(button) {
+            const jingleId = button.getAttribute('data-id');
+            const textSpan = button.querySelector('span'); // Находим текст внутри
+
+            button.disabled = true;
+            button.style.opacity = '0.5';
+
+            fetch(`/api/jingles/pause-request/${jingleId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]').content
+                }
+            })
+                .then(response => {
+                    if (response.ok) {
+                        showToast("Pause request sent successfully", "success");
+                        if (textSpan) textSpan.innerText = "Requested";
+                    } else {
+                        throw new Error('Failed to send request');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showToast("Error sending pause request", "error");
+                    button.disabled = false;
+                    button.style.opacity = '1';
+                });
+        }
+
+        // Данные из контекста Spring
         const orgId = [[${organization.id}]];
         const storeId = [[${store.id}]];
 
+        // Состояние плеера
         let stompClient = null;
         let mainAudio = new Audio();
         let playlist = [];
@@ -72,50 +117,58 @@
         let isPlaying = false;
         let isJinglePlaying = false;
 
+        // Элементы DOM
         const orbBtn = document.querySelector('.orb-play');
         const orbIcon = document.querySelector('.orb img');
-        const orbContainer = document.querySelector('.orb');
 
         mainAudio.crossOrigin = "anonymous";
         mainAudio.volume = 1.0;
 
+        // 1. ПОДКЛЮЧЕНИЕ WEBSOCKET СРАЗУ ПРИ ЗАГРУЗКЕ
+        document.addEventListener('DOMContentLoaded', () => {
+            connect();
+        });
 
         function connect() {
             const socket = new SockJS('/ws-player');
             stompClient = Stomp.over(socket);
-            stompClient.debug = null;
+            stompClient.debug = null; // Выключить лог STOMP в консоли
 
             stompClient.connect({}, function (frame) {
                 console.log('STOMP Connected: ' + frame);
 
+                // Подписка на инициализацию данных (плейлист)
                 stompClient.subscribe('/topic/store.' + storeId + '.init', function (message) {
                     const data = JSON.parse(message.body);
                     console.log('Initial state received:', data);
-
                     playlist = data.playlistUrls || [];
+
+                    // Если нажали Play раньше, чем пришли данные
                     if (playlist.length > 0 && isPlaying && (mainAudio.paused || !mainAudio.src)) {
                         playTrack(0);
                     }
                 });
 
+                // Подписка на команды джинглов
                 stompClient.subscribe('/topic/store.' + storeId + '.commands', function (message) {
                     const command = JSON.parse(message.body);
                     handleCommand(command);
                 });
 
+                // Подписка на расписание (для UI обновлений)
                 stompClient.subscribe('/topic/store.' + storeId + '.schedule', function (schedule) {
-                    const slots = JSON.parse(schedule.body);
-                    console.log('Schedule synced. Active slots:', slots.length);
+                    console.log('Schedule synced');
                 });
 
+                // Первичный запрос данных
                 stompClient.send("/app/sync." + storeId, {}, {});
             }, function (error) {
                 console.error('STOMP error:', error);
-                // Реконнект через 5 секунд при ошибке
-                setTimeout(connect, 5000);
+                setTimeout(connect, 5000); // Реконнект при обрыве
             });
         }
 
+        // 2. ЛОГИКА ВОСПРОИЗВЕДЕНИЯ МУЗЫКИ
         function playTrack(index) {
             if (playlist.length === 0) return;
 
@@ -123,8 +176,7 @@
             mainAudio.src = playlist[currentTrackIndex];
 
             mainAudio.play().catch(err => {
-                console.error("Playback error:", err);
-                setTimeout(() => playTrack(currentTrackIndex + 1), 2000);
+                console.warn("Playback blocked by browser. Wait for user click.");
             });
         }
 
@@ -134,81 +186,82 @@
             }
         };
 
+        // 3. УПРАВЛЕНИЕ ДЖИНГЛАМИ
         function handleCommand(command) {
             if (command.type === 'PLAY_JINGLE' && isPlaying) {
-                playJingle(command.jingleUrl, command.volume);
+                playJingle(command.jingleUrl);
             } else if (command.type === 'FORCE_DISCONNECT') {
-                stopEverything();
-                alert("This account is logged in from another device.");
+                stopPlaybackUI();
+                alert("Disconnected: logged in from another device.");
             }
         }
 
-        function playJingle(url, targetVolume) {
+        function playJingle(url) {
             if (isJinglePlaying) return;
 
             isJinglePlaying = true;
             const jingleAudio = new Audio(url);
-
+            jingleAudio.crossOrigin = "anonymous";
             jingleAudio.volume = 1.0;
+
+            // Приглушаем музыку до 10%
             fadeAudio(mainAudio, 0.1, 400);
+
             setTimeout(() => {
                 jingleAudio.play().catch(err => {
-                    console.error("Jingle playback failed:", err);
+                    console.error("Jingle failed", err);
                     isJinglePlaying = false;
                     fadeAudio(mainAudio, 1.0, 400);
                 });
-            }, 200);
+            }, 250);
 
             jingleAudio.onended = () => {
                 fadeAudio(mainAudio, 1.0, 800);
                 isJinglePlaying = false;
-
-                if (mainAudio.ended) {
-                    playTrack(currentTrackIndex + 1);
-                }
+                if (mainAudio.ended) playTrack(currentTrackIndex + 1);
             };
         }
 
+        // Плавный переход громкости
         function fadeAudio(audio, targetVolume, duration) {
             const startVolume = audio.volume;
             const diff = targetVolume - startVolume;
-            const steps = 25;
+            const steps = 20;
             const stepTime = duration / steps;
             let currentStep = 0;
 
             const interval = setInterval(() => {
                 currentStep++;
                 const nextVol = startVolume + (diff * (currentStep / steps));
-                audio.volume = Math.min(Math.max(nextVol, 0), 1); // Clamp 0-1
-
+                audio.volume = Math.min(Math.max(nextVol, 0), 1);
                 if (currentStep >= steps) clearInterval(interval);
             }, stepTime);
         }
 
-        function stopEverything() {
+        function stopPlaybackUI() {
             mainAudio.pause();
             mainAudio.src = "";
             isPlaying = false;
             orbIcon.style.display = 'none';
             orbBtn.classList.remove('active');
-            if (stompClient) {
-                stompClient.disconnect();
-                stompClient = null;
-            }
         }
 
+        // 4. ОБРАБОТКА КЛИКА ПО ORB
         orbBtn.addEventListener('click', () => {
             if (!isPlaying) {
                 isPlaying = true;
                 orbIcon.style.display = 'block';
                 orbBtn.classList.add('active');
-                connect();
+
+                if (playlist.length > 0) {
+                    playTrack(currentTrackIndex);
+                } else if (stompClient && stompClient.connected) {
+                    stompClient.send("/app/sync." + storeId, {}, {});
+                }
             } else {
-                stopEverything();
+                stopPlaybackUI();
             }
         });
     </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
 </th:block>
 </html>

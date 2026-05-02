@@ -41,7 +41,7 @@ public class Store extends UpdateEntity {
     private Organization organization;
 
     @Builder.Default
-    @ManyToMany(mappedBy = "stores")
+    @ManyToMany(mappedBy = "stores", fetch = FetchType.EAGER)
     private Set<Jingle> jingles = new HashSet<>();
 
     @OneToOne(cascade = CascadeType.ALL)
