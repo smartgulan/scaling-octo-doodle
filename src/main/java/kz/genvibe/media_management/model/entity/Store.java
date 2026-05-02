@@ -48,4 +48,8 @@ public class Store extends UpdateEntity {
     @JoinColumn(name = "user_id")
     private AppUser storeUser;
 
+    @Builder.Default
+    @OneToOne(mappedBy = "store")
+    private JingleSchedule jingleSchedule = new JingleSchedule();
+
 }

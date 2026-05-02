@@ -17,8 +17,8 @@ import java.util.List;
 public class JingleSchedule extends UpdateEntity {
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "organization_id", nullable = false)
-    private Organization organization;
+    @JoinColumn(name = "store_id", nullable = false)
+    private Store store;
 
     @Builder.Default
     @OneToMany(mappedBy = "jingleSchedule", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)

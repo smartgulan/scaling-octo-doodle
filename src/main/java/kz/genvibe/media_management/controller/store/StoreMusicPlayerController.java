@@ -8,6 +8,7 @@ import kz.genvibe.media_management.model.enums.JingleSlotStatus;
 import kz.genvibe.media_management.repository.JingleScheduleRepository;
 import kz.genvibe.media_management.repository.MusicRepository;
 import kz.genvibe.media_management.repository.OrganizationRepository;
+import kz.genvibe.media_management.repository.StoreRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -20,14 +21,16 @@ import org.springframework.stereotype.Controller;
 @Slf4j
 public class StoreMusicPlayerController {
 
+    private final StoreRepository storeRepository;
     private final OrganizationRepository organizationRepository;
     private final JingleScheduleRepository scheduleRepository;
     private final MusicRepository musicRepository;
     private final SimpMessagingTemplate messagingTemplate;
 
-    @MessageMapping("/sync.{orgId}")
-    public void syncSchedule(@DestinationVariable long orgId) {
-        var org = organizationRepository.findById(orgId)
+    @MessageMapping("/sync.{storeId}")
+    public void syncSchedule(@DestinationVariable long storeId) {
+        var store = storeRepository.findById(storeId).orElseThrow();
+        var org = organizationRepository.findById(store.getOrganization().getId())
             .orElseThrow(() -> new EntityNotFoundException("Organization not found"));
 
         var musicUrls = musicRepository
@@ -36,7 +39,7 @@ public class StoreMusicPlayerController {
             .map(Music::getFileUrl)
             .toList();
 
-        var schedule = scheduleRepository.findJingleScheduleByOrganization(org)
+        var schedule = scheduleRepository.findJingleScheduleByStore(store)
             .orElseThrow(() -> new EntityNotFoundException("Schedule not found"));
 
         var pendingSlots = schedule.getDailyJingleSlots().stream()
@@ -50,7 +53,7 @@ public class StoreMusicPlayerController {
             org.getCompanyName()
         );
 
-        messagingTemplate.convertAndSend("/topic/org." + orgId + ".init", initialState);
+        messagingTemplate.convertAndSend("/topic/store." + storeId + ".init", initialState);
     }
 
 }

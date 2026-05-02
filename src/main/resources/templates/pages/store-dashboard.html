@@ -63,6 +63,7 @@
 
     <script th:inline="javascript">
         const orgId = [[${organization.id}]];
+        const storeId = [[${store.id}]];
 
         let stompClient = null;
         let mainAudio = new Audio();
@@ -87,7 +88,7 @@
             stompClient.connect({}, function (frame) {
                 console.log('STOMP Connected: ' + frame);
 
-                stompClient.subscribe('/topic/org.' + orgId + '.init', function (message) {
+                stompClient.subscribe('/topic/store.' + storeId + '.init', function (message) {
                     const data = JSON.parse(message.body);
                     console.log('Initial state received:', data);
 
@@ -97,17 +98,17 @@
                     }
                 });
 
-                stompClient.subscribe('/topic/org.' + orgId + '.commands', function (message) {
+                stompClient.subscribe('/topic/store.' + storeId + '.commands', function (message) {
                     const command = JSON.parse(message.body);
                     handleCommand(command);
                 });
 
-                stompClient.subscribe('/topic/org.' + orgId + '.schedule', function (schedule) {
+                stompClient.subscribe('/topic/store.' + storeId + '.schedule', function (schedule) {
                     const slots = JSON.parse(schedule.body);
                     console.log('Schedule synced. Active slots:', slots.length);
                 });
 
-                stompClient.send("/app/sync." + orgId, {}, {});
+                stompClient.send("/app/sync." + storeId, {}, {});
             }, function (error) {
                 console.error('STOMP error:', error);
                 // Реконнект через 5 секунд при ошибке

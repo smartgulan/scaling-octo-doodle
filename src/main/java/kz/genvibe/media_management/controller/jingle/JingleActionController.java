@@ -37,7 +37,7 @@ public class JingleActionController {
     }
 
     @PatchMapping("/{id}/stores")
-    public String addJingleToLocation(
+    public String addJingleToLocations(
         @PathVariable long id,
         @ModelAttribute JingleAddStoresDto dto,
         @CurrentUser AppUser appUser
