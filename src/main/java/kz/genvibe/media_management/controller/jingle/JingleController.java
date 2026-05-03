@@ -32,6 +32,7 @@ public class JingleController {
         model.addAttribute("jingleHistory", jingleService.getJingleHistory(appUser));
         model.addAttribute("jingleRequestsToPause", jingleService.getJingleRequestsToPause(appUser));
         model.addAttribute("activeStores", storeService.getAllActiveStores(appUser));
+        model.addAttribute("organization", appUser.getOrganization());
         return "pages/jingles";
     }
 

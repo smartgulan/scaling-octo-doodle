@@ -25,6 +25,7 @@ public class StoreController {
         @CurrentUser AppUser appUser
     ) {
         model.addAttribute("stores", storeService.getAllStores(appUser));
+        model.addAttribute("organization", appUser.getOrganization());
         return "pages/stores";
     }
 

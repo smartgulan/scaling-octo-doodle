@@ -32,7 +32,11 @@ body{
 .card-status {
     font-weight: 500;
     font-size: 12px;
-    color: #00000080;
+    color: #000; /* по умолчанию черный */
+}
+
+.card-status.active {
+    color: #10A102; /* зелёный только для активного */
 }
 
 .card-header {
@@ -193,9 +197,18 @@ linear-gradient(0deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.2));
     font-weight: 500;
     min-width: 60px;
 }
+.jingle-badge{
+    background: #e6f7ed;
+    color: #2ecc71;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 4px 8px;
+    border-radius: 20px;
+}
 .status-badge.active { background: #e6f7ed; color: #2ecc71;
     font-size: 12px;
-    font-weight: 500;}
+    font-weight: 500;
+}
 .status-badge.inactive { background: #C88C1E1F; color: #C88C1E;
     font-size: 12px;
     font-weight: 500;}

@@ -32,7 +32,8 @@
     </div>
 
     <!-- STORES GRID -->
-    <div th:if="${!#lists.isEmpty(stores)}" class="stores-grid">
+    <div th:if="${!#lists.isEmpty(stores)}">
+        <div class="stores-grid">
 
         <div th:each="store : ${stores}" class="store-card" th:attr="data-id=${store.id}">
 
@@ -86,13 +87,14 @@
 
             </div>
         </div>
-    </div>
+        </div>
+        <!-- ADD CARD BUTTON -->
+        <button class="btn-add-card" onclick="openModal()">
+            <span th:replace="~{fragments/icons :: icon-plus}"></span>
+            <span class="btn-title">Add new store</span>
+        </button>
 
-    <!-- ADD CARD BUTTON -->
-    <button class="btn-add-card" onclick="openModal()">
-        <span th:replace="~{fragments/icons :: icon-plus}"></span>
-        <span class="btn-title">Add new store</span>
-    </button>
+    </div>
 
     <!-- MODAL (один на всё) -->
     <div id="modalOverlay" class="modal-overlay" onclick="closeModal()"></div>
@@ -121,7 +123,7 @@
                     <input type="email" name="email" placeholder="store@email.com" required>
                 </div>
 
-                <button type="submit" class="btn-save-store">
+                <button type="submit" class="btn-save-store" id="saveStoreBtn" disabled>
                     Save store
                 </button>
             </form>
@@ -175,6 +177,29 @@
         <span class="icon" th:insert="~{fragments/icons :: icon-toast}"></span>
         <span id="toastText">Link copied</span>
     </div>
+    <script>
+        const form = document.querySelector('#modal form');
+        const btn = document.getElementById('saveStoreBtn');
+
+        const nameInput = form.querySelector('input[name="name"]');
+        const emailInput = form.querySelector('input[name="email"]');
+
+        function validateForm() {
+            const nameValid = nameInput.value.trim().length > 0;
+            const emailValid = emailInput.value.trim().length > 0;
+
+            if (nameValid && emailValid) {
+                btn.disabled = false;
+                btn.classList.add('enabled');
+            } else {
+                btn.disabled = true;
+                btn.classList.remove('enabled');
+            }
+        }
+
+        nameInput.addEventListener('input', validateForm);
+        emailInput.addEventListener('input', validateForm);
+    </script>
     <script>
         let currentStoreId = null;
         let currentLink = "";

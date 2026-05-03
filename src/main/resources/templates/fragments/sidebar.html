@@ -70,7 +70,7 @@
             <div class="user-profile">
                 <span class="icon" th:replace="~{fragments/icons :: icon-account}"></span>
                 <div class="user-info">
-                    <span class="user-name">Company name</span>
+                    <span class="user-name" th:text="${organization.companyName}">Company name</span>
                     <span class="user-role">Admin</span>
                 </div>
             </div>

@@ -4,7 +4,7 @@
                     ~{::content},
                     'Dashboard - GenVibe',
                     'dashboard.css',
-                    'Hello, Dashboard',
+                    'Hello, team ' + ${organization.companyName},
                     'enhanced-dashboard'
                     )}">
 
@@ -137,6 +137,7 @@
         </div>
     </div>
     <div class="stats-row">
+        <a href="/music">
         <div class="stat-card">
             <svg class="stat-card__gradient" width="250" height="133" viewBox="0 0 371 162" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMaxYMax slice">
                 <g filter="url(#filter0_f_604_1810)">
@@ -192,6 +193,8 @@
             <p class="stat-label">Synth, lead, bass guitar, rhythm guitar</p>
             <p class="stat-label">BPM range: 110-115</p>
         </div>
+        </a>
+        <a href="/stores">
         <div class="stat-card">
             <svg class="stat-card__gradient" width="379" height="132" viewBox="0 0 379 132" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMaxYMax slice">
                 <g filter="url(#filter0_f_151_2265)">
@@ -254,6 +257,8 @@
             <p class="stat-value" th:text="${activeStores.size()}">15</p>
             <p class="stat-sub" th:text="${stores.size() + ' total'}">15 total</p>
         </div>
+        </a>
+        <a href="/analytics">
         <div class="stat-card">
             <svg class="stat-card__gradient" width="380" height="133" viewBox="0 0 380 133" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMaxYMax slice">
                 <g filter="url(#filter0_f_151_2289)">
@@ -307,10 +312,10 @@
                 <span class="icon" th:replace="~{fragments/icons :: icon-start}"></span>
                 <p>Daily Plays/minutes</p>
             </div>
-            <p class="stat-value" th:text="${(musicData.totalPlaysGrowthPercentage >= 0 ? '+' : '') + musicData.totalPlaysGrowthPercentage + '% this week'}">5,420</p>
+            <p class="stat-value" th:text="${(dailyPlaysAndMinutes.totalPlays >= 0 ? '0': '')}">5,420</p>
             <div class="store-status">
                 <p class="stat-sub">total plays today</p>
-                <span class="status-badge">
+                <span class="jingle-badge" th:text="${'↑' + dailyPlaysAndMinutes.totalPlaysGrowthPercentage + '%'}">
                 <svg width="7" height="7" viewBox="0 0 7 7" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M3.1204 0.0538223C3.3413 -0.0179511 3.57967 -0.0179305 3.80058 0.0538223L3.85966 0.0748184C3.99306 0.128242 4.09693 0.205133 4.17753 0.273549C4.26429 0.347206 4.35851 0.442327 4.45048 0.534291L6.7454 2.82921L6.78642 2.87462C6.97863 3.11024 6.96495 3.45767 6.7454 3.67736C6.51108 3.91167 6.13108 3.91167 5.89677 3.67736L4.06083 1.84142V6.39757L4.05741 6.4591C4.02657 6.76145 3.7712 6.99756 3.46073 6.99767C3.15017 6.99767 2.89441 6.76152 2.86356 6.4591L2.86063 6.39757V1.84093L1.02421 3.67736L0.978798 3.71886C0.743132 3.91114 0.39527 3.89705 0.175575 3.67736C-0.0439198 3.45766 -0.0576391 3.11022 0.134559 2.87462L0.175575 2.82921L2.4705 0.534291C2.56249 0.4423 2.65666 0.347227 2.74345 0.273549C2.83555 0.195356 2.95811 0.106603 3.1204 0.0538223Z" fill="#10A102"/>
                 </svg>
@@ -318,6 +323,7 @@
                 </span>
             </div>
         </div>
+        </a>
     </div>
 </div>
     <p class="store-title">Stores</p>

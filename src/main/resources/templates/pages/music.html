@@ -53,6 +53,7 @@
                         <h3 th:text="${music.atmosphere.name}">Style Name</h3>
                         <p th:text="${music.mood.name}">Style description text goes here.</p>
                     </div>
+                    <div class="selected-badge">✓ Selected</div>
                     <div class="waveform-placeholder">
                         <canvas class="waveCanvas"></canvas>
                     </div>
@@ -109,7 +110,11 @@
 
                 card.onclick = (e) => {
                     if (e.target.closest('.play-btn')) return;
-                    document.querySelectorAll('.music-card').forEach(c => c.classList.remove('selected'));
+
+                    document.querySelectorAll('.music-card').forEach(c => {
+                        c.classList.remove('selected');
+                    });
+
                     card.classList.add('selected');
                     document.getElementById('saveButton').disabled = false;
                 };

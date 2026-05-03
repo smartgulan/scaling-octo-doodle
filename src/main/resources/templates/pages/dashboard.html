@@ -16,7 +16,7 @@
             <div class="card-body">
                 <div class="card-icon">
                      <span th:replace="~{fragments/icons :: icon-music}"></div>
-                <span class="card-status">Selected</span>
+                <span class="card-status active">Selected</span>
             </div>
             <div class="card-header">
                 <h3>Music Management</h3>
@@ -29,7 +29,10 @@
             <div class="card-body">
                 <div class="card-icon">
                     <span th:replace="~{fragments/icons :: icon-store}"></div>
-                <span class="card-status" th:text="${#lists.size(stores)} + ' stores'">0 stores</span>
+                <span class="card-status"
+                      th:classappend="${#lists.size(stores) > 0} ? 'active' : ''"
+                      th:text="${#lists.size(stores)} + ' stores'">
+                </span>
             </div>
             <div class="card-header">
                 <h3>Stores</h3>
