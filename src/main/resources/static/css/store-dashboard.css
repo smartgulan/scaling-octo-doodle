@@ -39,12 +39,17 @@
     align-items: center;
     margin: 80px 0 40px 0;
 }
+.orb-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 60px 0 40px 0;
+}
 
 .orb {
-    width: 220px;
-    height: 220px;
+    width: 180px;
+    height: 180px;
     border-radius: 50%;
-    background: none;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -57,13 +62,10 @@
     width: 250%;
     height: 250%;
     object-fit: cover;
+    pointer-events: none; /* ← добавь это */
     -webkit-mask-image: radial-gradient(circle, black 49%, transparent 50%);
     mask-image: radial-gradient(circle, black 49%, transparent 50%);
     transition: transform 0.3s ease;
-}
-
-.orb::before {
-    display: none;
 }
 
 .orb:hover img {
@@ -71,25 +73,45 @@
 }
 
 .orb-play {
-    width: 44px;
-    height: 44px;
-    background: rgba(255, 255, 255, 0.85);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-    backdrop-filter: blur(4px);
     position: relative;
-    z-index: 1;
+    z-index: 10;
+    width: 100px;
+    height: 100px;
+    filter:
+            drop-shadow(0px 12.8px 25.6px rgba(0,0,0,0.06))
+            drop-shadow(0px 3.2px 6.4px rgba(0,0,0,0.04))
+            drop-shadow(0px 0.8px 3.2px rgba(0,0,0,0.04));
 }
 
 .orb-play svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100px;
+    height: 100px;
+    overflow: visible;
+}
+
+#icon-pause {
+    display: none;
+}
+
+
+.icon-store {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    fill: #00000033;
     width: 16px;
     height: 16px;
-    fill: #1a1a2e;
-    margin-left: 2px;
 }
+.icon-store span{
+    fill: #00000033;
+}
+.icon-store svg path{
+    fill: #00000029;
+}
+
 
 /* ===== ACTIVE JINGLES ===== */
 .active-jingles-card {
@@ -111,9 +133,9 @@
 
 .active-jingles-card h2 {
     font-size: 16px;
-    font-weight: 600;
-    color: #1a1a2e;
-    margin-bottom: 20px;
+    font-weight: 400;
+    color: black;
+    margin-bottom: 16px;
 }
 
 .jingle-row {
@@ -136,20 +158,25 @@
     box-shadow: 0 4px 16px rgba(0,0,0,0.07);
 }
 
+.jingle-info{
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
 .jingle-info h4 {
-    font-size: 14px;
-    font-weight: 500;
-    color: #1a1a2e;
-    margin-bottom: 4px;
+    font-size: 16px;
+    font-weight: 400;
+    color: black;
+    margin: 0;
+    padding: 0;
 }
 
 .jingle-meta {
-    font-size: 12px;
-    color: #888;
+    font-size: 14px;
+    color: #00000080;
     display: flex;
     align-items: center;
-    gap: 4px;
-    margin-bottom: 2px;
+    gap: 6px;
 }
 
 .jingle-repeating {
@@ -191,4 +218,20 @@
 /* ===== OLD DASHBOARD GRID (hidden / replaced) ===== */
 .dashboard-grid {
     display: none;
+}
+
+#icon-pause {
+    display: none;
+}
+
+#icon-play {
+    display: block;
+}
+
+.orb-play.is-playing #icon-play {
+    display: none;
+}
+
+.orb-play.is-playing #icon-pause {
+    display: block;
 }

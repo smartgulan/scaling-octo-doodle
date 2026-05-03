@@ -3,6 +3,7 @@ package kz.genvibe.media_management.controller.dashboard;
 import kz.genvibe.media_management.config.annotations.CurrentUser;
 import kz.genvibe.media_management.model.entity.AppUser;
 import kz.genvibe.media_management.model.entity.Store;
+import kz.genvibe.media_management.repository.analytics.StoreAnalyticsRepository;
 import kz.genvibe.media_management.service.internal.AnalyticsService;
 import kz.genvibe.media_management.service.internal.MusicService;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ public class DashboardController {
 
     private final AnalyticsService analyticsService;
     private final MusicService musicService;
+    private final StoreAnalyticsRepository storeAnalyticsRepository;
 
     @GetMapping
     public String dashboard(Model model, @CurrentUser AppUser appUser) {
@@ -27,6 +29,7 @@ public class DashboardController {
         final var activeStores = stores.stream()
             .filter(Store::isActive)
             .collect(Collectors.toSet());
+        activeStores.forEach(it -> it.setLastAccessDate(storeAnalyticsRepository.getLatestSnapshotDate(it.getName())));
         final var organization = appUser.getOrganization();
 
         model.addAttribute("organization", organization);

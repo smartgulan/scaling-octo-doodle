@@ -29,12 +29,12 @@ public class JingleActionController {
     }
 
     @DeleteMapping("/{id}")
-    public String deleteJingle(
+    @ResponseBody
+    public void deleteJingle(
         @PathVariable Long id,
         @CurrentUser AppUser appUser
     ) {
         jingleService.deleteJingleById(id, appUser);
-        return "redirect:/jingles";
     }
 
     @PatchMapping("/{id}/stores")

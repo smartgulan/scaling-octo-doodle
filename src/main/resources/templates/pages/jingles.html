@@ -276,6 +276,9 @@
                                 class="btn-outline btn-approve-pause"
                                 th:data-id="${request.id}"
                                 onclick="handleApprovePause(this)">
+                            <svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" clip-rule="evenodd" d="M6.41667 0C9.96043 7.69658e-05 12.8333 2.87289 12.8333 6.41667C12.8333 9.96045 9.96043 12.8333 6.41667 12.8333C2.87284 12.8333 0 9.96049 0 6.41667C0 2.87284 2.87284 0 6.41667 0ZM8.29769 4.18929C8.04108 4.03011 7.70911 4.09415 7.52865 4.32829L7.49447 4.37728L5.44084 7.68644L4.76408 6.70833L4.72762 6.66105C4.53566 6.43632 4.20061 6.389 3.95231 6.56079C3.70397 6.73271 3.63052 7.06299 3.77344 7.32186L3.80477 7.37256L4.58293 8.4965C4.64407 8.58485 4.71196 8.68448 4.77718 8.76253C4.83475 8.83141 4.92995 8.93396 5.07284 9.00521L5.13664 9.03369C5.35484 9.11862 5.59799 9.11231 5.81169 9.0166L5.87435 8.98527C6.0134 8.90701 6.10342 8.79999 6.15747 8.72835C6.21873 8.64714 6.28139 8.54394 6.33805 8.45264L8.48568 4.99251L8.51473 4.9401C8.64436 4.67445 8.55427 4.34853 8.29769 4.18929Z" fill="black"/>
+                            </svg>
                             Approve
                         </button>
                         <button class="btn-delete-icon" th:data-id="${request.id}">
@@ -536,18 +539,25 @@
             /* ================= DELETE JINGLE ================= */
             document.addEventListener('click', async (e) => {
                 const btn = e.target.closest('.btn-delete-icon');
-                if (!btn) return;
+                if (!btn || btn.disabled) return; // Проверяем, не нажата ли уже кнопка
+
+                // 1. Сразу предотвращаем дефолтное поведение и всплытие
+                e.preventDefault();
+                e.stopPropagation();
+
+                // 2. Блокируем кнопку (защита от двойного клика)
+                btn.disabled = true;
+                btn.style.pointerEvents = 'none'; // На всякий случай отключаем мышь
 
                 const item = btn.closest('.jingle-item');
-                const playBtn = item.querySelector('.play-btn');
+                const playBtn = item?.querySelector('.play-btn');
                 const id = btn.getAttribute('data-id');
 
+                // Остановка аудио (твой код)
                 if (currentButton && currentButton === playBtn) {
                     audio.pause();
                     cancelAnimationFrame(animFrameId);
                     currentButton = null;
-                    currentCanvas = null;
-                    currentCtx = null;
                 }
 
                 try {
@@ -564,12 +574,17 @@
                     if (response.ok) {
                         item.remove();
                     } else {
+                        // Если ошибка — разблокируем кнопку обратно
+                        btn.disabled = false;
+                        btn.style.pointerEvents = 'auto';
                         console.error('Delete failed, status:', response.status);
                     }
-                } catch (e) {
-                    console.error('Delete failed', e);
+                } catch (err) {
+                    btn.disabled = false;
+                    btn.style.pointerEvents = 'auto';
+                    console.error('Delete failed', err);
                 }
-            });
+            });;
         });
 
         function toLocalDateTimeString(date) {
@@ -988,7 +1003,12 @@
                     const actionsDiv = btn.parentElement;
                     const approvedBadge = document.createElement('span');
                     approvedBadge.className = 'badge-approved';
-                    approvedBadge.textContent = '✓ Approved';
+                    approvedBadge.innerHTML = `
+    <svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M6.41667 0C9.96043 7.69658e-05 12.8333 2.87289 12.8333 6.41667C12.8333 9.96045 9.96043 12.8333 6.41667 12.8333C2.87284 12.8333 0 9.96049 0 6.41667C0 2.87284 2.87284 0 6.41667 0ZM8.29769 4.18929C8.04108 4.03011 7.70911 4.09415 7.52865 4.32829L7.49447 4.37728L5.44084 7.68644L4.76408 6.70833L4.72762 6.66105C4.53566 6.43632 4.20061 6.389 3.95231 6.56079C3.70397 6.73271 3.63052 7.06299 3.77344 7.32186L3.80477 7.37256L4.58293 8.4965C4.64407 8.58485 4.71196 8.68448 4.77718 8.76253C4.83475 8.83141 4.92995 8.93396 5.07284 9.00521L5.13664 9.03369C5.35484 9.11862 5.59799 9.11231 5.81169 9.0166L5.87435 8.98527C6.0134 8.90701 6.10342 8.79999 6.15747 8.72835C6.21873 8.64714 6.28139 8.54394 6.33805 8.45264L8.48568 4.99251L8.51473 4.9401C8.64436 4.67445 8.55427 4.34853 8.29769 4.18929Z" fill="black"/>
+    </svg>
+    Approved
+`;
 
                     btn.remove(); // Удаляем кнопку Approve
                     actionsDiv.prepend(approvedBadge); // Добавляем бейдж в начало блока действий

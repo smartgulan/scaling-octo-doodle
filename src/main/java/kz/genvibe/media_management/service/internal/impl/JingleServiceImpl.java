@@ -8,7 +8,6 @@ import kz.genvibe.media_management.model.entity.*;
 import kz.genvibe.media_management.model.enums.CommandType;
 import kz.genvibe.media_management.model.enums.JingleSlotStatus;
 import kz.genvibe.media_management.repository.JingleRepository;
-import kz.genvibe.media_management.repository.JingleScheduleRepository;
 import kz.genvibe.media_management.repository.JingleSlotRepository;
 import kz.genvibe.media_management.service.integration.ElevenlabsIntegrationService;
 import kz.genvibe.media_management.service.internal.JingleService;
@@ -34,7 +33,6 @@ public class JingleServiceImpl implements JingleService {
     private final StoreService storeService;
     private final ElevenlabsIntegrationService elevenlabsIntegrationService;
     private final JingleRepository jingleRepository;
-    private final JingleScheduleRepository jingleScheduleRepository;
     private final JingleSlotRepository jingleSlotRepository;
     private final SimpMessagingTemplate messagingTemplate;
 
@@ -66,8 +64,8 @@ public class JingleServiceImpl implements JingleService {
     @Transactional
     public void deleteJingleById(long id, AppUser appUser) {
         var jingle = jingleRepository.findJingleByIdAndOrganization(id, appUser.getOrganization())
-            .orElseThrow(() -> new EntityNotFoundException("Jingle not found"));
-        jingleRepository.delete(jingle);
+                .orElseThrow(() -> new EntityNotFoundException("Jingle not found"));
+        jingleRepository.deleteByIdAndOrg(id, appUser.getOrganization());
     }
 
     @Override

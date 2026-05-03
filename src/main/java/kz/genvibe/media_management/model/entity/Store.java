@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import kz.genvibe.media_management.model.entity.base.UpdateEntity;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -50,5 +51,8 @@ public class Store extends UpdateEntity {
 
     @OneToOne(mappedBy = "store")
     private JingleSchedule jingleSchedule;
+
+    @Transient
+    private LocalDate lastAccessDate;
 
 }

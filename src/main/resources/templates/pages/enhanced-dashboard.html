@@ -15,7 +15,7 @@
             <img th:src="@{/assets/icons/play-animated.gif}" alt="orb" />
             <div class="orb-play" id="playPauseBtn">
                 <!-- Play icon (default) -->
-                <svg id="icon-play" width="100" height="100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <svg id="icon-play" width="100" height="100" fill="none" xmlns="http://www.w3.org/2000/svg" >
                     <g filter="url(#filter0_ddd_953_2062)">
                         <mask id="mask0_953_2062" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="25" y="12" width="65" height="65">
                             <rect x="25.9996" y="13.2" width="63.2" height="63.2" rx="31.6" fill="#D9D9D9" stroke="url(#paint0_linear_953_2062)" stroke-width="0.8"/>
@@ -371,8 +371,8 @@
             </div>
 
             <div class="access-title">
-                <p th:if="${store.active}">
-                    Last accessed: 24 Nov., 2026
+                <p th:if="${store.active}"
+                   th:text="|Last accessed: ${#temporals.format(store.lastAccessDate, 'dd MMM, yyyy', new java.util.Locale('en'))}|">
                 </p>
                 <p th:unless="${store.active}">
                     Activate this store to generate a music access link
@@ -433,61 +433,71 @@
         let currentStoreId = null;
         let currentLink = "";
 
+        // безопасный escape для onclick строк (так как HTML менять нельзя)
+        function safeStr(str) {
+            return (str || "").replace(/'/g, "\\'");
+        }
+
         function openLink(id, name, link) {
             currentStoreId = id;
             currentLink = link || "";
 
-            document.getElementById("storeName").innerText = name;
-            document.getElementById("storeLink").innerText = link || "Loading...";
+            const nameEl = document.getElementById("storeName");
+            const linkEl = document.getElementById("storeLink");
+            const modal = document.getElementById("linkModal");
+            const overlay = document.getElementById("linkModalOverlay");
 
-            document.getElementById("linkModal").style.display = "block";
-            document.getElementById("linkModalOverlay").style.display = "block";
+            if (nameEl) nameEl.innerText = name || "";
+            if (linkEl) linkEl.innerText = link || "Loading...";
+
+            if (modal) modal.style.display = "block";
+            if (overlay) overlay.style.display = "block";
         }
 
         function closeLinkModal() {
-            document.getElementById("linkModal").style.display = "none";
-            document.getElementById("linkModalOverlay").style.display = "none";
+            document.getElementById("linkModal")?.style && (document.getElementById("linkModal").style.display = "none");
+            document.getElementById("linkModalOverlay")?.style && (document.getElementById("linkModalOverlay").style.display = "none");
         }
 
         function activateStore(id, name) {
             currentStoreId = id;
 
-            // Сразу открываем модалку с "Loading..."
             openLink(id, name, "Loading...");
 
-            const token  = document.querySelector('meta[name="_csrf"]').content;
-            const header = document.querySelector('meta[name="_csrf_header"]').content;
+            const token = document.querySelector('meta[name="_csrf"]')?.content;
+            const header = document.querySelector('meta[name="_csrf_header"]')?.content;
 
             fetch(`/api/stores/activate/${id}`, {
                 method: "POST",
                 headers: { [header]: token }
             })
-                .then(() => fetch(`/api/stores/regenerate-link/${id}`, {
-                    method: "POST",
-                    headers: { [header]: token }
-                }))
+                .then(() =>
+                    fetch(`/api/stores/regenerate-link/${id}`, {
+                        method: "POST",
+                        headers: { [header]: token }
+                    })
+                )
                 .then(res => res.text())
                 .then(link => {
                     currentLink = link;
-                    document.getElementById("storeLink").innerText = link;
 
-                    // Обновляем карточку в DOM
+                    const linkEl = document.getElementById("storeLink");
+                    if (linkEl) linkEl.innerText = link;
+
                     updateStoreCard(id, name, link);
                     showToast("Store activated!");
                 })
                 .catch(() => {
-                    document.getElementById("storeLink").innerText = "Error";
+                    const linkEl = document.getElementById("storeLink");
+                    if (linkEl) linkEl.innerText = "Error";
                     showToast("Activation failed");
                 });
         }
 
-        // Единая функция обновления карточки — убирает дублирование
         function updateStoreCard(id, name, link) {
-            // th:each рендерит div с data-id без класса, ищем по атрибуту
             const wrapper = document.querySelector(`[data-id="${id}"]`);
             if (!wrapper) return;
 
-            // Обновляем бейдж
             const badge = wrapper.querySelector(".status-badge");
             if (badge) {
                 badge.innerText = "⬤ Active";
@@ -495,27 +505,28 @@
                 badge.classList.add("active");
             }
 
-            // Заменяем кнопку "Activate store" на "View store"
             const btn = wrapper.querySelector(".btn-link-store");
             if (btn) {
                 btn.innerText = "View store";
                 btn.onclick = () => openLink(id, name, link);
             }
 
-            // Обновляем подпись внизу карточки
             const accessTitle = wrapper.querySelector(".access-title p");
             if (accessTitle) {
-                accessTitle.innerText = "Last accessed: " + new Date().toLocaleDateString("en-GB", {
-                    day: "numeric", month: "short", year: "numeric"
+                const date = new Date().toLocaleDateString("en-GB", {
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric"
                 });
+                accessTitle.innerText = "Last accessed: " + date;
             }
         }
 
         function regenerateLink() {
             if (!currentStoreId) return;
 
-            const token  = document.querySelector('meta[name="_csrf"]').content;
-            const header = document.querySelector('meta[name="_csrf_header"]').content;
+            const token = document.querySelector('meta[name="_csrf"]')?.content;
+            const header = document.querySelector('meta[name="_csrf_header"]')?.content;
 
             fetch(`/api/stores/regenerate-link/${currentStoreId}`, {
                 method: "POST",
@@ -524,7 +535,8 @@
                 .then(res => res.text())
                 .then(link => {
                     currentLink = link;
-                    document.getElementById("storeLink").innerText = link;
+                    const linkEl = document.getElementById("storeLink");
+                    if (linkEl) linkEl.innerText = link;
                     showToast("Link regenerated");
                 })
                 .catch(() => showToast("Failed to regenerate link"));
@@ -538,11 +550,47 @@
 
         function showToast(message) {
             const toast = document.getElementById("toast");
-            const text  = document.getElementById("toastText");
-            text.innerText = message;
+            const text = document.getElementById("toastText");
+
+            if (text) text.innerText = message;
+            if (!toast) return;
+
             toast.classList.add("show");
             setTimeout(() => toast.classList.remove("show"), 2500);
         }
+
+        /* ===== PLAY / PAUSE ===== */
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const musicPreviewUrl = /*[[${musicPreviewUrl}]]*/ null;
+
+            const audio = musicPreviewUrl ? new Audio(musicPreviewUrl) : null;
+            const btn = document.getElementById("playPauseBtn");
+
+            const playIcon = document.getElementById("icon-play");
+            const pauseIcon = document.getElementById("icon-pause");
+
+            if (!btn || !audio) return;
+
+            function updateUI() {
+                const playing = !audio.paused;
+
+                btn.classList.toggle("is-playing", playing);
+
+                if (playIcon && pauseIcon) {
+                    playIcon.style.display = playing ? "none" : "block";
+                    pauseIcon.style.display = playing ? "block" : "none";
+                }
+            }
+
+            btn.addEventListener("click", () => {
+                if (audio.paused) audio.play();
+                else audio.pause();
+                updateUI();
+            });
+
+            audio.addEventListener("ended", updateUI);
+        });
     </script>
     <script th:inline="javascript">
         const musicPreviewUrl = /*[[${musicPreviewUrl}]]*/ null;

@@ -77,8 +77,8 @@
                 </div>
 
                 <div class="access-title">
-                    <p th:if="${store.active}">
-                        Last accessed: 24 Nov., 2026
+                    <p th:if="${store.active}"
+                       th:text="|Last accessed: ${#temporals.format(store.lastAccessDate, 'dd MMM, yyyy', new java.util.Locale('en'))}|">
                     </p>
                     <p th:unless="${store.active}">
                         Activate this store to generate a music access link
