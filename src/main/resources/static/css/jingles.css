@@ -163,6 +163,7 @@ textarea.has-text {
 .jingle-item {
     border-radius: 16px;
     display: flex;
+    justify-content: space-between;
     align-items: center;
     gap: 24px;
     border: 1px solid #EEE;
@@ -172,11 +173,13 @@ textarea.has-text {
     border-image-source: linear-gradient(167.06deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 22.24%);
     border-image-slice: 1;
     box-shadow: 0px 1px 0px 1px #FFFFFF inset, 0px 2px 8px 0px #00000012;
+    overflow: hidden;
 }
 
 .jingle-item.status-approved {
-    background-color: #F0F9F0;
-    border-color: #E0EFE0;
+    background-color: #10A10214;
+    border-color: #10A10214;
+    border-top: 1px solid #10A10214
 }
 
 .play-btn {
@@ -190,20 +193,28 @@ textarea.has-text {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    max-width: 480px;
     gap:6px;
+    width: 450px;
 }
 .jingle-title{
     display: block;
     font-size: 16px;
     font-weight: 400;
     color: #000000;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 450px;
 }
 .jingle-meta {
     display: block;
     font-weight: 400;
     font-size: 14px;
     color: #00000080;
+}
+.location-tag{
+    font-size: 14px;
+    font-weight: 400;
 }
 .jingle-details h4 {
     margin: 0 0 6px 0;
@@ -219,44 +230,22 @@ textarea.has-text {
 
 .waveform-placeholder {
     flex-grow: 1;
-    height: 34px;  /* было 40px */
+    height: 34px;
     display: flex;
     align-items: center;
-    position: relative;
     overflow: hidden;
-    max-width: 200px;
+    max-width: 300px;
 }
 
 .waveCanvas {
-    width: 200px;
+    width: 100%;
     height: 34px;
     display: block;
 }
 .play-btn span:nth-child(2) {
     display: none;
 }
-/*.waveform-placeholder::before,*/
-/*.waveform-placeholder::after {*/
-/*    content: "";*/
-/*    position: absolute;*/
-/*    top: 0;*/
-/*    width: 40px;*/
-/*    height: 100%;*/
-/*    z-index: 2;*/
-/*    pointer-events: none;*/
-/*}*/
 
-/*.waveform-placeholder::before {*/
-/*    left: 0;*/
-/*    background: linear-gradient(to right, white, transparent);*/
-/*}*/
-
-/*.waveform-placeholder::after {*/
-/*    right: 0;*/
-/*    background: linear-gradient(to left, white, transparent);*/
-/*}*/
-
-/* Кнопки действий */
 .btn-outline {
     background: #FFF;
     border: 1px solid #EEE;
@@ -275,12 +264,16 @@ textarea.has-text {
 }
 
 .badge-approved {
-    background: #E6F4EA;
-    color: #1E8E3E;
-    padding: 6px 12px;
+    background: #10A1021F;
+    color: #10A102;
+    align-items: center;
     border-radius: 20px;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 500;
+    padding: 7px 10px 2px 10px;
+}
+.badge-approved svg path {
+    fill: #10A102;
 }
 .history-section {
     background: #FFFFFF66;
@@ -306,18 +299,6 @@ textarea.has-text {
     width: 100%;
 }
 
-/*.select-wrapper::after {*/
-/*    content: '▼'; !* Или SVG иконка *!*/
-/*    font-size: 10px;*/
-/*    position: absolute;*/
-/*    right: 15px;*/
-/*    top: 50%;*/
-/*    transform: translateY(-50%);*/
-/*    pointer-events: none;*/
-/*    color: #999;*/
-/*}*/
-
-/* Стили для кастомного календаря-кнопки */
 .date-display {
     padding: 14px;
     border: 1px solid #EEE;
@@ -360,10 +341,7 @@ textarea.has-text {
 .custom-select-options li:hover {
     color: #00000080;
 }
-/*.select-wrapper.active .custom-select-header,*/
-/*.select-wrapper.active .date-display {*/
-/*    background: #FFFFFF66;*/
-/*}*/
+
 
 .icon,
 .arrow {
@@ -418,14 +396,16 @@ textarea.has-text {
     top: calc(100% + 6px);
     border: 1px solid #00000033;
     background: #FFFFFF;
+    background-clip: padding-box;
     padding: 32px;
     border-radius: 16px;
     box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-    z-index: 100;
+    z-index: 9999;
 }
 
-.date-range-picker.active .date-picker-dropdown {
-    display: block;
+.select-wrapper.date-range-picker {
+    position: relative;
+    isolation: isolate;
 }
 
 .date-picker-dropdown input {
@@ -461,12 +441,6 @@ textarea.has-text {
 .calendar-title{
     font-size: 18px;
     font-weight: 500;
-}
-.nav-btn {
-    background: none;
-    border: none;
-    font-size: 18px;
-    cursor: pointer;
 }
 
 
@@ -568,12 +542,6 @@ textarea.has-text {
     font-size: 18px;
 }
 
-.time-picker {
-    display: flex;
-    justify-content: center;
-    gap: 6px;
-    margin: 10px 0;
-}
 
 .footer-actions {
     display: flex;
@@ -606,9 +574,9 @@ textarea.has-text {
     border: 1px solid #00000033;
 }
 .btn-location--active {
-    border-color: #bbf7d0;
-    background-color: #f0fdf4;
-    color: #15803d;
+    border: none;
+    background-color: #10A1021F;
+    color: #10A102;
 }
 
 .btn-location--active:hover {
@@ -747,4 +715,15 @@ textarea.has-text {
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+}
+.modern-actions{
+    display: flex;
+    justify-content: flex-end;
+    gap: 24px;
+}
+.item-container{
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    align-items: center;
 }

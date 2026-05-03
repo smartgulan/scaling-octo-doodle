@@ -55,31 +55,6 @@
                                     th:text="${cat.name}"></option>
                         </select>
                     </div>
-
-<!--                    &lt;!&ndash; DATE &ndash;&gt;-->
-<!--                    <div class="select-wrapper date-range-picker">-->
-<!--                        <div class="date-display">-->
-<!--                            Select Start/End Date-->
-<!--                            <span class="icon" th:replace="~{fragments/icons :: icon-select}"></span>-->
-<!--                        </div>-->
-
-<!--                        <div class="date-picker-dropdown">-->
-<!--                            <label>Start</label>-->
-<!--                            <input type="datetime-local" id="startDatePicker">-->
-
-<!--                            <label>End</label>-->
-<!--                            <input type="datetime-local" id="endDatePicker">-->
-
-<!--                            <button type="button" class="btn-apply">Apply</button>-->
-<!--                        </div>-->
-
-<!--                        <input type="hidden" name="startDate" id="startDate"-->
-<!--                               th:value="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd''T''HH:mm')}">-->
-
-<!--                        <input type="hidden" name="endDate" id="endDate"-->
-<!--                               th:value="${#temporals.format(#temporals.createNow().plusDays(7), 'yyyy-MM-dd''T''HH:mm')}">-->
-<!--                    </div>-->
-
                     <div class="select-wrapper date-range-picker">
 
                         <!-- Trigger -->
@@ -176,27 +151,35 @@
             <h3>Jingle History</h3>
             <div class="jingle-list">
                 <div th:each="jingle : ${jingleHistory}" class="jingle-item">
-                    <button class="play-btn"
-                            th:data-src="${jingle.fileUrl}"
-                            onclick="toggleAudio(this)">
-                        <span class="icon" th:replace="~{fragments/icons :: icon-start}"></span>
-                        <span class="icon" th:replace="~{fragments/icons :: icon-pause}"></span>
-                    </button>
+                    <div class="item-container">
+                        <button class="play-btn"
+                                th:data-src="${jingle.fileUrl}"
+                                onclick="toggleAudio(this)">
+                            <span class="icon" th:replace="~{fragments/icons :: icon-start}"></span>
+                            <span class="icon" th:replace="~{fragments/icons :: icon-pause}"></span>
+                        </button>
 
-                    <div class="jingle-details">
-                        <p class="jingle-title" th:text="${jingle.announcementText}">Text</p>
+                        <div class="jingle-details">
+                            <p class="jingle-title" th:text="${jingle.announcementText}">Text</p>
 
-                        <p class="jingle-meta"
-                           th:text="${jingle.voice + ' · ' + '30s' + ' · Start date ' + #temporals.format(jingle.startDate, 'dd.MM.yyyy') + '/ End date ' + #temporals.format(jingle.endDate, 'dd.MM.yyyy')}">
-                            Voice · Duration · Date
-                        </p>
+                            <p class="jingle-meta"
+                               th:text="${jingle.voice + ' · ' + '30s' + ' · Start date ' + #temporals.format(jingle.startDate, 'dd.MM.yyyy') + '/ End date ' + #temporals.format(jingle.endDate, 'dd.MM.yyyy')}" th:attr="data-src=${jingle.fileUrl}">
+                                Voice · Duration · Date
+                            </p>
 
-                        <p class="jingle-meta" th:text="${'Repeating: ' + jingle.repeatingTime.name}"></p>
+                            <p class="jingle-meta">
+                                <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M7.42708 3.79053e-06C11.4208 0.000556932 14.6613 3.24056 14.6615 7.23438C14.6613 11.2285 11.42 14.4688 7.42578 14.4688L7.14583 14.4635C5.74839 14.4093 4.39396 13.9508 3.2487 13.1413C2.0271 12.2776 1.10267 11.0562 0.603516 9.64584C0.456407 9.2295 0.674906 8.77245 1.09115 8.625C1.50747 8.47779 1.96445 8.69579 2.11198 9.11198C2.50078 10.2105 3.22102 11.1619 4.17253 11.8346C5.12407 12.5072 6.26119 12.8677 7.42643 12.8678C10.5368 12.8676 13.0604 10.3447 13.0605 7.23438C13.0604 4.12388 10.5357 1.59961 7.42513 1.59961C6.66351 1.59871 5.9092 1.75248 5.20898 2.05209C4.51197 2.35038 3.88251 2.78725 3.35872 3.33529L3.34701 3.34896L4.43164 4.43295C4.85168 4.85287 4.55429 5.57097 3.96029 5.57097H0.666667C0.298613 5.57082 2.39919e-05 5.27238 0 4.9043V1.61329C2.91144e-05 1.0195 0.717977 0.722221 1.13802 1.14193L2.21484 2.2168L2.45182 1.98047C3.07169 1.39237 3.7921 0.918328 4.57943 0.581384C5.47886 0.1965 6.44747 -0.000997797 7.42578 3.79053e-06H7.42708Z" fill="black" fill-opacity="0.2"/>
+                                    <path d="M7.33333 3.6211C7.77509 3.6211 8.13335 3.9795 8.13346 4.42123V7.10026H9.77148L9.7793 7.10092L9.83073 7.10352L9.84505 7.10482C10.2485 7.14586 10.5636 7.48611 10.5638 7.90039C10.5636 8.31478 10.2484 8.65559 9.84505 8.69662L9.83073 8.69792L9.7793 8.70053L9.77148 8.70118H7.33854C7.26566 8.70118 7.19609 8.69047 7.13151 8.67318H7.12956C7.12674 8.67252 7.11782 8.67037 7.10742 8.66732L7.10417 8.66602C7.09782 8.66408 7.09215 8.66225 7.08984 8.66146L7.08854 8.66081L7.0306 8.63933L7.02734 8.63803C6.99566 8.62464 6.96663 8.60989 6.94076 8.59506C6.7232 8.47198 6.56507 8.24844 6.53776 7.98177L6.53711 7.97461L6.53646 7.9668L6.53385 7.91602L6.5332 7.90821V4.42123C6.53332 3.97957 6.89168 3.62122 7.33333 3.6211Z" fill="black" fill-opacity="0.2"/>
+                                </svg>
+                                <span th:text="${'Repeating: ' + jingle.repeatingTime.name}"></span>
+                            </p>
+                        </div>
                     </div>
                     <div class="waveform-placeholder">
                         <canvas class="waveCanvas"></canvas>
                     </div>
-                    <div class="item-actions modern-actions">
+                    <div class="modern-actions">
                         <button class="btn-location"
                                 th:classappend="${jingle.stores != null and !jingle.stores.empty} ? 'btn-location--active' : ''"
                                 th:data-id="${jingle.id}">
@@ -246,18 +229,47 @@
             <div class="jingle-list">
                 <div th:each="request : ${jingleRequestsToPause}"
                      class="jingle-item" th:classappend="${request.pauseApproved} ? 'status-approved' : ''">
-                    <button class="play-btn active"><i class="icon-pause"></i></button>
-                    <div class="jingle-details">
-                        <h4 th:text="${request.announcementText}">Text</h4>
-                        <div class="jingle-meta" th:text="${request.voice.name + ' • ' + #temporals.format(request.startDate, 'dd.MM.yyyy')}">Details</div>
-                        <div class="location-tag" th:if="${not #lists.isEmpty(request.stores)}">
-                            <i class="icon-pin"></i> <span th:text="${request.stores[0].name}">Store</span>
+                    <div class="item-container">
+                        <button class="play-btn"
+                                th:data-src="${request.fileUrl}"
+                                onclick="toggleAudio(this)">
+                            <span class="icon" th:replace="~{fragments/icons :: icon-start}"></span>
+                            <span class="icon" th:replace="~{fragments/icons :: icon-pause}"></span>
+                        </button>
+                        <div class="jingle-details">
+                            <p class="jingle-title" th:text="${request.announcementText}">Text</p>
+                            <p class="jingle-meta"
+                               th:text="${request.voice + ' · ' + '30s' + ' · Start date ' + #temporals.format(request.startDate, 'dd.MM.yyyy') + '/ End date ' + #temporals.format(request.endDate, 'dd.MM.yyyy')}" th:attr="data-src=${request.fileUrl}">
+                                Voice · Duration · Date
+                            </p>
+
+                            <p class="jingle-meta">
+                                <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M7.42708 3.79053e-06C11.4208 0.000556932 14.6613 3.24056 14.6615 7.23438C14.6613 11.2285 11.42 14.4688 7.42578 14.4688L7.14583 14.4635C5.74839 14.4093 4.39396 13.9508 3.2487 13.1413C2.0271 12.2776 1.10267 11.0562 0.603516 9.64584C0.456407 9.2295 0.674906 8.77245 1.09115 8.625C1.50747 8.47779 1.96445 8.69579 2.11198 9.11198C2.50078 10.2105 3.22102 11.1619 4.17253 11.8346C5.12407 12.5072 6.26119 12.8677 7.42643 12.8678C10.5368 12.8676 13.0604 10.3447 13.0605 7.23438C13.0604 4.12388 10.5357 1.59961 7.42513 1.59961C6.66351 1.59871 5.9092 1.75248 5.20898 2.05209C4.51197 2.35038 3.88251 2.78725 3.35872 3.33529L3.34701 3.34896L4.43164 4.43295C4.85168 4.85287 4.55429 5.57097 3.96029 5.57097H0.666667C0.298613 5.57082 2.39919e-05 5.27238 0 4.9043V1.61329C2.91144e-05 1.0195 0.717977 0.722221 1.13802 1.14193L2.21484 2.2168L2.45182 1.98047C3.07169 1.39237 3.7921 0.918328 4.57943 0.581384C5.47886 0.1965 6.44747 -0.000997797 7.42578 3.79053e-06H7.42708Z" fill="black" fill-opacity="0.2"/>
+                                    <path d="M7.33333 3.6211C7.77509 3.6211 8.13335 3.9795 8.13346 4.42123V7.10026H9.77148L9.7793 7.10092L9.83073 7.10352L9.84505 7.10482C10.2485 7.14586 10.5636 7.48611 10.5638 7.90039C10.5636 8.31478 10.2484 8.65559 9.84505 8.69662L9.83073 8.69792L9.7793 8.70053L9.77148 8.70118H7.33854C7.26566 8.70118 7.19609 8.69047 7.13151 8.67318H7.12956C7.12674 8.67252 7.11782 8.67037 7.10742 8.66732L7.10417 8.66602C7.09782 8.66408 7.09215 8.66225 7.08984 8.66146L7.08854 8.66081L7.0306 8.63933L7.02734 8.63803C6.99566 8.62464 6.96663 8.60989 6.94076 8.59506C6.7232 8.47198 6.56507 8.24844 6.53776 7.98177L6.53711 7.97461L6.53646 7.9668L6.53385 7.91602L6.5332 7.90821V4.42123C6.53332 3.97957 6.89168 3.62122 7.33333 3.6211Z" fill="black" fill-opacity="0.2"/>
+                                </svg>
+                                <span th:text="${'Repeating: ' + request.repeatingTime.name}"></span>
+                            </p>
+                            <p class="location-tag" th:if="${not #lists.isEmpty(request.stores)}">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M8.0023 0.941406C5.26557 0.941406 3.03906 3.16791 3.03906 5.90464C3.03906 6.82929 3.29519 7.73166 3.77994 8.51453L7.71978 14.8635C7.79525 14.9852 7.92821 15.0591 8.0712 15.0591C8.07231 15.0591 8.07338 15.0591 8.07449 15.0591C8.21872 15.0579 8.35196 14.9817 8.42605 14.858L12.2655 8.44747C12.7235 7.68115 12.9655 6.80186 12.9655 5.90464C12.9655 3.16791 10.739 0.941406 8.0023 0.941406ZM11.5556 8.02278L8.06494 13.8509L4.48301 8.0787C4.07952 7.42709 3.86075 6.67532 3.86075 5.90464C3.86075 3.62403 5.72169 1.7631 8.0023 1.7631C10.2829 1.7631 12.1411 3.62403 12.1411 5.90464C12.1411 6.65246 11.9367 7.38501 11.5556 8.02278Z" fill="black" fill-opacity="0.5"/>
+                                    <path d="M8.00115 3.42188C6.63278 3.42188 5.51953 4.53513 5.51953 5.90349C5.51953 7.26312 6.61467 8.38511 8.00115 8.38511C9.40472 8.38511 10.4828 7.24817 10.4828 5.90349C10.4828 4.53513 9.36951 3.42188 8.00115 3.42188ZM8.00115 7.56342C7.08414 7.56342 6.34122 6.81802 6.34122 5.90349C6.34122 4.99125 7.08891 4.24357 8.00115 4.24357C8.91339 4.24357 9.65832 4.99125 9.65832 5.90349C9.65832 6.80468 8.93269 7.56342 8.00115 7.56342Z" fill="black" fill-opacity="0.5"/>
+                                </svg>
+                                <span th:text="${request.stores[0].name}">Store</span>
+                            </p>
                         </div>
                     </div>
-                    <div class="waveform-placeholder small"></div>
+                        <div class="waveform-placeholder">
+                            <canvas class="waveCanvas"></canvas>
+                        </div>
                     <!-- Находим эту часть в вашем коде -->
-                    <div class="item-actions">
-                        <span th:if="${request.pauseApproved}" class="badge-approved">✓ Approved</span>
+                    <div class="modern-actions">
+                        <span th:if="${request.pauseApproved}" class="badge-approved">
+                            <svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" clip-rule="evenodd" d="M6.41667 0C9.96043 7.69658e-05 12.8333 2.87289 12.8333 6.41667C12.8333 9.96045 9.96043 12.8333 6.41667 12.8333C2.87284 12.8333 0 9.96049 0 6.41667C0 2.87284 2.87284 0 6.41667 0ZM8.29769 4.18929C8.04108 4.03011 7.70911 4.09415 7.52865 4.32829L7.49447 4.37728L5.44084 7.68644L4.76408 6.70833L4.72762 6.66105C4.53566 6.43632 4.20061 6.389 3.95231 6.56079C3.70397 6.73271 3.63052 7.06299 3.77344 7.32186L3.80477 7.37256L4.58293 8.4965C4.64407 8.58485 4.71196 8.68448 4.77718 8.76253C4.83475 8.83141 4.92995 8.93396 5.07284 9.00521L5.13664 9.03369C5.35484 9.11862 5.59799 9.11231 5.81169 9.0166L5.87435 8.98527C6.0134 8.90701 6.10342 8.79999 6.15747 8.72835C6.21873 8.64714 6.28139 8.54394 6.33805 8.45264L8.48568 4.99251L8.51473 4.9401C8.64436 4.67445 8.55427 4.34853 8.29769 4.18929Z" fill="black"/>
+                            </svg>
+                            Approved
+                        </span>
 
                         <!-- Измененная кнопка -->
                         <button th:if="${!request.pauseApproved}"
@@ -266,13 +278,34 @@
                                 onclick="handleApprovePause(this)">
                             Approve
                         </button>
-
-                        <button class="btn-delete-icon"><i class="icon-trash"></i></button>
+                        <button class="btn-delete-icon" th:data-id="${request.id}">
+                            <span class="icon" th:replace="~{fragments/icons :: icon-trash}"></span>
+                        </button>
                     </div>
                 </div>
             </div>
         </section>
     </div>
+    <script>
+        document.querySelectorAll('.jingle-meta').forEach(el => {
+            const src = el.dataset.src;
+            if (!src) return;
+
+            const audio = new Audio(src);
+
+            audio.addEventListener('loadedmetadata', () => {
+                const duration = formatDuration(audio.duration);
+
+                el.textContent = el.textContent.replace('30s', duration);
+            });
+        });
+
+        function formatDuration(seconds) {
+            const m = Math.floor(seconds / 60);
+            const s = Math.floor(seconds % 60);
+            return `${m}:${String(s).padStart(2, '0')}`;
+        }
+        </script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
 
@@ -501,42 +534,42 @@
             renderCalendar();
 
             /* ================= DELETE JINGLE ================= */
-            document.querySelectorAll('.btn-delete-icon').forEach(btn => {
-                btn.addEventListener('click', async () => {
-                    const item = btn.closest('.jingle-item');
-                    const playBtn = item.querySelector('.play-btn');
-                    const id = btn.getAttribute('data-id');
+            document.addEventListener('click', async (e) => {
+                const btn = e.target.closest('.btn-delete-icon');
+                if (!btn) return;
 
-                    if (currentButton && currentButton === playBtn) {
-                        audio.pause();
-                        cancelAnimationFrame(animFrameId);
-                        currentButton = null;
-                        currentCanvas = null;
-                        currentCtx = null;
-                    }
+                const item = btn.closest('.jingle-item');
+                const playBtn = item.querySelector('.play-btn');
+                const id = btn.getAttribute('data-id');
 
-                    try {
-                        const csrfToken = document.querySelector('meta[name="_csrf"]')?.content;
-                        const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content;
+                if (currentButton && currentButton === playBtn) {
+                    audio.pause();
+                    cancelAnimationFrame(animFrameId);
+                    currentButton = null;
+                    currentCanvas = null;
+                    currentCtx = null;
+                }
 
-                        const response = await fetch(`/api/jingles/${id}`, {
-                            method: 'DELETE',
-                            headers: {
-                                [csrfHeader]: csrfToken
-                            }
-                        });
+                try {
+                    const csrfToken = document.querySelector('meta[name="_csrf"]')?.content;
+                    const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content;
 
-                        if (response.ok) {
-                            item.remove();
-                        } else {
-                            console.error('Delete failed, status:', response.status);
+                    const response = await fetch(`/api/jingles/${id}`, {
+                        method: 'DELETE',
+                        headers: {
+                            [csrfHeader]: csrfToken
                         }
-                    } catch (e) {
-                        console.error('Delete failed', e);
-                    }
-                });
-            });
+                    });
 
+                    if (response.ok) {
+                        item.remove();
+                    } else {
+                        console.error('Delete failed, status:', response.status);
+                    }
+                } catch (e) {
+                    console.error('Delete failed', e);
+                }
+            });
         });
 
         function toLocalDateTimeString(date) {
@@ -686,7 +719,9 @@
 
             currentButton = btn;
             currentCanvas = canvas;
-            currentCanvas.width = canvas.getBoundingClientRect().width || 300;
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
             currentCanvas.height = 34;
             currentCtx = canvas.getContext("2d");
 
