@@ -67,11 +67,13 @@ public class AnalyticsServiceImpl implements AnalyticsService {
         return jingleTypeDistributionDataRepository.findTopByOrganizationIdAndSnapshotDate(organizationId, LocalDate.now());
     }
 
-    @Scheduled(cron = "0 0 * * * *")
+    @Scheduled(cron = "0 * * * * *")
+    @Transactional
     public void refreshAllAnalyticsDataView() {
         em.createNativeQuery("refresh materialized view concurrently music_analytics_data_view").executeUpdate();
         em.createNativeQuery("refresh materialized view concurrently jingle_aggregate_analytics_data_view").executeUpdate();
         em.createNativeQuery("refresh materialized view concurrently store_aggregate_analytics_data_view").executeUpdate();
+        em.createNativeQuery("refresh materialized view concurrently jingle_types_distribution_data_view").executeUpdate();
     }
 
 }
