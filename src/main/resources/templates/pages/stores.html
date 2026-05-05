@@ -349,12 +349,41 @@
         }
 
         function copyLink() {
-            if (!currentLink) return;
+            if (!currentLink) {
+                showToast("Link not ready");
+                return;
+            }
 
-            navigator.clipboard.writeText(currentLink);
-            showToast("Link copied to clipboard");
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(currentLink)
+                    .then(() => showToast("Link copied"))
+                    .catch(() => fallbackCopy());
+            } else {
+                fallbackCopy();
+            }
         }
 
+        function fallbackCopy() {
+            const textarea = document.createElement("textarea");
+            textarea.value = currentLink;
+
+            // чтобы не прыгал экран
+            textarea.style.position = "fixed";
+            textarea.style.opacity = "0";
+
+            document.body.appendChild(textarea);
+            textarea.focus();
+            textarea.select();
+
+            try {
+                document.execCommand("copy");
+                showToast("Link copied");
+            } catch (err) {
+                showToast("Copy failed");
+            }
+
+            document.body.removeChild(textarea);
+        }
     </script>
 </th:block>
 </html>

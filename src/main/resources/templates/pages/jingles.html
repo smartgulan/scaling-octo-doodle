@@ -54,6 +54,23 @@
                                     th:value="${cat.name()}"
                                     th:text="${cat.name}"></option>
                         </select>
+
+                        <div class="speed-range">
+                            <span class="speed-text">Slower</span>
+
+                            <input type="range"
+                                   name="speed"
+                                   min="0.70"
+                                   max="1.20"
+                                   step="0.01"
+                                   value="1"
+                                   id="speedRange">
+
+                            <span class="speed-text">Faster</span>
+
+                            <!-- 👇 ВОТ ЭТО ДОБАВЬ -->
+                            <span id="speedValue">1.00</span>
+                        </div>
                     </div>
                     <div class="select-wrapper date-range-picker">
 
@@ -290,6 +307,21 @@
         </section>
     </div>
     <script>
+        const speedRange = document.getElementById('speedRange');
+        const speedValue = document.getElementById('speedValue');
+
+        function formatSpeed(val) {
+            return Number(val).toFixed(2);
+        }
+
+        // init
+        if (speedRange && speedValue) {
+            speedValue.textContent = formatSpeed(speedRange.value);
+
+            speedRange.addEventListener('input', () => {
+                speedValue.textContent = formatSpeed(speedRange.value);
+            });
+        }
         document.querySelectorAll('.jingle-meta').forEach(el => {
             const src = el.dataset.src;
             if (!src) return;

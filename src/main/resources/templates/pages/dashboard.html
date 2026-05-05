@@ -15,7 +15,7 @@
         <div class="card">
             <div class="card-body">
                 <div class="card-icon">
-                     <span th:replace="~{fragments/icons :: icon-music}"></div>
+                    <span th:replace="~{fragments/icons :: icon-music}"></span></div>
                 <span class="card-status active">Selected</span>
             </div>
             <div class="card-header">
@@ -28,7 +28,7 @@
         <div class="card">
             <div class="card-body">
                 <div class="card-icon">
-                    <span th:replace="~{fragments/icons :: icon-store}"></div>
+                    <span th:replace="~{fragments/icons :: icon-store}"></span></div>
                 <span class="card-status"
                       th:classappend="${#lists.size(stores) > 0} ? 'active' : ''"
                       th:text="${#lists.size(stores)} + ' stores'">
@@ -44,7 +44,7 @@
         <div class="card">
             <div class="card-body">
                 <div class="card-icon">
-                    <span th:replace="~{fragments/icons :: icon-jingle}"></div>
+                    <span th:replace="~{fragments/icons :: icon-jingle}"></span></div>
 <!--                <span class="card-status" th:text="${#lists.size(jingles)} + ' jingles'">0 generate</span>-->
             </div>
             <div class="card-header">

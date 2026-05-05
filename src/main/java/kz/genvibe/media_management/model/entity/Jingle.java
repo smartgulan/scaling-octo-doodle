@@ -42,6 +42,10 @@ public class Jingle extends CreateEntity {
     private String announcementText;
 
     @Column(nullable = false)
+    @Builder.Default
+    private Double speed = 1.0;
+
+    @Column(nullable = false)
     private String fileUrl;
 
     @Builder.Default

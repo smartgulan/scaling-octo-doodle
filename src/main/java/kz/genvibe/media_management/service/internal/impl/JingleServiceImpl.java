@@ -162,7 +162,7 @@ public class JingleServiceImpl implements JingleService {
                 CommandType.PLAY_JINGLE,
                 slot.getJingle().getFileUrl(),
                 slot.getId(),
-                0.1
+                slot.getJingle().getSpeed()
             );
 
             messagingTemplate.convertAndSend("/topic/store." + storeId + ".commands", command);

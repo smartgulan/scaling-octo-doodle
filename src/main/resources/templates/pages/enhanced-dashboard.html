@@ -543,9 +543,41 @@
         }
 
         function copyLink() {
-            if (!currentLink) return;
-            navigator.clipboard.writeText(currentLink);
-            showToast("Link copied to clipboard");
+            if (!currentLink) {
+                showToast("Link not ready");
+                return;
+            }
+
+            // ✅ современный способ
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(currentLink)
+                    .then(() => showToast("Link copied"))
+                    .catch(() => fallbackCopy());
+            } else {
+                // ❗ если clipboard недоступен
+                fallbackCopy();
+            }
+        }
+
+        function fallbackCopy() {
+            const textarea = document.createElement("textarea");
+            textarea.value = currentLink;
+
+            textarea.style.position = "fixed";
+            textarea.style.opacity = "0";
+
+            document.body.appendChild(textarea);
+            textarea.focus();
+            textarea.select();
+
+            try {
+                document.execCommand("copy");
+                showToast("Link copied");
+            } catch (err) {
+                showToast("Copy failed");
+            }
+
+            document.body.removeChild(textarea);
         }
 
         function showToast(message) {
