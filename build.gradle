@@ -36,15 +36,11 @@ dependencies {
 	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
 	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
-	implementation('org.springframework.boot:spring-boot-starter-data-redis') {
-		exclude group: 'io.lettuce', module: 'lettuce-core'
-	}
-	implementation 'redis.clients:jedis'
-	implementation 'org.springframework.session:spring-session-data-redis'
 	implementation('org.springframework.boot:spring-boot-starter-websocket') {
 		exclude group: 'org.springframework', module: 'spring-oxm'
 	}
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+	implementation 'org.springframework.boot:spring-boot-starter-session-jdbc'
 	runtimeOnly 'org.postgresql:postgresql'
 	runtimeOnly 'org.springframework.boot:spring-boot-starter-flyway'
 	runtimeOnly 'org.flywaydb:flyway-database-postgresql'
@@ -73,6 +69,10 @@ bootJar {
 		enabled = true
 	}
 	classpath = sourceSets.main.runtimeClasspath - configurations.developmentOnly
+}
+
+bootBuildImage {
+	imageName = "docker.io/darigasha/media-management:${version}"
 }
 
 tasks.named('test') {
