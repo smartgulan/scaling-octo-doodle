@@ -68,11 +68,6 @@ bootJar {
 	layered {
 		enabled = true
 	}
-	classpath = sourceSets.main.runtimeClasspath - configurations.developmentOnly
-}
-
-bootBuildImage {
-	imageName = "docker.io/darigasha/media-management:${version}"
 }
 
 tasks.named('test') {

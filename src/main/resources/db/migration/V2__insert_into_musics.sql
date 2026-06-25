@@ -1,14 +1,15 @@
-insert into musics(id, file_url, mood, atmosphere)
-values (default, 'http://localhost:9080/files/music/Warm&Welcoming+Slow-down-and-relax.mp3', 'SLOW_DOWN_AND_RELAX', 'WARM_AND_WELCOMING'),
-       (default, 'http://localhost:9080/files/music/Warm&Welcoming+Feel-comfortable-staying-longer.mp3', 'FEEL_COMFORTABLE_STAYING_LONGER', 'WARM_AND_WELCOMING'),
-       (default, 'http://localhost:9080/files/music/Warm&Welcoming+Feel-luxurious-and-sophisticated.mp3', 'FEEL_LUXURIOUS_AND_SOPHISTICATED', 'WARM_AND_WELCOMING'),
-       (default, 'http://localhost:9080/files/music/Warm&Welcoming+Move-efficiently-and-decide-quickly.mp3', 'MOVE_EFFICIENTLY_AND_DECIDE_QUICKLY', 'WARM_AND_WELCOMING'),
-       (default, 'http://localhost:9080/files/music/Modern&Energetic+Feel-energized-and-social.mp3', 'FEEL_ENERGIZED_AND_SOCIAL', 'MODERN_AND_ENERGETIC'),
-       (default, 'http://localhost:9080/files/music/Modern&Energetic+Feel-comfortable-staying-longer.mp3', 'FEEL_COMFORTABLE_STAYING_LONGER', 'MODERN_AND_ENERGETIC'),
-       (default, 'http://localhost:9080/files/music/Modern&Energetic+Slow-down-and-relax.mp3', 'SLOW_DOWN_AND_RELAX', 'MODERN_AND_ENERGETIC'),
-       (default, 'http://localhost:9080/files/music/Premium&Sophisticated+Feel-luxurious-and-sophisticated.mp3', 'FEEL_LUXURIOUS_AND_SOPHISTICATED', 'PREMIUM_AND_SOPHISTICATED'),
-       (default, 'http://localhost:9080/files/music/Premium&Sophisticated+Slow-down-and-relax.mp3', 'SLOW_DOWN_AND_RELAX', 'PREMIUM_AND_SOPHISTICATED'),
-       (default, 'http://localhost:9080/files/music/Social&Stylish+Move-efficiently-and-decide-quickly.mp3', 'MOVE_EFFICIENTLY_AND_DECIDE_QUICKLY', 'SOCIAL_AND_STYLISH'),
-       (default, 'http://localhost:9080/files/music/Natural&Mindful+Slow-down-and-relax.mp3', 'SLOW_DOWN_AND_RELAX', 'NATURAL_AND_MINDFUL'),
-       (default, 'http://localhost:9080/files/music/Traditional&Cultural(Chinese)+Feel-comfortable-staying-longer.mp3', 'FEEL_COMFORTABLE_STAYING_LONGER', 'TRADITIONAL_AND_CULTURAL_CHINESE'),
-       (default, 'http://localhost:9080/files/music/Traditional&Cultural(Japanese)+Slow-down-and-relax.mp3', 'SLOW_DOWN_AND_RELAX', 'TRADITIONAL_AND_CULTURAL_JAPANESE')
+INSERT INTO musics (id, file_url, mood, atmosphere)
+VALUES
+    (default, 'https://agnafyaipjhixqkijmwy.supabase.co/storage/v1/object/public/music/Warm%20and%20welcoming%20+%20slow%20down%20and%20relax.mp3', 'SLOW_DOWN_AND_RELAX', 'WARM_AND_WELCOMING'),
+    (default, 'https://agnafyaipjhixqkijmwy.supabase.co/storage/v1/object/public/music/1%20Warm%20and%20welcoming%20+%20Feel%20comfortable%20staying%20longer.mp3', 'FEEL_COMFORTABLE_STAYING_LONGER', 'WARM_AND_WELCOMING'),
+    (default, 'https://agnafyaipjhixqkijmwy.supabase.co/storage/v1/object/public/music/Warm%20and%20welcoming%20+%20Feel%20luxurious%20and%20sophisticated%202.mp3', 'FEEL_LUXURIOUS_AND_SOPHISTICATED', 'WARM_AND_WELCOMING'),
+    (default, 'https://agnafyaipjhixqkijmwy.supabase.co/storage/v1/object/public/music/Warm%20and%20welcoming%20+%20Move%20efficiently%20and%20decide%20quickly%202.mp3', 'MOVE_EFFICIENTLY_AND_DECIDE_QUICKLY', 'WARM_AND_WELCOMING'),
+    (default, 'https://agnafyaipjhixqkijmwy.supabase.co/storage/v1/object/public/music/2%20modern%20energetic%20+%20feel%20energized%20and%20social.mp3', 'FEEL_ENERGIZED_AND_SOCIAL', 'MODERN_AND_ENERGETIC'),
+    (default, 'https://agnafyaipjhixqkijmwy.supabase.co/storage/v1/object/public/music/3%20UPD%20modern%20energetic%20+%20feel%20energized%20and%20social%20+%20Feel%20comfortable%20staying%20longer.mp3', 'FEEL_COMFORTABLE_STAYING_LONGER', 'MODERN_AND_ENERGETIC'),
+    (default, 'https://agnafyaipjhixqkijmwy.supabase.co/storage/v1/object/public/music/Modern%20and%20energetic%20+%20slow%20down%20and%20relax%202.mp3', 'SLOW_DOWN_AND_RELAX', 'MODERN_AND_ENERGETIC'),
+    (default, 'https://agnafyaipjhixqkijmwy.supabase.co/storage/v1/object/public/music/4%20Premium%20and%20sophisticated%20+%20Feel%20luxurious%20and%20sophisticated.mp3', 'FEEL_LUXURIOUS_AND_SOPHISTICATED', 'PREMIUM_AND_SOPHISTICATED'),
+    (default, 'https://agnafyaipjhixqkijmwy.supabase.co/storage/v1/object/public/music/9%20Premium%20and%20sophisticated%20+%20Slow%20down%20and%20relax.mp3', 'SLOW_DOWN_AND_RELAX', 'PREMIUM_AND_SOPHISTICATED'),
+    (default, 'https://agnafyaipjhixqkijmwy.supabase.co/storage/v1/object/public/music/5%20Social%20&%20Stylish%20+%20Move%20efficiently%20and%20decide%20quickly.mp3', 'MOVE_EFFICIENTLY_AND_DECIDE_QUICKLY', 'SOCIAL_AND_STYLISH'),
+    (default, 'https://agnafyaipjhixqkijmwy.supabase.co/storage/v1/object/public/music/6%20Natural%20and%20mindful%20+%20Slow%20down%20and%20relax.mp3', 'SLOW_DOWN_AND_RELAX', 'NATURAL_AND_MINDFUL'),
+    (default, 'https://agnafyaipjhixqkijmwy.supabase.co/storage/v1/object/public/music/7%20Traditional%20and%20cultural%20Chinese%20+%20Feel%20comfortable%20staying%20longer.mp3', 'FEEL_COMFORTABLE_STAYING_LONGER', 'TRADITIONAL_AND_CULTURAL_CHINESE'),
+    (default, 'https://agnafyaipjhixqkijmwy.supabase.co/storage/v1/object/public/music/8%20Traditional%20and%20cultural%20Japanese%20+%20Slow%20down%20and%20relax.mp3', 'SLOW_DOWN_AND_RELAX', 'TRADITIONAL_AND_CULTURAL_JAPANESE');
