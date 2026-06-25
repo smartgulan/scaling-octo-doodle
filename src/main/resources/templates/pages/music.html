@@ -36,7 +36,7 @@
                 </div>
                 <div class="selected-info">
                     <p>Selected</p>
-                    <span id="selectedInfo" th:text="${organization.musicAtmosphere.name + ' / ' + organization.musicMood.name}"></span>
+                    <span id="selectedInfo" th:text="${organization.musicAtmosphere.name + ' / ' + organization.getMoodNames()}"></span>
                 </div>
             </div>
 
@@ -51,7 +51,7 @@
                     </button>
                     <div class="music-info">
                         <h3 th:text="${music.atmosphere.name}">Style Name</h3>
-                        <p th:text="${music.mood.name}">Style description text goes here.</p>
+                        <p th:text="${music.getMoodNames()}">Style description text goes here.</p>
                     </div>
                     <div class="selected-badge">✓ Selected</div>
                     <div class="waveform-placeholder">
@@ -99,7 +99,7 @@
             document.querySelectorAll('.music-card').forEach(card => {
                 const cardAtmosphere = card.querySelector('.music-info h3').textContent.trim();
                 const cardMood = card.querySelector('.music-info p').textContent.trim();
-0
+
                 const atmosphereLabel = atmosphere ? atmosphere.closest('.chip').querySelector('span').textContent.trim() : null;
                 const moodLabel = mood ? mood.closest('.chip').querySelector('span').textContent.trim() : null;
 

@@ -35,8 +35,12 @@ public class StoreMusicPlayerController {
         var org = organizationRepository.findById(store.getOrganization().getId())
             .orElseThrow(() -> new EntityNotFoundException("Organization not found"));
 
-        var musicUrls = musicRepository
-            .findAllByAtmosphereAndMood(org.getMusicAtmosphere(), org.getMusicMood())
+        String atmosphereStr = org.getMusicAtmosphere().name();
+        String[] moodArray = org.getMusicMood().stream()
+            .map(Enum::name)
+            .toArray(String[]::new);
+
+        var musicUrls = musicRepository.findAllByAtmosphereAndMood(atmosphereStr, moodArray)
             .stream()
             .map(Music::getFileUrl)
             .toList();

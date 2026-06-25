@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.List;
+
 @Controller
 @RequestMapping("/api/music")
 @RequiredArgsConstructor
@@ -25,7 +27,7 @@ public class MusicActionController {
     @ResponseBody
     public String saveMusicAtmosphereAndMood(
         @RequestParam @NotNull MusicAtmosphere atmosphere,
-        @RequestParam @NotNull MusicMood mood,
+        @RequestParam @NotNull List<MusicMood> mood,
         @CurrentUser AppUser appUser,
         RedirectAttributes redirectAttributes
     ) {
