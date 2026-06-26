@@ -33,6 +33,9 @@ public class Music extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private MusicAtmosphere atmosphere;
 
+    @Column(nullable = false)
+    private String iconLocation;
+
     public final String getMoodNames() {
         final var sb = new StringBuilder();
 

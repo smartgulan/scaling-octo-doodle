@@ -64,6 +64,7 @@ CREATE TABLE musics
     file_url   VARCHAR(255)                            NOT NULL,
     mood       VARCHAR[],
     atmosphere VARCHAR(255),
+    icon_location VARCHAR(255) not null,
     CONSTRAINT pk_musics PRIMARY KEY (id)
 );
 

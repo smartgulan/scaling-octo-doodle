@@ -27,11 +27,11 @@ public class MusicActionController {
     @ResponseBody
     public String saveMusicAtmosphereAndMood(
         @RequestParam @NotNull MusicAtmosphere atmosphere,
-        @RequestParam @NotNull List<MusicMood> mood,
+        @RequestParam @NotNull List<MusicMood> moods,
         @CurrentUser AppUser appUser,
         RedirectAttributes redirectAttributes
     ) {
-        organizationService.saveMusicTypes(appUser, atmosphere, mood);
+        organizationService.saveMusicTypes(appUser, atmosphere, moods);
         redirectAttributes.addFlashAttribute("toast", "Music type successfully saved for your company");
         return "redirect:/dashboard";
     }
