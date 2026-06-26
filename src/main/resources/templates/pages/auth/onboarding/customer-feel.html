@@ -27,9 +27,32 @@
 
             <div class="form-footer">
                 <hr>
-                <button class="btn-primary" type="submit">Continue</button>
+                <button class="btn-primary" type="submit" id="continueBtn" disabled>Continue</button>
             </div>
         </form>
     </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const MAX_SELECTION = 2;
+            const checkboxes = document.querySelectorAll('input[name="mood"]');
+            const continueBtn = document.getElementById('continueBtn');
+
+            function validateSelection() {
+                const checked = Array.from(checkboxes).filter(cb => cb.checked);
+
+                // Frontend limit: at most 2 selections — lock the rest once the cap is hit.
+                checkboxes.forEach(cb => {
+                    cb.disabled = !cb.checked && checked.length >= MAX_SELECTION;
+                });
+
+                // Backend @NotEmpty: require at least one selection.
+                continueBtn.disabled = checked.length === 0;
+            }
+
+            checkboxes.forEach(cb => cb.addEventListener('change', validateSelection));
+            validateSelection();
+        });
+    </script>
 </th:block>
 </html>
