@@ -21,6 +21,13 @@ public interface JingleRepository extends JpaRepository<Jingle, Long> {
 
     Optional<Jingle> findJingleByIdAndOrganization(Long id, Organization organization);
 
+    @EntityGraph(attributePaths = "stores")
+    @Query("SELECT DISTINCT j FROM Jingle j JOIN j.stores WHERE j.startDate <= :endOfDay AND j.endDate >= :startOfDay")
+    List<Jingle> findActiveAssignedJingles(
+        @Param("startOfDay") java.time.LocalDateTime startOfDay,
+        @Param("endOfDay") java.time.LocalDateTime endOfDay
+    );
+
     long countAllByOrganization(Organization organization);
 
     @Modifying

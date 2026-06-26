@@ -230,21 +230,16 @@
             openLink(id, name, "Loading...");
 
             try {
-                // 1. Activate
+                // 1. Activate (response body is the music access link)
                 const actRes = await fetch(`/api/stores/activate/${id}`, {
                     method: "POST",
                     headers: { [header]: token }
                 });
                 if (!actRes.ok) throw new Error("Activation failed");
 
-                // 2. Regenerate Link
-                const linkRes = await fetch(`/api/stores/regenerate-link/${id}`, {
-                    method: "POST",
-                    headers: { [header]: token }
-                });
-                const link = await linkRes.text();
+                const link = await actRes.text();
 
-                // 3. Update UI
+                // 2. Update UI
                 currentLink = link;
                 document.getElementById("storeLink").innerText = link;
                 markStoreAsActive(id);

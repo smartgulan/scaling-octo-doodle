@@ -19,10 +19,12 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.Set;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -94,9 +96,15 @@ public class JingleServiceImpl implements JingleService {
 
         final var jingleSchedules = stores.stream()
             .map(Store::getJingleSchedule)
+            .filter(Objects::nonNull)
             .collect(Collectors.toSet());
 
-        generateSlotsForJingle(jingle, jingleSchedules);
+        var today = LocalDate.now();
+        var now = LocalDateTime.now().withSecond(0).withNano(0);
+
+        for (final var schedule : jingleSchedules) {
+            generateSlotsForJingleOnDay(jingle, schedule, today, now);
+        }
     }
 
     @Override
@@ -119,29 +127,83 @@ public class JingleServiceImpl implements JingleService {
         return jingleRepository.findJinglesByOrganizationAndRequestedToPauseIsTrue(appUser.getOrganization());
     }
 
-    private void generateSlotsForJingle(Jingle jingle, Set<JingleSchedule> schedules) {
+    /**
+     * Re-materializes today's slots for every active, store-assigned jingle.
+     * Runs hourly so that multi-day jingles keep getting slots after the date rolls
+     * over and so a jingle that starts later today is picked up even if the app was
+     * restarted. Generation is idempotent (duplicates are skipped) and never creates
+     * slots in the past, so running it often is safe.
+     */
+    @Scheduled(cron = "0 0 * * * *")
+    @Transactional
+    public void generateDailySlots() {
+        var today = LocalDate.now();
         var now = LocalDateTime.now().withSecond(0).withNano(0);
+        var startOfDay = today.atStartOfDay();
+        var endOfDay = today.atTime(LocalTime.MAX);
 
-        if (now.isAfter(jingle.getEndDate()) || now.plusDays(1).isBefore(jingle.getStartDate())) {
+        var jingles = jingleRepository.findActiveAssignedJingles(startOfDay, endOfDay);
+
+        for (final var jingle : jingles) {
+            for (final var store : jingle.getStores()) {
+                var schedule = store.getJingleSchedule();
+                if (schedule == null) {
+                    continue;
+                }
+                generateSlotsForJingleOnDay(jingle, schedule, today, now);
+            }
+        }
+
+        log.info("Daily slot generation finished for {} active jingle(s)", jingles.size());
+    }
+
+    /**
+     * Generates the PENDING slots of {@code jingle} that fall on {@code day} for a single
+     * schedule. Slot times follow the jingle's repeating cadence anchored at its start date.
+     * Slots earlier than {@code notBefore} are skipped (so we never schedule the past), and
+     * times that already have a slot for this jingle in this schedule are skipped (idempotent).
+     */
+    private void generateSlotsForJingleOnDay(
+        Jingle jingle,
+        JingleSchedule schedule,
+        LocalDate day,
+        LocalDateTime notBefore
+    ) {
+        var startOfDay = day.atStartOfDay();
+        var endOfDay = day.atTime(LocalTime.MAX);
+
+        // Jingle is not active on this day at all.
+        if (jingle.getStartDate().isAfter(endOfDay) || jingle.getEndDate().isBefore(startOfDay)) {
             return;
         }
 
-        var minutesInterval = jingle.getRepeatingTime().getDuration().toMinutes();
-        var nextSlotTime = jingle.getStartDate().isAfter(now) ? jingle.getStartDate() : now;
-        var endOfDay = now.toLocalDate().atTime(LocalTime.MAX);
+        var interval = jingle.getRepeatingTime().getDuration().toMinutes();
 
-        for (final var schedule: schedules) {
-            while (nextSlotTime.isBefore(endOfDay) && nextSlotTime.isBefore(jingle.getEndDate())) {
-                var slot = JingleSlot.builder()
+        var existingTimes = schedule.getDailyJingleSlots().stream()
+            .filter(slot -> Objects.equals(slot.getJingle().getId(), jingle.getId()))
+            .map(JingleSlot::getPlayTime)
+            .collect(Collectors.toSet());
+
+        // First cadence point (anchored at the jingle start) that lands within this day.
+        var slotTime = jingle.getStartDate();
+        if (slotTime.isBefore(startOfDay)) {
+            var steps = Duration.between(slotTime, startOfDay).toMinutes() / interval;
+            slotTime = slotTime.plusMinutes(steps * interval);
+            while (slotTime.isBefore(startOfDay)) {
+                slotTime = slotTime.plusMinutes(interval);
+            }
+        }
+
+        while (!slotTime.isAfter(endOfDay) && !slotTime.isAfter(jingle.getEndDate())) {
+            if (!slotTime.isBefore(notBefore) && !existingTimes.contains(slotTime)) {
+                schedule.addSlot(JingleSlot.builder()
                     .jingle(jingle)
                     .jingleSchedule(schedule)
-                    .playTime(nextSlotTime)
+                    .playTime(slotTime)
                     .status(JingleSlotStatus.PENDING)
-                    .build();
-
-                schedule.addSlot(slot);
-                nextSlotTime = nextSlotTime.plusMinutes(minutesInterval);
+                    .build());
             }
+            slotTime = slotTime.plusMinutes(interval);
         }
     }
 
@@ -150,7 +212,7 @@ public class JingleServiceImpl implements JingleService {
     public void checkAndBroadcastJingles() {
         log.info("Starting broadcast");
         var now = LocalDateTime.now().withSecond(0).withNano(0);
-        var currentSlots = jingleSlotRepository.findJingleSlotsByPlayTimeAndStatusAndJingleRequestedToPauseIsFalse(
+        var currentSlots = jingleSlotRepository.findJingleSlotsByPlayTimeLessThanEqualAndStatusAndJingleRequestedToPauseIsFalse(
             now,
             JingleSlotStatus.PENDING
         );
