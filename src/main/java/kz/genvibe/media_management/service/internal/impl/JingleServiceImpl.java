@@ -20,9 +20,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -65,9 +66,16 @@ public class JingleServiceImpl implements JingleService {
     @Override
     @Transactional
     public void deleteJingleById(long id, AppUser appUser) {
-        var jingle = jingleRepository.findJingleByIdAndOrganization(id, appUser.getOrganization())
+        // Authorization check: only delete a jingle that belongs to the caller's organization.
+        jingleRepository.findJingleByIdAndOrganization(id, appUser.getOrganization())
                 .orElseThrow(() -> new EntityNotFoundException("Jingle not found"));
-        jingleRepository.deleteByIdAndOrg(id, appUser.getOrganization());
+
+        // Delete in FK order with bulk statements. None of these FKs have ON DELETE CASCADE,
+        // and bulk deletes avoid the row-count optimistic-lock check that entity removal does
+        // (which clashed with the cascade from Organization.jingles).
+        jingleSlotRepository.deleteByJingleId(id);   // jingle_slots -> jingles
+        jingleRepository.deleteStoreLinks(id);       // jingle_stores -> jingles
+        jingleRepository.hardDeleteById(id);         // jingles
     }
 
     @Override
@@ -99,11 +107,11 @@ public class JingleServiceImpl implements JingleService {
             .filter(Objects::nonNull)
             .collect(Collectors.toSet());
 
-        var today = LocalDate.now();
-        var now = LocalDateTime.now().withSecond(0).withNano(0);
+        var now = Instant.now();
 
         for (final var schedule : jingleSchedules) {
-            generateSlotsForJingleOnDay(jingle, schedule, today, now);
+            var zone = schedule.getStore().getZoneId();
+            generateSlotsForJingleOnDay(jingle, schedule, LocalDate.now(zone), zone, now);
         }
     }
 
@@ -137,12 +145,16 @@ public class JingleServiceImpl implements JingleService {
     @Scheduled(cron = "0 0 * * * *")
     @Transactional
     public void generateDailySlots() {
-        var today = LocalDate.now();
-        var now = LocalDateTime.now().withSecond(0).withNano(0);
-        var startOfDay = today.atStartOfDay();
-        var endOfDay = today.atTime(LocalTime.MAX);
+        var now = Instant.now();
 
-        var jingles = jingleRepository.findActiveAssignedJingles(startOfDay, endOfDay);
+        // Jingle start/end dates are zoneless wall-clock values. Pad the active-window
+        // prefilter by a day on each side so we never drop a jingle that is "today" in
+        // some store's zone but not in the server's. The per-store generation below
+        // re-validates the exact wall-clock window anyway.
+        var rangeStart = LocalDate.now().minusDays(1).atStartOfDay();
+        var rangeEnd = LocalDate.now().plusDays(1).atTime(LocalTime.MAX);
+
+        var jingles = jingleRepository.findActiveAssignedJingles(rangeStart, rangeEnd);
 
         for (final var jingle : jingles) {
             for (final var store : jingle.getStores()) {
@@ -150,7 +162,8 @@ public class JingleServiceImpl implements JingleService {
                 if (schedule == null) {
                     continue;
                 }
-                generateSlotsForJingleOnDay(jingle, schedule, today, now);
+                var zone = store.getZoneId();
+                generateSlotsForJingleOnDay(jingle, schedule, LocalDate.now(zone), zone, now);
             }
         }
 
@@ -167,12 +180,13 @@ public class JingleServiceImpl implements JingleService {
         Jingle jingle,
         JingleSchedule schedule,
         LocalDate day,
-        LocalDateTime notBefore
+        ZoneId zone,
+        Instant notBefore
     ) {
         var startOfDay = day.atStartOfDay();
         var endOfDay = day.atTime(LocalTime.MAX);
 
-        // Jingle is not active on this day at all.
+        // Jingle is not active on this day at all (wall-clock window, interpreted in the store's zone).
         if (jingle.getStartDate().isAfter(endOfDay) || jingle.getEndDate().isBefore(startOfDay)) {
             return;
         }
@@ -195,11 +209,13 @@ public class JingleServiceImpl implements JingleService {
         }
 
         while (!slotTime.isAfter(endOfDay) && !slotTime.isAfter(jingle.getEndDate())) {
-            if (!slotTime.isBefore(notBefore) && !existingTimes.contains(slotTime)) {
+            // Resolve the wall-clock cadence point to an absolute instant in the store's zone.
+            var playInstant = slotTime.atZone(zone).toInstant();
+            if (!playInstant.isBefore(notBefore) && !existingTimes.contains(playInstant)) {
                 schedule.addSlot(JingleSlot.builder()
                     .jingle(jingle)
                     .jingleSchedule(schedule)
-                    .playTime(slotTime)
+                    .playTime(playInstant)
                     .status(JingleSlotStatus.PENDING)
                     .build());
             }
@@ -211,7 +227,7 @@ public class JingleServiceImpl implements JingleService {
     @Transactional
     public void checkAndBroadcastJingles() {
         log.info("Starting broadcast");
-        var now = LocalDateTime.now().withSecond(0).withNano(0);
+        var now = Instant.now();
         var currentSlots = jingleSlotRepository.findJingleSlotsByPlayTimeLessThanEqualAndStatusAndJingleRequestedToPauseIsFalse(
             now,
             JingleSlotStatus.PENDING

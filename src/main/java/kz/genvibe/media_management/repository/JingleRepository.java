@@ -1,6 +1,5 @@
 package kz.genvibe.media_management.repository;
 
-import jakarta.transaction.Transactional;
 import kz.genvibe.media_management.model.entity.Jingle;
 import kz.genvibe.media_management.model.entity.Organization;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -30,8 +29,13 @@ public interface JingleRepository extends JpaRepository<Jingle, Long> {
 
     long countAllByOrganization(Organization organization);
 
-    @Modifying
-    @Transactional
-    @Query("DELETE FROM Jingle j WHERE j.id = :id AND j.organization = :org")
-    void deleteByIdAndOrg(@Param("id") long id, @Param("org") Organization org);
+    /** Removes the jingle_stores join rows for a jingle (M2M owning side, no ON DELETE CASCADE). */
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
+    @Query(value = "DELETE FROM jingle_stores WHERE jingle_id = :id", nativeQuery = true)
+    void deleteStoreLinks(@Param("id") long id);
+
+    /** Bulk-deletes the jingle itself; avoids the row-count optimistic check of entity removal. */
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
+    @Query("DELETE FROM Jingle j WHERE j.id = :id")
+    void hardDeleteById(@Param("id") long id);
 }
