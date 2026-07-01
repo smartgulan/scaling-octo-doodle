@@ -137,11 +137,11 @@
                 </div>
                 <div class="form-group">
                     <label>Email</label>
-                    <input type="email" name="email" th:value="${appUser.email}" required>
+                    <input type="email" name="email" th:value="${appUser.email}" required maxlength="254">
                 </div>
                 <div class="form-group">
                     <label>Role</label>
-                    <input type="text" name="companyRole" th:value="${appUser.companyRole}">
+                    <input type="text" name="companyRole" th:value="${appUser.companyRole}" required>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn-cancel" onclick="closeModal('profileModal')">Cancel</button>
