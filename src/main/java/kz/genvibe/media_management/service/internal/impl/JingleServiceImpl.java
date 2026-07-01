@@ -108,9 +108,9 @@ public class JingleServiceImpl implements JingleService {
             .collect(Collectors.toSet());
 
         var now = Instant.now();
+        var zone = ZoneId.systemDefault();
 
         for (final var schedule : jingleSchedules) {
-            var zone = schedule.getStore().getZoneId();
             generateSlotsForJingleOnDay(jingle, schedule, LocalDate.now(zone), zone, now);
         }
     }
@@ -146,15 +146,13 @@ public class JingleServiceImpl implements JingleService {
     @Transactional
     public void generateDailySlots() {
         var now = Instant.now();
+        var zone = ZoneId.systemDefault();
+        var today = LocalDate.now(zone);
 
-        // Jingle start/end dates are zoneless wall-clock values. Pad the active-window
-        // prefilter by a day on each side so we never drop a jingle that is "today" in
-        // some store's zone but not in the server's. The per-store generation below
-        // re-validates the exact wall-clock window anyway.
-        var rangeStart = LocalDate.now().minusDays(1).atStartOfDay();
-        var rangeEnd = LocalDate.now().plusDays(1).atTime(LocalTime.MAX);
+        var startOfDay = today.atStartOfDay();
+        var endOfDay = today.atTime(LocalTime.MAX);
 
-        var jingles = jingleRepository.findActiveAssignedJingles(rangeStart, rangeEnd);
+        var jingles = jingleRepository.findActiveAssignedJingles(startOfDay, endOfDay);
 
         for (final var jingle : jingles) {
             for (final var store : jingle.getStores()) {
@@ -162,8 +160,7 @@ public class JingleServiceImpl implements JingleService {
                 if (schedule == null) {
                     continue;
                 }
-                var zone = store.getZoneId();
-                generateSlotsForJingleOnDay(jingle, schedule, LocalDate.now(zone), zone, now);
+                generateSlotsForJingleOnDay(jingle, schedule, today, zone, now);
             }
         }
 
@@ -186,7 +183,7 @@ public class JingleServiceImpl implements JingleService {
         var startOfDay = day.atStartOfDay();
         var endOfDay = day.atTime(LocalTime.MAX);
 
-        // Jingle is not active on this day at all (wall-clock window, interpreted in the store's zone).
+        // Jingle is not active on this day at all (wall-clock window, interpreted in the app zone).
         if (jingle.getStartDate().isAfter(endOfDay) || jingle.getEndDate().isBefore(startOfDay)) {
             return;
         }
@@ -209,7 +206,7 @@ public class JingleServiceImpl implements JingleService {
         }
 
         while (!slotTime.isAfter(endOfDay) && !slotTime.isAfter(jingle.getEndDate())) {
-            // Resolve the wall-clock cadence point to an absolute instant in the store's zone.
+            // Resolve the wall-clock cadence point to an absolute instant in the app zone.
             var playInstant = slotTime.atZone(zone).toInstant();
             if (!playInstant.isBefore(notBefore) && !existingTimes.contains(playInstant)) {
                 schedule.addSlot(JingleSlot.builder()

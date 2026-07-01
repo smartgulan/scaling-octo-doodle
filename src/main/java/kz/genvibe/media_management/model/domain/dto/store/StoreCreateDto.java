@@ -8,6 +8,5 @@ public record StoreCreateDto(
     @NotBlank @Size(min = 3, message = "Store name cannot be blank or less than 3 characters")
     String name,
     String location,
-    @Email String email,
-    String timezone
+    @Email String email
 ) { }

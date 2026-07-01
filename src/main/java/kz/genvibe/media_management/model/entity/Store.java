@@ -5,7 +5,6 @@ import kz.genvibe.media_management.model.entity.base.UpdateEntity;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -24,11 +23,6 @@ public class Store extends UpdateEntity {
 
     @Column
     private String location;
-
-    /** Physical timezone of this store; drives wall-clock jingle scheduling. */
-    @Builder.Default
-    @Column(name = "zone_id", nullable = false)
-    private ZoneId zoneId = ZoneId.of("Asia/Almaty");
 
     @Column(length = 254, nullable = false)
     private String email;

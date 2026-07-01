@@ -17,7 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.ZoneId;
 import java.util.List;
 import java.util.UUID;
 
@@ -67,25 +66,12 @@ public class StoreServiceImpl implements StoreService {
             .name(dto.name())
             .location(dto.location())
             .email(dto.email())
-            .zoneId(resolveZone(dto.timezone()))
             .organization(appUser.getOrganization())
             .storeUser(storeUser)
             .build();
 
         storeRepository.save(store);
         log.info("Added store: {} for user: {}", dto.name(), appUser.getEmail());
-    }
-
-    /** Parses the submitted IANA timezone, falling back to Asia/Almaty when missing or invalid. */
-    private static ZoneId resolveZone(String timezone) {
-        if (timezone == null || timezone.isBlank()) {
-            return ZoneId.of("Asia/Almaty");
-        }
-        try {
-            return ZoneId.of(timezone.trim());
-        } catch (Exception e) {
-            return ZoneId.of("Asia/Almaty");
-        }
     }
 
     @Override
